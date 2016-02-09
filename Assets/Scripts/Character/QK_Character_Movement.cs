@@ -36,7 +36,7 @@ public class QK_Character_Movement : MonoBehaviour {
 	[ReadOnly] public float verticalVelocity = 0f;
 	private float terminalVelocity = 30f;
 	private float turnRate = 5f;
-	public bool jumping = false;
+	private bool jumping = false;
 
 	private Vector3 moveVector = Vector3.zero;
 	private Vector3 desiredMoveVector = Vector3.zero;
@@ -60,7 +60,7 @@ public class QK_Character_Movement : MonoBehaviour {
 	private Quaternion targetAngle = Quaternion.identity;
 	private PoPCamera cam;
 	private bool canJump = true;
-	public bool slide = false;
+	private bool slide = false;
 	
 	//Parkor?
 	
@@ -79,7 +79,7 @@ public class QK_Character_Movement : MonoBehaviour {
 		_stateModifier = CharacterState.Normal;
 		
 		// Set CharacterController Defaults
-		charCont.slopeLimit = 30f;
+		charCont.slopeLimit = 60f;
 	}
 	
 	void FixedUpdate()
@@ -131,7 +131,7 @@ public class QK_Character_Movement : MonoBehaviour {
 		// Apply Slide
 		ApplySlide ();
 		//print (slide);
-		if (!slide) {
+		if (!slide) { //disable movement if the character is sliding
 			moveVector = new Vector3 (desiredMoveVector.x, verticalVelocity, desiredMoveVector.z);
 		}
 		Vector3 curMoveVect = new Vector3 (moveVector.x * curSpeed, verticalVelocity, moveVector.z * curSpeed);
@@ -215,14 +215,14 @@ public class QK_Character_Movement : MonoBehaviour {
 			groundNormal = hitInfo.normal;
 
 			//if the angle is under slope limit, return
-			if((Vector3.Angle (hitInfo.normal, Vector3.up)) <= (charCont.slopeLimit*2f)){
+			if((Vector3.Angle (hitInfo.normal, Vector3.up)) <= (charCont.slopeLimit)){
 			
 				slide = false;
 				canJump = true;
 				return;
 			}
 			//if the angle is over the slope limit, continue, and disable jumping
-			if (Vector3.Angle (hitInfo.normal, Vector3.up) > (charCont.slopeLimit*2f)) {
+			if (Vector3.Angle (hitInfo.normal, Vector3.up) > (charCont.slopeLimit)) {
 				canJump = false;
 			}
 			else{
@@ -366,6 +366,7 @@ public class QK_Character_Movement : MonoBehaviour {
 	
 	void Jump() 
 	{
+		//slide bool is handed in ApplySlide, makes you jump backwards if you try to jump while sliding
 		if ((charCont.isGrounded) && !slide) {
 			verticalVelocity = jumpSpeed;
 		}
