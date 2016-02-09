@@ -5,7 +5,7 @@ using System.Collections;
 using Debug = FFP.Debug;
 
 public class QK_Character_Movement : MonoBehaviour {
-
+	
 	private static QK_Character_Movement _instance;
 	public static QK_Character_Movement Instance 
 	{
@@ -18,13 +18,13 @@ public class QK_Character_Movement : MonoBehaviour {
 			return _instance;
 		}
 	}
-
+	
 	public enum CharacterState {Idle, Move, Pivot, Sprint, Crouch, Hang, Ladder, Sidle, Wait, Normal}
 	public CharacterState _moveState { get; private set; }
 	public CharacterState _stateModifier { get; private set; }
-
+	
 	public static CharacterController charCont;
-
+	
 	[ReadOnly] public float curSpeed = 0f;
 	private float acceleration = 0.3f;
 	[ReadOnly] public float runSpeed = 8f;
@@ -36,34 +36,40 @@ public class QK_Character_Movement : MonoBehaviour {
 	[ReadOnly] public float verticalVelocity = 0f;
 	private float terminalVelocity = 30f;
 	private float turnRate = 5f;
+	private bool jumping = false;
 
 	private Vector3 moveVector = Vector3.zero;
 	private Vector3 desiredMoveVector = Vector3.zero;
-    private Vector3 inputDirection { get; set; }
+	private Vector3 inputDirection { get; set; }
 	private Vector3 groundNormal = Vector3.zero;
-
+	
 	private Interactable iObject;
 	private GameObject triggeredObj;
-
-    // Ladder Variables
-    private bool onLadder = false;
+	
+	// Ladder Variables
+	private bool onLadder = false;
 	private bool dismountTop = false;
 	private bool dismountBottom = false;
-    private Vector3 climbToPosition = Vector3.zero;
+	private Vector3 climbToPosition = Vector3.zero;
 	private Vector3 ladderDismountPos = Vector3.zero;
-
+	
 	// This is for Slide if implemented
 	private float slideTheshold = 0.6f;
 	private float MaxControllableSlideMagnitude = 0.4f;
 	private Vector3 slideDirection;
 	private Quaternion targetAngle = Quaternion.identity;
 	private PoPCamera cam;
-
-    void Awake()
-    {
-        _instance = null;
-    }
-
+	private bool canJump = true;
+	private bool slide = false;
+	
+	//Parkor?
+	
+	
+	void Awake()
+	{
+		_instance = null;
+	}
+	
 	// Use this for initialization
 	void Start () 
 	{
@@ -71,38 +77,41 @@ public class QK_Character_Movement : MonoBehaviour {
 		cam = PoPCamera.instance;
 		_moveState = CharacterState.Idle;
 		_stateModifier = CharacterState.Normal;
-
+		
 		// Set CharacterController Defaults
-		charCont.slopeLimit = 30f;
+		charCont.slopeLimit = 60f;
 	}
-
+	
 	void FixedUpdate()
 	{
 		if (cam == null)
 			return;
-
+		
 		CalculateMovementDirection ();
-
+		
 		ApplyGravity ();
-
+		
 		DetermineCharacterState ();
-
+		
+		
+		
 		switch (_stateModifier) 
 		{
-			case CharacterState.Ladder:
-				ClimbLadder();
-				break;
-
-			default:
-				ProcessStandardMotion();
-				break;
+		case CharacterState.Ladder:
+			ClimbLadder();
+			break;
+			
+		default:
+			ProcessStandardMotion();
+			break;
 			
 		}
 	}
-
-    void ProcessStandardMotion()
+	
+	void ProcessStandardMotion()
 	{
-		if (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0) {
+		
+		if (Input.GetAxisRaw ("Vertical") != 0 || Input.GetAxisRaw ("Horizontal") != 0) {
 			curSpeed += acceleration;
 			curSpeed *= inputDirection.magnitude;
 		} else {
@@ -116,22 +125,24 @@ public class QK_Character_Movement : MonoBehaviour {
 		} else {
 			curSpeed = Mathf.Clamp (curSpeed, 0f, runSpeed);
 		}
-
-        //curSpeed *= desiredMoveVector.magnitude;
+		
+		//curSpeed *= desiredMoveVector.magnitude;
 		
 		// Apply Slide
 		ApplySlide ();
+		//print (slide);
+		if (!slide) { //disable movement if the character is sliding
+			moveVector = new Vector3 (desiredMoveVector.x, verticalVelocity, desiredMoveVector.z);
+		}
+		Vector3 curMoveVect = new Vector3 (moveVector.x * curSpeed, verticalVelocity, moveVector.z * curSpeed);
 		
-		moveVector = new Vector3 (desiredMoveVector.x, verticalVelocity, desiredMoveVector.z);
-
-		Vector3 curMoveVect = new Vector3(moveVector.x * curSpeed, verticalVelocity, moveVector.z * curSpeed);
-
 		if (_moveState != CharacterState.Idle)
 			RotateCharacter (inputDirection);
-
+		
 		charCont.Move (curMoveVect * Time.deltaTime);
+		
 	}
-
+	
 	void CalculateMovementDirection ()
 	{
 		float inputHor = Input.GetAxisRaw("Horizontal");
@@ -140,81 +151,130 @@ public class QK_Character_Movement : MonoBehaviour {
 		forward = new Vector3(forward.x, transform.position.y, forward.z);
 		forward = Vector3.Normalize(forward - transform.position);
 		Vector3 right = new Vector3(forward.z, 0f, -forward.x);
-
+		
 		inputDirection = Vector3.Normalize((inputHor * right) + (inputVert * forward));
 		desiredMoveVector = Vector3.Lerp (moveVector, inputDirection, 0.2f);
 		desiredMoveVector = new Vector3 (desiredMoveVector.x, 0f, desiredMoveVector.z);
-
+		
 		if (inputHor != 0f || inputVert != 0) 
-        {
-            if (_moveState == CharacterState.Idle)
-            {
-                _moveState = CharacterState.Pivot;
-            }
-            else if (_moveState == CharacterState.Pivot)
-            {
-                if (Vector3.Dot(Vector3.Normalize(transform.forward), Vector3.Normalize(inputDirection)) >= 0.9)
-                    _moveState = CharacterState.Move;
-                else
-                    _moveState = CharacterState.Pivot;
-            }
-            else
-            {
-                if (Vector3.Angle(Vector3.Normalize(transform.forward), Vector3.Normalize(inputDirection)) >= 90f)
-                {
-                    _moveState = CharacterState.Pivot;
-                } else {
-                    _moveState = CharacterState.Move;
-                }
-            }
+		{
+			if (_moveState == CharacterState.Idle)
+			{
+				_moveState = CharacterState.Pivot;
+			}
+			else if (_moveState == CharacterState.Pivot)
+			{
+				if (Vector3.Dot(Vector3.Normalize(transform.forward), Vector3.Normalize(inputDirection)) >= 0.9)
+					_moveState = CharacterState.Move;
+				else
+					_moveState = CharacterState.Pivot;
+			}
+			else
+			{
+				if (Vector3.Angle(Vector3.Normalize(transform.forward), Vector3.Normalize(inputDirection)) >= 90f)
+				{
+					_moveState = CharacterState.Pivot;
+				} else {
+					_moveState = CharacterState.Move;
+				}
+			}
 		} 
-        else 
-        {
+		else 
+		{
 			_moveState = CharacterState.Idle;
 		}
 	}
-
+	
 	void ApplyGravity () 
 	{
-        if (!charCont.isGrounded && moveVector.y > -terminalVelocity) {
+		if (!charCont.isGrounded && moveVector.y > -terminalVelocity) {
 			verticalVelocity -= gravity * Time.deltaTime;
 		} else if(charCont.isGrounded) {
 			verticalVelocity = -1;
 		}
 	}
 
+	//Handle sliding on steep surfaces
 	void ApplySlide ()
 	{
-		if (!QK_Character_Movement.charCont.isGrounded)
+		if (!QK_Character_Movement.charCont.isGrounded) {
+			jumping = true;
+
 			return;
+		}
+		jumping = false;
 
+
+		
 		slideDirection = Vector3.zero;
-
+		
 		RaycastHit hitInfo;
-
-		if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, 5f, cam.PlayerLM)) {
+				//Raycast onto the object below you
+		if (Physics.Raycast(transform.position, Vector3.down, out hitInfo, 2f, cam.PlayerLM)) {
+		
 			groundNormal = hitInfo.normal;
-			if (Vector3.Angle (hitInfo.normal, Vector3.up) < charCont.slopeLimit) {
-				slideDirection = new Vector3 (hitInfo.normal.x, -hitInfo.normal.y, hitInfo.normal.z);
-			}
-		}
 
-		/*if (slideDirection.magnitude < MaxControllableSlideMagnitude) {
-			moveVector += slideDirection;
+			//if the angle is under slope limit, return
+			if((Vector3.Angle (hitInfo.normal, Vector3.up)) <= (charCont.slopeLimit)){
+			
+				slide = false;
+				canJump = true;
+				return;
+			}
+			//if the angle is over the slope limit, continue, and disable jumping
+			if (Vector3.Angle (hitInfo.normal, Vector3.up) > (charCont.slopeLimit)) {
+				canJump = false;
+			}
+			else{
+				canJump = true;
+			}
+				
+			//this section catches the angle of the x, -x, z, and negative -z from the raycast
+			//if it is "greater" than the slide threshhold (or less for the negative angle) then
+			//feed into slideDirection the opposite angle
+					
+			if(hitInfo.normal.x> slideTheshold){
+				slideDirection = new Vector3(-hitInfo.normal.x, hitInfo.normal.y,-hitInfo.normal.z);
+				slide = true;
+			}
+			
+			if(hitInfo.normal.x< slideTheshold*(-1f)){
+				slideDirection = new Vector3(-hitInfo.normal.x, hitInfo.normal.y,-hitInfo.normal.z);
+				slide = true;
+			}
+			
+			
+			if(hitInfo.normal.z> slideTheshold){
+				slideDirection = new Vector3(-hitInfo.normal.x, hitInfo.normal.y, -hitInfo.normal.z);
+				slide = true;
+			}
+			
+			if(hitInfo.normal.z < slideTheshold*(-1)){
+				slideDirection = new Vector3(-hitInfo.normal.x, hitInfo.normal.y, -hitInfo.normal.z);
+				slide = true;
+			}
+			
 		}
-		else {
+		//change our movement vector to the slide direction assigned above, continue to
+		//slide until the character reaches an angle below the slide threshhold. 
+
+
+		if (slide) {
+			charCont.Move (slideDirection * Time.deltaTime * -slideSpeed);
+		} else {
 			moveVector = slideDirection;
-		}*/
+		}
 	}
 	
 	void DetermineCharacterState () 
 	{
+		
 		if(!IsInActionState())
 		{
 			if (Input.GetKey(KeyCode.E)) 
 			{
 				iObject = GetActionObject();
-
+				
 				if(iObject != null)
 				{
 					if(iObject.Type == Interactable.ObjectType.Ladder)
@@ -234,27 +294,29 @@ public class QK_Character_Movement : MonoBehaviour {
 						Debug.Warning("player", "No player action for type "+iObject.Type);
 						_stateModifier = CharacterState.Normal;
 					}
-
+					
 					// We have an action to do, break out
 					return;
 				}
 			}
-
+			
 			if (Input.GetButton("Jump")) {
 				Jump ();
 				return;
 			}
-
+			
 			if (false) {
 				_stateModifier = CharacterState.Sprint;
+				
 			} else if (false) {
 				_stateModifier = CharacterState.Crouch;
 			} else {
 				_stateModifier = CharacterState.Normal;
+				
 			}
 		}
 	}
-
+	
 	Interactable GetActionObject()
 	{
 		GameObject actionableObj = null;
@@ -298,13 +360,25 @@ public class QK_Character_Movement : MonoBehaviour {
 		} else
 			return null;
 	}
-
+	
+	
+	
+	
 	void Jump() 
 	{
-		if (charCont.isGrounded)
+		//slide bool is handed in ApplySlide, makes you jump backwards if you try to jump while sliding
+		if ((charCont.isGrounded) && !slide) {
 			verticalVelocity = jumpSpeed;
+		}
+		if ((charCont.isGrounded) && slide) {
+			verticalVelocity = jumpSpeed;
+			moveVector *= -0.5f;
+		}
+		
 	}
-
+	
+	
+	
 	void ClimbLadder()
 	{
 		if (iObject == null || iObject.Type != Interactable.ObjectType.Ladder)
@@ -313,33 +387,33 @@ public class QK_Character_Movement : MonoBehaviour {
 			_stateModifier = CharacterState.Normal;
 			return;
 		}
-
+		
 		// Snap to ladder
 		if(!onLadder)
 		{
-            // Just use an estimated distance check because absolute position checking is inaccurate
-            if (Vector3.Distance(transform.position, triggeredObj.transform.position) < 0.01f) {
+			// Just use an estimated distance check because absolute position checking is inaccurate
+			if (Vector3.Distance(transform.position, triggeredObj.transform.position) < 0.01f) {
 				// Ready to begin climbing
-                onLadder = true;
+				onLadder = true;
 				climbToPosition = triggeredObj.transform.position;
-            } else {
-                transform.position = Vector3.Lerp(transform.position, triggeredObj.transform.position, 2 * Time.deltaTime);
+			} else {
+				transform.position = Vector3.Lerp(transform.position, triggeredObj.transform.position, 2 * Time.deltaTime);
 				transform.LookAt(transform.position - iObject.transform.forward);
-            }
-
+			}
+			
 			return;
 		}
-
+		
 		Vector3 bottom = iObject.ladderBottom;
 		Vector3 top = iObject.ladderTop;
 		Vector3 climbDir = Vector3.zero;
-
+		
 		// Check if we're at top or bottom
 		if(dismountTop)
 		{
 			// Do dismount top
 			transform.position = Vector3.Lerp(transform.position, top + transform.forward / 1.5f, Time.deltaTime * 2);
-
+			
 			if(Vector3.Distance(transform.position, top + transform.forward / 1.5f) <= 0.01f)
 				Reset();
 			return;
@@ -348,18 +422,18 @@ public class QK_Character_Movement : MonoBehaviour {
 		{
 			// Do dismount bottom
 			transform.position = Vector3.Lerp(transform.position, bottom - transform.forward / 1.5f, Time.deltaTime * 2);
-
+			
 			if(Vector3.Distance(transform.position, bottom - transform.forward / 1.5f) <= 0.01f)
 				Reset();
 			return;
 		}
-
+		
 		if(Vector3.Distance(climbToPosition, transform.position) > 0.1f)
 		{
 			transform.position = Vector3.Lerp(transform.position, climbToPosition, 0.1f);
 			return;
 		}
-
+		
 		if(Input.GetAxisRaw("Vertical") > 0)
 		{
 			if(Vector3.Distance(transform.position, top) <= 0.5f)
@@ -386,16 +460,16 @@ public class QK_Character_Movement : MonoBehaviour {
 			// Set position to move down
 			climbDir = Vector3.Normalize(bottom - transform.position)/1.5f;
 		}
-
+		
 		climbToPosition = transform.position + climbDir;
 	}
-
+	
 	bool IsInActionState()
 	{
 		if (_stateModifier == CharacterState.Ladder ||
-			_stateModifier == CharacterState.Sidle ||
-			_stateModifier == CharacterState.Hang ||
-			!charCont.isGrounded)
+		    _stateModifier == CharacterState.Sidle ||
+		    _stateModifier == CharacterState.Hang ||
+		    !charCont.isGrounded)
 		{
 			return true;
 		}
@@ -404,28 +478,28 @@ public class QK_Character_Movement : MonoBehaviour {
 			return false;
 		}
 	}
-
+	
 	void RotateCharacter(Vector3 toRotate)
 	{
 		Quaternion newRotation = Quaternion.LookRotation (toRotate, Vector3.up);
 		transform.rotation = Quaternion.Slerp (transform.rotation, newRotation, turnRate * Time.deltaTime);
 	}
-
+	
 	void Reset()
 	{
 		_moveState = CharacterState.Idle;
 		_stateModifier = CharacterState.Idle;
 		moveVector = Vector3.zero;
-
+		
 		iObject = null;
 		triggeredObj = null;
-
+		
 		dismountBottom = false;
 		dismountTop = false;
 		onLadder = false;
 		climbToPosition = Vector3.zero;
 	}
-
+	
 	public T GetComponentInHeirarchy<T>(GameObject obj) 
 	{
 		if(obj.GetComponent<T>() != null) {
@@ -436,11 +510,11 @@ public class QK_Character_Movement : MonoBehaviour {
 			return GetComponentInHeirarchy<T>(obj.transform.parent.gameObject);
 		}
 	}
-		
+	
 	void OnDrawGizmosSelected()
 	{
-#if UNITY_EDITOR
-        if (cam && Debug.IsKeyActive("player")) {
+		#if UNITY_EDITOR
+		if (cam && Debug.IsKeyActive("player")) {
 			/*float inputHor = InputManager.input.MoveHorizontalAxis ();
 			float inputVert = InputManager.input.MoveVerticalAxis ();
 			Vector3 forward = transform.position + cam.transform.forward;
@@ -457,6 +531,6 @@ public class QK_Character_Movement : MonoBehaviour {
 				Gizmos.DrawSphere(transform.position + charCont.center, 1.5f);
 			}
 		}
-#endif
-    }
+		#endif
+	}
 }
