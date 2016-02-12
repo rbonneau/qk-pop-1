@@ -53,7 +53,8 @@ public class StealthHand : MonoBehaviour
 	void Start()
 	{
 
-		clockFace = transform.FindChild("StealthClock").gameObject;
+		clockFace = GameObject.Find("clockFace");
+//		clockFace = transform.FindChild("StealthClock").gameObject;
 
 //START TEMP
 		//find/get number of enemies nearby
@@ -79,7 +80,7 @@ public class StealthHand : MonoBehaviour
 		
 //		transform.RotateAround(transform.parent.position, transform.parent.transform.up, Time.deltaTime * speed);
 
-		if(Input.GetButtonDown("action"))
+		if(Input.GetButtonDown("Jump"))
 		{
 
 			//check for success/failure
