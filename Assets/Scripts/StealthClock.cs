@@ -3,21 +3,52 @@ using System.Collections;
 
 public class StealthClock : MonoBehaviour
 {
+	/*
+	this class attaches to a clock face
+	in order for the minigame success/fail conditions to work properly,
+	the clock face y axis must be inverted so the y axis is pointing down (z rotation = 180)
+	*/
 
+	//start of green area in degrees from x axis
+	private int _startDegree;
+	//end of green area in degrees from x axis
+	private int _endDegree;
 
-	public int startDegree;
-	public int endDegree;
+	public float startDegree
+	{
+		get
+		{
+			return _startDegree;
+		}
+	}
+
+	public float endDegree
+	{
+		get
+		{
+			return _endDegree;
+		}
+	}
+
 	float startWidth;
 	float endWidth;
 
 	//number of guards near player
-	private int numberOfGuards;
+	private int _numberOfGuards;
+
+	public int numberOfGuards
+	{
+		get
+		{
+			return _numberOfGuards;
+		}
+	}
+
 	//length of lines that make up red/green areas
 	private float lineLength;
 	//degrees in a circle
 	private int degrees = 360;
-	//
-	Vector3[] linesArr;
+
 	//starting point of each line, above center of clock face
 	public Vector3 startPos;
 
@@ -26,18 +57,32 @@ public class StealthClock : MonoBehaviour
 	
 	private GameObject clockHand;
 
+	void Awake()
+	{
+
+		//get nearby enemies
+//TEMP
+		_numberOfGuards = 1;
+//TEMP
+
+		//calculate number of max successful presses
+
+		//calculate  number of max fail presses
+
+		//calculate size of green area
+
+		//set start and end of green area
+
+		//TESTING
+		_startDegree = 0;
+		_endDegree = 90;
+		//END TESTING
+
+	}
+
 	// Use this for initialization
 	void Start()
 	{
-
-		
-		//get size of green area
-		//		startDegree = GetComponentInParent<StealthHand>().startDegree;
-		//		endDegree = GetComponentInParent<StealthHand>().endDegree;
-//TESTING
-		startDegree = 500;
-		endDegree = 500;
-//END TESTING
 
 		//initialize line parameters
 		lineLength = transform.localScale.x / 2f;
@@ -46,21 +91,20 @@ public class StealthClock : MonoBehaviour
 		startWidth = 0f;
 		endWidth = transform.localScale.x * Mathf.PI / 360f;
 
+		//array of empty gameobjects to hold a single line renderer each
 		lines = new GameObject[degrees];
-		linesArr = new Vector3[degrees];
 
 		//initialize lines for arc
 		lineSetup();
 
 	}
 	
-
 	void lineSetup()
 	{
 
 		//set green and red with reduced opacity
-		Color colorG = new Color(0.0f, 1.0f, 0.0f, 0.7f);
-		Color colorR = new Color(1.0f, 0.0f, 0.0f, 0.7f);
+		Color colorG = new Color(0.0f, 1.0f, 0.0f, 0.9f);
+		Color colorR = new Color(1.0f, 0.0f, 0.0f, 0.9f);
 
 		//set color transparency
 //		colorG.a = 0.5f;
@@ -82,21 +126,21 @@ public class StealthClock : MonoBehaviour
 
 			//add a line renderer to the empty game object
 			LineRenderer lRend = lines[i].AddComponent<LineRenderer>();
-
+			//set line widths
 			lRend.SetWidth(startWidth, endWidth);
-
+			//set line renderer material
 			lRend.material = new Material(Shader.Find("Particles/Additive"));
-//			lRend.material.SetColor("Default-Particle", colorG);
+
 			//only one line per game object
 			lRend.SetVertexCount(2);
 
 			//set line colors accordingly
 			//check start and end boundaries
 			//green area fills upward from startDegree to endDegree
-			if(startDegree < endDegree)
+			if(_startDegree < _endDegree)
 			{
 
-				if((startDegree <= i) && (i <= endDegree))
+				if((_startDegree <= i) && (i <= _endDegree))
 				{
 
 					lRend.SetColors(colorG, colorG);
@@ -111,7 +155,7 @@ public class StealthClock : MonoBehaviour
 			}
 			else
 			{
-				if((startDegree <= i) || (i <= endDegree))
+				if((_startDegree <= i) || (i <= _endDegree))
 				{
 
 					lRend.SetColors(Color.clear, colorG);
@@ -130,15 +174,15 @@ public class StealthClock : MonoBehaviour
 			//initialize end point to current position of gameObject
 			linePos = startPos;
 
-			//find x and z position of end of line
+			//find x and z position of end of line, y will remain the same
 			lineX = startPos.x + lineLength * Mathf.Cos(Mathf.Deg2Rad * i);
 			linePos[0] = lineX;
 			lineZ = startPos.z + lineLength * Mathf.Sin(Mathf.Deg2Rad * i);
 			linePos[2] = lineZ;
 
+			//set start and end points for the line
 			lRend.SetPosition(0, startPos);
 			lRend.SetPosition(1, linePos);
-			linesArr[i] = linePos;
 			
 		}
 		
@@ -148,44 +192,6 @@ public class StealthClock : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-
-		for(int i = 0; i < lines.Length; i++)
-		{
-
-//			lines[i].GetComponent<LineRenderer>().SetPosition(0, linePoints[i]);
-		}
-
-		//set
-		if(startDegree < endDegree)
-		{
-
-			for(int i = startDegree; i < endDegree; i++)
-			{
-
-				lines[i].GetComponent<LineRenderer>().SetColors(Color.green, Color.green);
-
-			}
-
-		}
-		else
-		{
-			for(int i = startDegree; i < lines.Length; i++)
-			{
-
-				lines[i].GetComponent<LineRenderer>().SetColors(Color.green, Color.green);
-
-			}
-
-			for(int i = 0; i < endDegree; i++)
-			{
-				lines[i].GetComponent<LineRenderer>().SetColors(Color.green, Color.green);
-			}
-		}
-
-		
-
-		//this won't work at runtime
-//		drawArcs(GetComponentInParent<StealthHand>().startDegree, GetComponentInParent<StealthHand>().endDegree);
 
 	}
 */

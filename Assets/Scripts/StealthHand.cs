@@ -5,25 +5,8 @@ public class StealthHand : MonoBehaviour
 {
 
 	//green area on clock face between startDegree and endDegree
-	private float _startDegree;
-	private float _endDegree;
-
-
-	public int startDegree
-	{
-		get
-		{
-			return System.Convert.ToInt32(_startDegree);
-		}
-	}
-
-	public int endDegree
-	{
-		get
-		{
-			return System.Convert.ToInt32(_endDegree);
-		}
-	}
+	public float startDegree;
+	public float endDegree;
 
 
 	//number of successful presses before winning minigame
@@ -47,18 +30,33 @@ public class StealthHand : MonoBehaviour
 	private float areaSize;
 
 	//StealthClock, the face of the clock, should be child of this StealthHand
-	GameObject clockFace;
+//	GameObject clockFace;
+	StealthClock clockFace;
 
 	// Use this for initialization
 	void Start()
 	{
 
-		clockFace = GameObject.Find("clockFace");
-//		clockFace = transform.FindChild("StealthClock").gameObject;
+		//initialize success/fail counts
+		currentSuccess = 0;
+		currentFail = 0;
+
+		//get the clock face
+		clockFace = transform.GetComponentInParent<StealthClock>();
+
+		//set green borders
+		startDegree = clockFace.startDegree;
+		endDegree = clockFace.endDegree;
 
 //START TEMP
 		//find/get number of enemies nearby
-		enemiesNearby = 1;
+//		enemiesNearby = 1;
+		enemiesNearby = clockFace.numberOfGuards;
+		if(enemiesNearby < 1)
+		{
+			enemiesNearby = 1;
+			Debug.Log("StealthHand: enemiesNearby < 1");
+		}
 
 		//set maxSuccess/maxFail
 		//should eventually take into account number of searching guards and their distance to player
@@ -76,23 +74,45 @@ public class StealthHand : MonoBehaviour
 	{
 
 		//rotate hand
-		transform.RotateAround(clockFace.transform.position, clockFace.transform.up, Time.deltaTime * speed);
+//		transform.RotateAround(clockFace.transform.position, clockFace.transform.up, Time.deltaTime * speed);
 		
-//		transform.RotateAround(transform.parent.position, transform.parent.transform.up, Time.deltaTime * speed);
+		transform.RotateAround(transform.parent.position, transform.parent.transform.up, -Time.deltaTime * speed);
+		
 
 		if(Input.GetButtonDown("Jump"))
 		{
 
-			//check for success/failure
-			if((transform.rotation.y >= _startDegree) && (transform.rotation.y <= _endDegree))
+			if(startDegree < endDegree)
 			{
-				currentSuccess++;
+				//check for success/failure
+				if((startDegree <= transform.rotation.y) && (transform.rotation.y <= endDegree))
+				{
+					currentSuccess++;
+					print("currentSuccess: " + currentSuccess);
+				}
+				else
+				{
+					currentFail++;
+					print("currentFail: " + currentFail);
+				}
+/*
 			}
 			else
 			{
-				currentFail++;
-			}
+				if((startDegree <= transform.rotation.y) || (transform.rotation.y <= endDegree))
+				{
 
+					currentSuccess++;
+
+				}
+				else
+				{
+
+					currentFail++;
+
+				}
+*/
+			}
 			if(currentSuccess >= maxSuccess)
 			{
 
@@ -107,19 +127,6 @@ public class StealthHand : MonoBehaviour
 
 				
 			}
-
-		}
-
-		if(currentFail <= maxFail)
-		{
-
-			//do failure work
-
-		}
-		else if(currentSuccess >= maxSuccess)
-		{
-
-			//do successes work
 
 		}
 
