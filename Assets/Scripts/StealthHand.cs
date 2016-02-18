@@ -7,6 +7,10 @@ public class StealthHand : MonoBehaviour
 	//green area on clock face between startDegree and endDegree
 	public float startDegree;
 	public float endDegree;
+	public float quatTest;
+	public float currentY;
+	public float currentWorldY;
+
 
 
 	//number of successful presses before winning minigame
@@ -76,8 +80,15 @@ public class StealthHand : MonoBehaviour
 		//rotate hand
 //		transform.RotateAround(clockFace.transform.position, clockFace.transform.up, Time.deltaTime * speed);
 		
-		transform.RotateAround(transform.parent.position, transform.parent.transform.up, -Time.deltaTime * speed);
-		
+		transform.RotateAround(transform.parent.position, transform.parent.transform.up, -Time.deltaTime * -speed);
+
+//		currentY = transform.eulerAngles.y;
+//		transform.eulerAngles.y;
+		currentY = transform.localEulerAngles.y;
+
+		currentWorldY = transform.rotation.eulerAngles.y;
+
+		quatTest = Quaternion.Inverse(transform.rotation).eulerAngles.y;
 
 		if(Input.GetButtonDown("Jump"))
 		{
@@ -85,15 +96,22 @@ public class StealthHand : MonoBehaviour
 			if(startDegree < endDegree)
 			{
 				//check for success/failure
-				if((startDegree <= transform.rotation.y) && (transform.rotation.y <= endDegree))
+				if((startDegree <= transform.localEulerAngles.y) && (transform.localEulerAngles.y <= endDegree))
 				{
 					currentSuccess++;
 					print("currentSuccess: " + currentSuccess);
+					print("startDegree: " + startDegree);
+					print("transform.localEulerAngles.y: " + transform.localEulerAngles.y);
+					print("endDegree: " + endDegree);
+
 				}
 				else
 				{
 					currentFail++;
 					print("currentFail: " + currentFail);
+					print("startDegree: " + startDegree);
+					print("transform.localEulerAngles.y: " + transform.localEulerAngles.y);
+					print("endDegree: " + endDegree);
 				}
 /*
 			}
