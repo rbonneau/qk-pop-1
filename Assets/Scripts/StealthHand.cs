@@ -7,12 +7,7 @@ public class StealthHand : MonoBehaviour
 	//green area on clock face between startDegree and endDegree
 	public float startDegree;
 	public float endDegree;
-	public float quatTest;
-	public float currentY;
-	public float currentWorldY;
-
-
-
+	
 	//number of successful presses before winning minigame
 	private int maxSuccess;
 	//current total of successful presses
@@ -31,10 +26,9 @@ public class StealthHand : MonoBehaviour
 	private float speed = 6f;
 
 	//size of green area on clock, in degrees, affected by number of enemies and their distance to player
-	private float areaSize;
+//	private float areaSize;
 
-	//StealthClock, the face of the clock, should be child of this StealthHand
-//	GameObject clockFace;
+	//StealthClock, the face of the clock, should be parent of this StealthHand
 	StealthClock clockFace;
 
 	// Use this for initialization
@@ -59,7 +53,7 @@ public class StealthHand : MonoBehaviour
 		if(enemiesNearby < 1)
 		{
 			enemiesNearby = 1;
-			Debug.Log("StealthHand: enemiesNearby < 1");
+			Debug.Log("StealthHand: enemiesNearby < 1, set enemiesNearby to 1");
 		}
 
 		//set maxSuccess/maxFail
@@ -78,17 +72,7 @@ public class StealthHand : MonoBehaviour
 	{
 
 		//rotate hand
-//		transform.RotateAround(clockFace.transform.position, clockFace.transform.up, Time.deltaTime * speed);
-		
-		transform.RotateAround(transform.parent.position, transform.parent.transform.up, -Time.deltaTime * -speed);
-
-//		currentY = transform.eulerAngles.y;
-//		transform.eulerAngles.y;
-		currentY = transform.localEulerAngles.y;
-
-		currentWorldY = transform.rotation.eulerAngles.y;
-
-		quatTest = Quaternion.Inverse(transform.rotation).eulerAngles.y;
+		transform.RotateAround(transform.parent.position, transform.parent.transform.up, -Time.deltaTime * speed);
 
 		if(Input.GetButtonDown("Jump"))
 		{
@@ -99,25 +83,27 @@ public class StealthHand : MonoBehaviour
 				if((startDegree <= transform.localEulerAngles.y) && (transform.localEulerAngles.y <= endDegree))
 				{
 					currentSuccess++;
+
 					print("currentSuccess: " + currentSuccess);
+					print("localEulerAngles: " + transform.localEulerAngles.y);
 					print("startDegree: " + startDegree);
-					print("transform.localEulerAngles.y: " + transform.localEulerAngles.y);
 					print("endDegree: " + endDegree);
 
 				}
 				else
 				{
 					currentFail++;
+
 					print("currentFail: " + currentFail);
+					print("localEulerAngles: " + transform.localEulerAngles.y);
 					print("startDegree: " + startDegree);
-					print("transform.localEulerAngles.y: " + transform.localEulerAngles.y);
 					print("endDegree: " + endDegree);
 				}
-/*
+
 			}
 			else
 			{
-				if((startDegree <= transform.rotation.y) || (transform.rotation.y <= endDegree))
+				if((startDegree <= transform.localEulerAngles.y) || (transform.localEulerAngles.y <= endDegree))
 				{
 
 					currentSuccess++;
@@ -129,20 +115,30 @@ public class StealthHand : MonoBehaviour
 					currentFail++;
 
 				}
-*/
+
 			}
 			if(currentSuccess >= maxSuccess)
 			{
 
 				//enemies return to normal
+				foreach(Enemy guard in clockFace.enemyList)
+				{
 
+//AI					guard.enemyCurrentState = enemy.patrolState;
+
+				}
 
 			}
 			else if(currentFail >= maxFail)
 			{
 
 				//alert enemies to player position
+				foreach(Enemy guard in clockFace.enemyList)
+				{
 
+//AI					guard.enemyCurrentState = clockFace.chaseState;
+				
+				}
 				
 			}
 

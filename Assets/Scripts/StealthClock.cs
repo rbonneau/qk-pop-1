@@ -1,13 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class StealthClock : MonoBehaviour
 {
 	/*
 	this class attaches to a clock face
 	in order for the minigame success/fail conditions to work properly,
-	the clock face y axis must be inverted so the y axis is pointing down (z rotation = 180)
+	the clock face y axis must be inverted so the y axis is pointing down (y rotation = 180, z rotation = 180)
 	*/
+
+	Transform player;
+	public float searchSize = 20f;
+
+	public List<Enemy> enemyList = new List<Enemy>();
 
 	//start of green area in degrees from x axis
 	private int _startDegree;
@@ -60,10 +66,35 @@ public class StealthClock : MonoBehaviour
 	void Awake()
 	{
 
+		//get the location of the player
+		player = GameObject.FindGameObjectWithTag("Player").transform;
+
 		//get nearby enemies
 //TEMP
 		_numberOfGuards = 1;
 //TEMP
+		
+		Collider[] enemyColliders = Physics.OverlapSphere(player.position, searchSize);
+
+		for(int i = 0; i < enemyColliders.Length; i++)
+		{
+
+			//check for enemy tag
+			if(enemyColliders[i].CompareTag("enemy"))
+			{
+
+				//if enemy is searching for player
+//AI				if(enemyColliders[i].GetComponent<AIMain>().enemyCurrentState == enemy.searchingState)
+//AI				{
+
+					//add to list
+					enemyList.Add(enemyColliders[i].GetComponent<Enemy>());
+
+//AI				}
+			}
+		}
+
+		_numberOfGuards = enemyList.Count;
 
 		//calculate number of max successful presses
 
