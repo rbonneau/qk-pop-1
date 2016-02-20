@@ -33,9 +33,15 @@ public class Checkpoint : MonoBehaviour
         Gizmos.DrawIcon (transform.position, "checkpointGizmo.png");
     }
 
-	public Vector3 getPosition(){
+	public Vector3 getPosition()
+    {
 		return transform.position;
 	}
+
+    public Quaternion getRotation()
+    {
+        return transform.rotation;
+    }
 //END OLD CODE
 
 	void OnTriggerEnter(Collider col)

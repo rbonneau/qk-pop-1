@@ -58,6 +58,25 @@ public class AIPath : MonoBehaviour {
 		return points;
 	}
 
+    public List<Quaternion> getRotations()
+    {
+        List<Quaternion> rotations = new List<Quaternion>();
+        foreach (GameObject r in checkpoints)
+        {
+
+            if (r == null)
+            {
+                checkpoints.Remove(r);
+            }
+            else
+            {
+                Checkpoint data = r.GetComponent<Checkpoint>();
+                rotations.Add(data.getRotation());
+            }
+        }
+        return rotations;
+    }
+
 	void OnDrawGizmosSelected()
 	{
 		List<Vector3> points = getPoints();

@@ -6,76 +6,34 @@ using UnityEditor.AnimatedValues;
 
 public struct AI_Data
 {
-	private int hp_;
-	private float sightDistance_;
-	private float passiveSightAngle_;
-	private float speed_;
-	private float runSpeed_;
-	private string[] seekTag_;
-	private float attackDistance_;
-	private float aggressionLimit_;
-	private string panicPoints_;
-	private bool aggression_;
-	private List<GameObject> paths;
-    private float suspicion_;
-    private float chasingSightAngle_;
 
-	public AI_Data(int hp,
-	               float SightDistance,
-	               float passiveSightAngle,
-	               float speed,
-	               float runSpeed,
-	               string[] seekTag,
-	               float attackDistance,
-	               float aggressionLimit,
-	               string panicPoints,
-	               bool aggression,
-                   float suspicionLimit,
-                   float chasingSightAngle)
+	private List<GameObject> paths;
+
+	public AI_Data(int hp
+        )
 	{
-		hp_ = hp;
-		sightDistance_ = SightDistance;
-		passiveSightAngle_ = passiveSightAngle;
-		speed_ = speed;
-		runSpeed_ = runSpeed;
-		seekTag_ = seekTag;
-		attackDistance_ = attackDistance;
-		aggressionLimit_ = aggressionLimit;
-		panicPoints_ = panicPoints;
-		aggression_ = aggression;
 		paths = new List<GameObject> ();
-        suspicion_ = suspicionLimit;
-        chasingSightAngle_ = chasingSightAngle;
+
 	}
 
-	public void loadData(AIMainTrimmed target)
+	public void loadData(StatePatternEnemy target)
 	{
-		target.hp = hp_;
-		target.sightDistance = sightDistance_;
-		target.passiveSightAngle = passiveSightAngle_;
-		target.speed = speed_;
-		target.runSpeed = runSpeed_;
-		target.seekTag = seekTag_;
-		target.aggressionLimit = aggressionLimit_;
-		target.panicPoints = panicPoints_;
-		target.enemy = aggression_;
-        target.suspicionLimit = suspicion_;
-        target.chasingSightAngle = chasingSightAngle_;
+
 	}
 }
 
-[CustomEditor(typeof(AIMainTrimmed), true)]
+[CustomEditor(typeof(StatePatternEnemy), true)]
 public class AIEditor : Editor {
 
-	AIMainTrimmed ai_target;
+	StatePatternEnemy ai_target;
 	AnimBool show_data;
 	string[] ai_types = new string[]{"Villager", "Guard", "Commander"};
 	string[] path_types = new string[]{"one way", "loop around", "back and forth", "On Guard"};
 
 	AI_Data[] ai_data = new AI_Data[]{
-		new AI_Data(100, 5, 35, 5, 8, new string[]{"Player"}, 3, 10, "PanicPoints", false, 10, 70),
-		new AI_Data(200, 15, 35, 6, 12, new string[]{"Player"}, 5, 1, "PanicPoints", true, 1, 70),
-		new AI_Data(300, 5, 35, 7, 16, new string[]{"Player"}, 7, 10, "PanicPoints", true, 10,70)};
+		new AI_Data(100),
+		new AI_Data(200),
+		new AI_Data(300)};
 
 	int ai_types_index = 0;
 	int current_selection = 0;
@@ -83,12 +41,10 @@ public class AIEditor : Editor {
 
 	void OnEnable()
 	{
-		ai_target = (AIMainTrimmed)target;
+		ai_target = (StatePatternEnemy)target;
 		ai_types_index = ai_target.current_preset;
 		show_data = new AnimBool(ai_target.customType);
 		show_data.valueChanged.AddListener(Repaint);
-
-        ai_target.PlayerLastPos = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/shadowPlayer.prefab", typeof(GameObject)) as GameObject;
     }
 
 	override public void OnInspectorGUI()
@@ -143,6 +99,7 @@ public class AIEditor : Editor {
 
 		if (EditorGUILayout.BeginFadeGroup (show_data.faded))
 		{
+            /* old code
 			ai_target.hp = EditorGUILayout.FloatField("Health:", ai_target.hp);
 			ai_target.sightDistance = EditorGUILayout.FloatField("Sight Distance:", ai_target.sightDistance);
 			ai_target.passiveSightAngle = EditorGUILayout.FloatField("Passive Sight Angle:", ai_target.passiveSightAngle);
@@ -153,6 +110,7 @@ public class AIEditor : Editor {
 			ai_target.suspicionLimit = EditorGUILayout.FloatField("Suspicion Limit:", ai_target.suspicionLimit);
 			ai_target.aggressionLimit = EditorGUILayout.FloatField("Aggression Limit:", ai_target.aggressionLimit);
 			ai_target.enemy = EditorGUILayout.Toggle("Aggressive:", ai_target.enemy);
+            */
 		}
 		EditorGUILayout.EndFadeGroup();
 
