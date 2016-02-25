@@ -102,14 +102,14 @@ public class StealthClock : MonoBehaviour
 //		_numberOfGuards = 1;
 //TEMP
 		
-		Collider[] enemyColliders = Physics.OverlapSphere(player.position, searchSize);
+//		Collider[] enemyColliders = Physics.OverlapSphere(player.position, searchSize);
 
-		for(int i = 0; i < enemyColliders.Length; i++)
-		{
+//		for(int i = 0; i < enemyColliders.Length; i++)
+//		{
 
 			//check for enemy tag
 //			if(enemyColliders[i].CompareTag("enemy"))
-			{
+//			{
 
 				//if enemy is searching for player
 //AI				if(enemyColliders[i].GetComponent<AIMain>().enemyCurrentState == enemy.searchingState)
@@ -119,18 +119,14 @@ public class StealthClock : MonoBehaviour
 //					enemyList.Add(enemyColliders[i].GetComponent<Enemy>());
 
 //AI				}
-			}
-		}
+//			}
+//		}
 
 		//get the number of guards actively searching for player
 //		_numberOfGuards = enemyList.Count;
 		
 		//set difficulty
 		setDifficulty();
-
-		//set red and green zones
-//		setColors();
-
 
 //TESTING
 		Debug.Log("StealthClock Awake() complete");
@@ -243,26 +239,30 @@ public class StealthClock : MonoBehaviour
 			//check for win condition
 			if(_currentSuccess >= maxSuccess)
 			{
+				
+				Debug.Log("StealthClock: mini game success");
 
 				//enemies return to normal
-				foreach(Enemy guard in enemyList)
-				{
+//				foreach(Enemy guard in enemyList)
+//				{
 
 //AI				guard.enemyCurrentState = enemy.patrolState;
 
-				}
+//				}
 
 			}
 			else if(_currentFail >= maxFail)
 			{
 
+				Debug.Log("StealthClock: mini game fail");
+
 				//alert enemies to player position
-				foreach(Enemy guard in enemyList)
-				{
+//				foreach(Enemy guard in enemyList)
+//				{
 
 //AI				guard.enemyCurrentState = clockFace.chaseState;
 
-				}
+//				}
 
 			}
 
