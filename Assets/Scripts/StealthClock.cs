@@ -4,15 +4,22 @@ using System.Collections.Generic;
 
 public class StealthClock : MonoBehaviour
 {
-	/*
-	this class attaches to a clock face
-	in order for the minigame success/fail conditions to work properly,
-	the clock face y axis must be inverted so the y axis is pointing down (y rotation = 180, z rotation = 180)
+    /*!
+        \file  StealthClock.cs
+	    \brief  This class attaches to a clock face.
+	
+        In order for the minigame success/fail conditions to work properly,
+	    the clock face y axis must be inverted so the y axis is pointing down
+        (y rotation = 180, z rotation = 180).
 	*/
 
-	Transform player;
+    //reference to the player
+    Transform player;
+
+    //distance from player to search for enemies
 	public float searchSize = 20f;
 
+    //list of enemies searching near player
 	public List<Enemy> enemyList = new List<Enemy>();
 
 	//start of green area in degrees from x axis
@@ -61,6 +68,24 @@ public class StealthClock : MonoBehaviour
 	public int maxSuccess;
 	public int maxFail;
 
+    //number of successes necessary for a win
+    private int easySuccess = 3;
+    private int mediumSuccess = 3;
+    private int hardSuccess = 3;
+    private int hellSuccess = 3;
+
+    //number of failures necessary for a loss
+    private int easyFail = 1;
+    private int mediumFail = 1;
+    private int hardFail = 1;
+    private int hellFail = 1;
+
+    //speed of clock hand in rpms
+    public int easySpeed = 20;
+    private int mediumSpeed = 20;
+    private int hardSpeed = 20;
+    private int hellSpeed = 40;
+
 	//width of red/green lines start is center of circle, end is edge of circle
 	private float _startWidth;
 	private float _endWidth;
@@ -87,6 +112,7 @@ public class StealthClock : MonoBehaviour
 	//array of empty objects to hold line renderers, one object/line for each degree
 	public GameObject[] lines;
 	
+    //hand of clock, child of this gameObject
 	private GameObject _clockHand;
 
 	void Awake()
@@ -141,7 +167,8 @@ public class StealthClock : MonoBehaviour
 		//initialize line parameters
 		_lineLength = transform.localScale.x / 2f;
 		startPos = transform.position;
-		startPos = new Vector3(startPos.x, startPos.y + 0.1f, startPos.z);
+        //should set line y distance above clock face based on size of clock
+		startPos = new Vector3(startPos.x, startPos.y + transform.lossyScale.y * 2.0f, startPos.z);
 		_startWidth = 0f;
 		_endWidth = transform.localScale.x * Mathf.PI / 360f;
 
@@ -165,8 +192,13 @@ public class StealthClock : MonoBehaviour
 
 		//check for at least 1 suspicous enemy
 //AI
+        //if(suspicious < 1)
+        //kill self
+
 		//check for no enemies chasing player
 //AI
+        //if(chasing > 0)
+        //kill self
 
 //should be if(Input.GetButtonDown("Action"))
 		if(Input.GetButtonDown("Jump"))
@@ -177,19 +209,20 @@ public class StealthClock : MonoBehaviour
 				//check for success/failure
 				if((startDegree <= _clockHand.transform.localEulerAngles.y) && (_clockHand.transform.localEulerAngles.y <= endDegree))
 				{
+                    
+                    //increment success count
 					_currentSuccess++;
 
 //TESTING
 					print("SUCCESS: " + _clockHand.transform.localEulerAngles.y);
-//					print("currentSuccess: " + _currentSuccess);
-//					print("localEulerAngles: " + _clockHand.transform.localEulerAngles.y);
 					print("startDegree: " + startDegree);
 					print("endDegree: " + endDegree);
 //END TESTING
 					//check to see if zones need to be reset
 					if(_currentSuccess < maxSuccess)
 						{
-
+                            
+                            //reset the red and green zones
 							setZones();
 
 						}
@@ -197,12 +230,12 @@ public class StealthClock : MonoBehaviour
 				}
 				else
 				{
+
+                    //increment fail count
 					_currentFail++;
 
 //TESTING
 					print("FAIL: " + _clockHand.transform.localEulerAngles.y);
-//					print("currentFail: " + _currentFail);
-//					print("localEulerAngles: " + _clockHand.transform.localEulerAngles.y);
 					print("startDegree: " + startDegree);
 					print("endDegree: " + endDegree);
 //END  TESTING
@@ -216,12 +249,14 @@ public class StealthClock : MonoBehaviour
 				if((_startDegree <= _clockHand.transform.localEulerAngles.y) || (_clockHand.transform.localEulerAngles.y <= endDegree))
 				{
 
+                    //increment success count
 					_currentSuccess++;
 
 					//check to see if zones need to be reset
 					if(_currentSuccess < maxSuccess)
 					{
 
+                        //reset the zones
 						setZones();
 
 					}
@@ -230,6 +265,7 @@ public class StealthClock : MonoBehaviour
 				else
 				{
 
+                    //increment fail count
 					_currentFail++;
 
 				}
@@ -242,13 +278,19 @@ public class StealthClock : MonoBehaviour
 				
 				Debug.Log("StealthClock: mini game success");
 
-				//enemies return to normal
-//				foreach(Enemy guard in enemyList)
-//				{
+                //enemies return to normal
+                //				foreach(Enemy guard in enemyList)
+                //				{
 
-//AI				guard.enemyCurrentState = enemy.patrolState;
+                //AI				guard.enemyCurrentState = enemy.patrolState;
 
-//				}
+                //				}
+
+                //deactivate lines
+                deactivateLines();
+
+                //deactivate self
+                gameObject.SetActive(false);
 
 			}
 			else if(_currentFail >= maxFail)
@@ -256,21 +298,37 @@ public class StealthClock : MonoBehaviour
 
 				Debug.Log("StealthClock: mini game fail");
 
-				//alert enemies to player position
-//				foreach(Enemy guard in enemyList)
-//				{
+                //alert enemies to player position
+                //				foreach(Enemy guard in enemyList)
+                //				{
 
-//AI				guard.enemyCurrentState = clockFace.chaseState;
+                //AI				guard.enemyCurrentState = clockFace.chaseState;
 
-//				}
+                //				}
+
+                //deactivate lines
+                deactivateLines();
+
+                //deactivate self
+                gameObject.SetActive(false);
 
 			}
 
 		}
 
 	}
-	
-	void lineSetup()
+
+    /*!
+        \brief Creates a line renderer for each object in the lines array.
+
+        Creates a line renderer for each object in the lines array. Each line starts
+        in the the center of the clock face and a moves outward, one line for each 
+        degree of the clock face. Line widths start at a point and expand as they
+        move away from the center of the clock face to form a continuous circle.
+
+        \return void
+    */
+    void lineSetup()
 	{
 
 		//create a line renderer for each object in the array
@@ -294,8 +352,10 @@ public class StealthClock : MonoBehaviour
 			//set line renderer material
 			lRend.material = new Material(Shader.Find("Particles/Additive"));
 
-			//only one line per game object
-			lRend.SetVertexCount(2);
+  //          lRend.material = new Material(Shader.Find("Transparent/Diffuse"));
+
+            //only one line per game object
+            lRend.SetVertexCount(2);
 			
 			//do math to point lines in correct directions, find end point for each line
 			//initialize end point to current position of gameObject
@@ -315,18 +375,34 @@ public class StealthClock : MonoBehaviour
 		
 	}
 
+
+    /*! \brief Sets proper difficulty level based on enemies and resets the red and green zones.
+        
+        Just calls setDifficulty and setColors.
+    */
 	void setZones()
 	{
+
 		setDifficulty();
 		setColors();
+
 	}
 
-	//sets the values for zone areas, successes needed to win, fails allowed before losing, and speed of clock hand
-	//based on the number of guards presently searching for player
+	/*! \brief  Sets the minigame difficulty.
+    
+        Sets the location and size of green area, successes needed to win, fails allowed
+        before losing, and speed of clock hand based on the number of guards presently
+        searching for player.
+
+        Calls getEndDegree(int randomStart, int range)
+
+        \return void
+    */
 	void setDifficulty()
 	{
 
 		//call AI manager for suspicious guards
+//AI
 		_numberOfGuards = 1;
 
 		//choose random angle to start the green zone
@@ -337,9 +413,9 @@ public class StealthClock : MonoBehaviour
 		{
 
 			_endDegree = getEndDegree(_startDegree, _easySize);
-			maxSuccess = 3;
-			maxFail = 3;
-			_clockSpeed = 5;
+			maxSuccess = easySuccess;
+			maxFail = easyFail;
+			_clockSpeed = easySpeed;
 
 		}
 		//2-3 guards
@@ -347,9 +423,9 @@ public class StealthClock : MonoBehaviour
 		{
 
 			_endDegree = getEndDegree(_startDegree, _mediumSize);
-			maxSuccess = 3;
-			maxFail = 2;
-			_clockSpeed = 10;
+			maxSuccess = mediumSuccess;
+			maxFail = mediumFail;
+			_clockSpeed = mediumSpeed;
 
 		}
 		//4-9 guards
@@ -357,9 +433,9 @@ public class StealthClock : MonoBehaviour
 		{
 
 			_endDegree = getEndDegree(_startDegree, _hardSize);
-			maxSuccess = 3;
-			maxFail = 1;
-			_clockSpeed = 20;
+			maxSuccess = hardSuccess;
+			maxFail = hardFail;
+			_clockSpeed = hardSpeed;
 
 		}
 		//10 or more guards
@@ -367,17 +443,25 @@ public class StealthClock : MonoBehaviour
 		{
 
 			_endDegree = getEndDegree(_startDegree, _hellSize);
-			maxSuccess = 3;
-			maxFail = 1;
-			_clockSpeed = 40;
+			maxSuccess = hellSuccess;
+			maxFail = hellFail;
+			_clockSpeed = hellSpeed;
 
 		}
 
 	}
 
-	//called by setDifficulty()
-	//takes 2 integers: the start degree of the green area 0-359 and the size of the green area in degrees
-	int getEndDegree(int randomStart, int range)
+    /*!
+	    \brief  Calculates the end degree of the green zone.
+        
+	    \param randomStart the start degree of the green area 0-359
+        \param range the size of the green area in degrees
+
+        Called by setDifficulty()
+
+        /return int
+	*/
+    int getEndDegree(int randomStart, int range)
 	{
 
 		int end;
@@ -400,7 +484,7 @@ public class StealthClock : MonoBehaviour
 			//move end within bounds
 			end = end - 360;
 
-			//check for 
+			//check for same start and end degrees
 			if(randomStart == end)
 			{
 
@@ -418,8 +502,15 @@ public class StealthClock : MonoBehaviour
 
 	}
 
-	//sets the colors for each line renderer that make up the red/green zones
-	void setColors()
+    /*!
+	    \brief Sets the colors for each line renderer that make up the red and green zones.
+	    
+        Cycles through each object in the lines array and sets its line renderer to the proper
+        color based on _startDegree and _endDegree
+
+        \return void
+    */
+    void setColors()
 	{
 
 		//set green and red with reduced opacity
@@ -472,5 +563,28 @@ public class StealthClock : MonoBehaviour
 		}
 
 	}
+
+    /*!
+        \brief  Deactivates all of the lines created by StealthClock.
+
+        Iterates through the lines[] array and deactivates each game object.
+
+        \return void
+    */
+    void deactivateLines()
+    {
+
+        for(int i = 0; i < lines.Length; i++)
+        {
+
+            if(lines[i] != null)
+            {
+
+                lines[i].SetActive(false);
+
+            }
+        }
+
+    }
 
 }

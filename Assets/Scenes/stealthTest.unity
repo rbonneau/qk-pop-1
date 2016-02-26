@@ -160,14 +160,13 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 72627680}
   m_LocalRotation: {x: 1, y: -1.62920685e-07, z: -1.62920685e-07, w: 2.65431496e-14}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
-  m_LocalScale: {x: 1, y: .0500000007, z: 1}
+  m_LocalPosition: {x: -5.21000004, y: -2.5999999, z: -2.79999995}
+  m_LocalScale: {x: 5.64435911, y: .282218069, z: 5.6443615}
   m_Children:
   - {fileID: 1042712686}
   - {fileID: 1094905455}
-  - {fileID: 1372621035}
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Father: {fileID: 590331827}
+  m_RootOrder: 1
 --- !u!114 &72627685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,6 +183,7 @@ MonoBehaviour:
   _clockSpeed: 1
   maxSuccess: 0
   maxFail: 0
+  easySpeed: 20
   startPos: {x: 0, y: 0, z: 0}
   lines: []
 --- !u!1 &409466308
@@ -246,6 +246,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
+--- !u!1 &590331826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 590331827}
+  m_Layer: 0
+  m_Name: miniGame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &590331827
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 590331826}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.47000003, y: 2.59999967, z: .839999437}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1372621035}
+  - {fileID: 72627684}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
 --- !u!1001 &966497372
 Prefab:
   m_ObjectHideFlags: 0
@@ -519,10 +548,10 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: .300000012
+  near clip plane: 2.43000007
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -542,9 +571,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1372621030}
-  m_LocalRotation: {x: -.707106709, y: 2.30404638e-07, z: -1.42108547e-14, w: .707106829}
-  m_LocalPosition: {x: -0, y: -20, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 20}
+  m_LocalRotation: {x: .707106829, y: 0, z: 0, w: .707106709}
+  m_LocalPosition: {x: -.629999995, y: 1.46000004, z: -.75999999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 72627684}
-  m_RootOrder: 2
+  m_Father: {fileID: 590331827}
+  m_RootOrder: 0

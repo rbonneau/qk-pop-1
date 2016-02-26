@@ -1,11 +1,21 @@
 ﻿using UnityEngine;
-using System.Collections;
+//using System.Collections;
 
 public class StealthHand : MonoBehaviour
 {
 
-	//default speed of clock hand in degrees, 6f = 1rpm
-	private float _defaultSpeed = 6f;
+    /*!
+        \file   StealthHand.cs
+        \brief  This class attaches to and rotates a clock hand.
+        
+        This script should be attached to a clock hand which is a child of
+        a clock face with a StealthClock component.
+    
+        The clock hand rotates at a speed set by the clock face.
+    */
+
+    //default speed of clock hand in degrees, 6f = 1rpm
+    private float _defaultSpeed = 6f;
 	
 	//StealthClock, the face of the clock, should be parent of this StealthHand
 	StealthClock clockFace;
