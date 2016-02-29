@@ -14,7 +14,7 @@ public class Checkpoint : MonoBehaviour
 {
 //START OLD CODE
     public float minDist = 0.0f; //!<Minimum distance away from the Checkpoint that CheckpointTrigger needs to be
-
+    public bool aiSearch;
 	public AIPath path_reference;
 
 //END OLD CODE
@@ -41,6 +41,11 @@ public class Checkpoint : MonoBehaviour
     public Quaternion getRotation()
     {
         return transform.rotation;
+    }
+
+    public bool getSearch()
+    {
+        return aiSearch;
     }
 //END OLD CODE
 

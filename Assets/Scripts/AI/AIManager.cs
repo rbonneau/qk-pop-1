@@ -1,8 +1,48 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+/*
+stealth mini game triggered when one enemy is in the suspicious state
+one list of enemies
+*/
+ //public function that decrements timer of all ai in the alert/suspicious state
 public class AIManager : MonoBehaviour {
-	Transform[] AI_children;
+
+    public GameObject[] AiChildren;
+    public bool playerHidden;
+    void Start ()
+    {
+        AiChildren = new GameObject[transform.childCount];
+        int childCount = 0;
+        foreach (Transform child in transform)
+        {
+            AiChildren[childCount] = child.gameObject;
+            childCount++;
+        }
+    }
+
+    //change this to function call
+    public bool checkForPlayer ()
+    {
+        for (int i = 0; i < AiChildren.Length; i++)
+        {
+            //Checks if any of the AI that were chasing the target can see the player
+            if (AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChaseState" && AiChildren[i].GetComponent<StatePatternEnemy>().seesTarget == false)
+            {
+                playerHidden = true;
+                break;
+            }
+            playerHidden = false;
+            i++;
+        }
+        Debug.Log(playerHidden);
+        return playerHidden;
+    }
+
+
+
+
+    /* OLD CODE
+    Transform[] AI_children;
 	int AI_children_length;
 
 	// Start Gathers all children that this manager is in charge of
@@ -62,5 +102,5 @@ public class AIManager : MonoBehaviour {
 			AI_children[i].GetComponent<AIMain>().ChangeNavPoint("Start Path",GetComponent<AIMain>().startPoint.transform.position); 
 		}
 	}
-		
+		*/
 }

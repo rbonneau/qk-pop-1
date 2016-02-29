@@ -4,8 +4,8 @@ using System.Collections;
 public class ChaseState : IEnemyState
 {
     private readonly StatePatternEnemy enemy;
-    private int sightAngle = 50;
     private float chaseTimer;
+
 
     public ChaseState(StatePatternEnemy statePatternEnemy)
     {
@@ -77,16 +77,24 @@ public class ChaseState : IEnemyState
         RaycastHit hit;
         //Vector3 enemyToTarget = (enemy.chaseTarget.position + enemy.offset) - enemy.eyes.transform.position;
         Vector3 enemyToTarget = enemy.chaseTarget.position;
-        if (Vector3.Angle(enemy.chaseTarget.position - enemy.transform.position, enemy.transform.forward) < sightAngle)
+
+        if (Vector3.Angle(enemy.chaseTarget.position - enemy.transform.position, enemy.transform.forward) < enemy.sightAngle)
         {
-            if (Physics.Raycast(enemy.transform.position, enemyToTarget, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
+            if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
+            {
+                enemy.seesTarget = true;
                 enemy.chaseTarget = hit.transform;
+            }
+            else
+            {
+                enemy.seesTarget = true;
+            }
         }
         else
         {
-            Debug.Log(enemy.navMeshAgent.pathStatus);
+            enemy.seesTarget = false;
             ToSearchingState();
-        }
+        };
     }
 
     private void Chase()
@@ -100,7 +108,7 @@ public class ChaseState : IEnemyState
         }
         else
         {
-            enemy.moveSpeed = enemy.moveSpeed - (chaseTimer / 100);
+            enemy.moveSpeed = enemy.moveSpeed - (chaseTimer / 1000);
         }
         enemy.meshRendererFlag.material.color = Color.red;
         enemy.navMeshAgent.destination = enemy.chaseTarget.position;

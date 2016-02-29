@@ -77,5 +77,6 @@ public class DazedState : IEnemyState
         {
             ToPatrolState();
         }
+        enemy.meshRendererFlag.material.color = Color.gray;
     }
 }

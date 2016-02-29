@@ -17,14 +17,15 @@ public class StatePatternEnemy : MonoBehaviour
     public float moveSpeed = 5f;
     public float searchingTurnSpeed = 180f;
     public float searchingDuration = 4f;
-    public float sightRange = 20f;
+    public float sightRange = 40f;
+    public float sightAngle = 60f;
     public Transform[] wayPoints;
     public Transform eyes;
     public Vector3 offset = new Vector3(0, .5f, 0);
     public MeshRenderer meshRendererFlag;
     public int current_preset = 0;
     public bool customType = false;
-
+    public bool seesTarget;
 
     //Path Variables
     public List<GameObject> Pathways;                       //!<List of the paths the AI uses. Paths are gameobjects with a list of vectors 3s that the AI uses to as waypoints. See AI's editor for paths.
@@ -87,7 +88,10 @@ public class StatePatternEnemy : MonoBehaviour
          
         */
         currentState = patrolState; //sets the current state
-	}
+        Path = Pathways[PathwayCount];
+        AIPath CheckpointScript = Path.GetComponent<AIPath>();
+        //THIS might not be needed maybe idk lets find out navPoint = CheckpointScript.getPoints()[CheckpointCount];
+    }
 	
 	// Update is called once per frame
 	void Update ()

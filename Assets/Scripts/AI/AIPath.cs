@@ -77,6 +77,26 @@ public class AIPath : MonoBehaviour {
         return rotations;
     }
 
+    public List<bool> getSearch()
+    {
+        List<bool> search = new List<bool>();
+
+        foreach (GameObject s in checkpoints)
+        {
+
+            if (s == null)
+            {
+                checkpoints.Remove(s);
+            }
+            else
+            {
+                Checkpoint data = s.GetComponent<Checkpoint>();
+                search.Add(data.getSearch());
+            }
+        }
+        return search;
+    }
+
 	void OnDrawGizmosSelected()
 	{
 		List<Vector3> points = getPoints();

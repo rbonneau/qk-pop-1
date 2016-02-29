@@ -59,7 +59,7 @@ public class PatrolState : IEnemyState
 
     public void ToSuspiciousState()
     {
-
+        enemy.currentState = enemy.suspiciousState;
     }
 
     public void ToKOState()
@@ -77,10 +77,11 @@ public class PatrolState : IEnemyState
         RaycastHit hit;
         //if (Physics.Raycast(enemy.eyes.transform.position, enemy.eyes.transform.forward, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
         if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
-
             {
                 enemy.chaseTarget = hit.transform;
-            ToChaseState();
+            //if enemy is alert type
+            //ToChaseState();
+            ToSuspiciousState();
             } 
     }
     void Patrol()
@@ -95,25 +96,26 @@ public class PatrolState : IEnemyState
             nextWayPoint = (nextWayPoint + 1) % enemy.wayPoints.Length;
         }
         */
-        
-
         if (enemy.navMeshAgent.remainingDistance <= enemy.navMeshAgent.stoppingDistance && !enemy.navMeshAgent.pathPending)
         {
+            enemy.Path = enemy.Pathways[enemy.PathwayCount];
+            AIPath CheckpointScript = enemy.Path.GetComponent<AIPath>();
             if (enemy.PathwayCount <= enemy.Pathways.Count - 1)
             {
-                enemy.Path = enemy.Pathways[enemy.PathwayCount];
                 if (enemy.Path == null)
                 {
+                    Debug.Log("there is no assigned path");
                     return;
                 }
-                AIPath CheckpointScript = enemy.Path.GetComponent<AIPath>();
-
+                //have the searchcheck here? if the current checkpoint search is true then search
                 switch (enemy.PathType[enemy.PathwayCount])
                 {
 
-                    case 0:
+                    case 0: //From A to B to C etc (one way)
                         if (enemy.CheckpointCount < CheckpointScript.getPoints().Count)
                         {
+                            Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
+
                             enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
                             if (enemy.CheckpointCount != CheckpointScript.getPoints().Count)
                             {
@@ -134,12 +136,14 @@ public class PatrolState : IEnemyState
                         }
                         break;
 
-                    case 1:
+                    case 1: //looping
                         if (enemy.LoopCount <= enemy.nofLoops[enemy.PathwayCount])
                         {
                             if (enemy.CheckpointCount < CheckpointScript.getPoints().Count)
                             {
                                 enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
+                                Debug.Log(enemy.CheckpointCount);
+
                                 if (enemy.CheckpointCount != CheckpointScript.getPoints().Count)
                                 {
                                     enemy.CheckpointCount++;
@@ -163,11 +167,13 @@ public class PatrolState : IEnemyState
                         }
                         break;
 
-                    case 2:
+                    case 2: //back and forth
                         if (enemy.LoopCount <= enemy.nofLoops[enemy.PathwayCount])
                         {
                             if ((enemy.CheckpointCount < CheckpointScript.getPoints().Count) && (enemy.back == false))
                             {
+                                Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
+
                                 enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
                                 if (enemy.CheckpointCount != CheckpointScript.getPoints().Count)
                                 {
@@ -178,6 +184,8 @@ public class PatrolState : IEnemyState
                             {
                                 if (enemy.CheckpointCount > 0)
                                 {
+                                    Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
+
                                     enemy.back = true;
                                     enemy.CheckpointCount--;
                                     string CheckpointCountString = enemy.CheckpointCount.ToString();
@@ -203,9 +211,11 @@ public class PatrolState : IEnemyState
                         }
                         break;
 
-                    case 3:
+                    case 3: //guard a single point
                         if (enemy.CheckpointCount < CheckpointScript.getPoints().Count)
                         {
+                            Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
+
                             string CheckpointCountString = enemy.CheckpointCount.ToString();
                             enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
                             if (enemy.navMeshAgent.remainingDistance <= enemy.navMeshAgent.stoppingDistance && !enemy.navMeshAgent.pathPending)
@@ -225,6 +235,7 @@ public class PatrolState : IEnemyState
 
 
         }
+        enemy.meshRendererFlag.material.color = Color.green;
         enemy.navMeshAgent.destination = enemy.navPoint;
         enemy.navMeshAgent.Resume();
     }
