@@ -22,6 +22,8 @@ public class StealthClock : MonoBehaviour
     //list of enemies searching near player
 	public List<Enemy> enemyList = new List<Enemy>();
 
+	private AIManager aiMan;
+
 	//start of green area in degrees from x axis
 	private int _startDegree;
 	//end of green area in degrees from x axis
@@ -121,6 +123,10 @@ public class StealthClock : MonoBehaviour
 		//get the location of the player
 		player = GameObject.FindGameObjectWithTag("Player").transform;
 
+		aiMan = GameObject.FindObjectOfType<AIManager>();
+
+
+
 		//check for nearby enemies that are searching and not chasing player
 //AI
 
@@ -189,6 +195,9 @@ public class StealthClock : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+
+		//check to see if player is found
+		hideCheck();
 
 		//check for at least 1 suspicous enemy
 //AI
@@ -586,5 +595,51 @@ public class StealthClock : MonoBehaviour
         }
 
     }
+
+	/*!
+		\brief Checks the aiManager to see if the player is hidden from enemies.
+		
+		Deactivates this gameObject if ai known to the AIManager have found the player.
+		
+		\return void
+	*/
+	void hideCheck()
+	{
+
+		//if the player is not hidden
+		if(!aiMan.checkForPlayer())
+		{
+			
+			//deactivate the miniGame
+			gameObject.SetActive(false);
+			
+		}
+		else
+		{
+
+			int searchingAI = 0;
+			//check for at least one enemy looking for player
+			for(int i = 0; i < aiMan.AiChildren.Length; i++)
+			{
+
+				//if searching for player
+				if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer");
+				{
+
+					searchingAI++;
+
+				}
+				if(searchingAI > 0)
+				{
+
+					gameObject.SetActive(false);
+
+				}
+
+			}
+
+		}
+
+	}
 
 }
