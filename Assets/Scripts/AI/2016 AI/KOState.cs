@@ -16,7 +16,7 @@ public class KOState : IEnemyState
 
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider col)
     {
 
     }
@@ -41,7 +41,7 @@ public class KOState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }

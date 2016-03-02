@@ -40,7 +40,7 @@ public class WalkState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }

@@ -19,10 +19,13 @@ public class PatrolState : IEnemyState
         Patrol();
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider col)
     {
-        if (other.gameObject.CompareTag("Player"))
-            ToSearchingState();
+        if (col.GetComponent("PlayNoise") != null)
+        {
+            enemy.noiseLoc = col.gameObject.transform;
+            enemy.currentState = enemy.distractedState;
+        }
     }
 
     public void ToPatrolState()
@@ -46,9 +49,11 @@ public class PatrolState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
-
+        enemy.currentState = enemy.distractedState;
+        enemy.noiseLoc = distractedPoint;
+        enemy.moveSpeed = 5f;
     }
 
     public void ToSearchingState()
@@ -114,8 +119,6 @@ public class PatrolState : IEnemyState
                     case 0: //From A to B to C etc (one way)
                         if (enemy.CheckpointCount < CheckpointScript.getPoints().Count)
                         {
-                            Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
-
                             enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
                             if (enemy.CheckpointCount != CheckpointScript.getPoints().Count)
                             {
@@ -142,7 +145,6 @@ public class PatrolState : IEnemyState
                             if (enemy.CheckpointCount < CheckpointScript.getPoints().Count)
                             {
                                 enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
-                                Debug.Log(enemy.CheckpointCount);
 
                                 if (enemy.CheckpointCount != CheckpointScript.getPoints().Count)
                                 {
@@ -172,8 +174,6 @@ public class PatrolState : IEnemyState
                         {
                             if ((enemy.CheckpointCount < CheckpointScript.getPoints().Count) && (enemy.back == false))
                             {
-                                Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
-
                                 enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
                                 if (enemy.CheckpointCount != CheckpointScript.getPoints().Count)
                                 {
@@ -184,8 +184,6 @@ public class PatrolState : IEnemyState
                             {
                                 if (enemy.CheckpointCount > 0)
                                 {
-                                    Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
-
                                     enemy.back = true;
                                     enemy.CheckpointCount--;
                                     string CheckpointCountString = enemy.CheckpointCount.ToString();
@@ -214,7 +212,6 @@ public class PatrolState : IEnemyState
                     case 3: //guard a single point
                         if (enemy.CheckpointCount < CheckpointScript.getPoints().Count)
                         {
-                            Debug.Log(CheckpointScript.getSearch()[enemy.CheckpointCount]);
 
                             string CheckpointCountString = enemy.CheckpointCount.ToString();
                             enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];

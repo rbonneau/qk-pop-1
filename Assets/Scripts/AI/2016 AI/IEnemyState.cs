@@ -6,7 +6,7 @@ public interface IEnemyState
 
     void UpdateState();
 
-    void OnTriggerEnter(Collider other);
+    void OnTriggerEnter(Collider col);
 
     void ToPatrolState();
 
@@ -16,7 +16,7 @@ public interface IEnemyState
 
     void ToDazedState();
 
-    void ToDistractedState();
+    void ToDistractedState(Transform distractedPoint);
 
     void ToSuspiciousState();
 

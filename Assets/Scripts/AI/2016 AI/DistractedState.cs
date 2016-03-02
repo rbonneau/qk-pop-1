@@ -12,10 +12,10 @@ public class DistractedState : IEnemyState
 
     public void UpdateState()
     {
-
+        Distracted();
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider col)
     {
 
     }
@@ -40,7 +40,7 @@ public class DistractedState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }
@@ -62,6 +62,13 @@ public class DistractedState : IEnemyState
 
     public void ToWalkState()
     {
+
+    }
+
+    public void Distracted ()
+    {
+        enemy.chaseTarget = enemy.noiseLoc;
+        enemy.navMeshAgent.destination = enemy.chaseTarget.position;
 
     }
 }

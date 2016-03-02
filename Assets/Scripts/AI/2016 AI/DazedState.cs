@@ -45,7 +45,7 @@ public class DazedState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }
@@ -73,7 +73,7 @@ public class DazedState : IEnemyState
     private void Dazed()
     {
         dazeTimer += Time.deltaTime;
-        if (dazeTimer > 3f)
+        if (dazeTimer > 6f)
         {
             ToPatrolState();
         }

@@ -45,7 +45,7 @@ public class SuspiciousState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }

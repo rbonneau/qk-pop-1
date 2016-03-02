@@ -8,17 +8,23 @@ public struct AI_Data
 {
 
 	private List<GameObject> paths;
+    public float sightRange_;
+    public float sightAngle_;
 
-	public AI_Data(int hp
-        )
+
+    public AI_Data(
+        float SightRange,
+        float SightAngle)
 	{
 		paths = new List<GameObject> ();
-
+        sightRange_ = SightRange;
+        sightAngle_ = SightAngle;
 	}
 
 	public void loadData(StatePatternEnemy target)
 	{
-
+        target.sightRange = sightRange_;
+        target.sightAngle = sightAngle_;
 	}
 }
 
@@ -31,9 +37,9 @@ public class AIEditor : Editor {
 	string[] path_types = new string[]{"one way", "loop around", "back and forth", "On Guard"};
 
 	AI_Data[] ai_data = new AI_Data[]{
-		new AI_Data(100),
-		new AI_Data(200),
-		new AI_Data(300)};
+		new AI_Data(40f, 60f),
+		new AI_Data(40f, 60f),
+		new AI_Data(40f, 60f)};
 
 	int ai_types_index = 0;
 	int current_selection = 0;
@@ -99,6 +105,11 @@ public class AIEditor : Editor {
 
 		if (EditorGUILayout.BeginFadeGroup (show_data.faded))
 		{
+            ai_target.sightRange = EditorGUILayout.FloatField("Sight Range:", ai_target.sightRange);
+            ai_target.sightAngle = EditorGUILayout.FloatField("Sight Angle:", ai_target.sightAngle);
+
+
+
             /* old code
 			ai_target.hp = EditorGUILayout.FloatField("Health:", ai_target.hp);
 			ai_target.sightDistance = EditorGUILayout.FloatField("Sight Distance:", ai_target.sightDistance);
@@ -111,8 +122,8 @@ public class AIEditor : Editor {
 			ai_target.aggressionLimit = EditorGUILayout.FloatField("Aggression Limit:", ai_target.aggressionLimit);
 			ai_target.enemy = EditorGUILayout.Toggle("Aggressive:", ai_target.enemy);
             */
-		}
-		EditorGUILayout.EndFadeGroup();
+        }
+        EditorGUILayout.EndFadeGroup();
 
 		if (current_selection != ai_types_index)
 		{

@@ -17,9 +17,13 @@ public class SearchingState : IEnemyState
         Search();
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider col)
     {
-
+        if (col.GetComponent("PlayNoise") != null)
+        {
+            enemy.noiseLoc = col.gameObject.transform;
+            enemy.currentState = enemy.distractedState;
+        }
     }
 
     public void ToPatrolState()
@@ -46,7 +50,7 @@ public class SearchingState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }
@@ -74,7 +78,7 @@ public class SearchingState : IEnemyState
     private void Look()
     {
         RaycastHit hit;
-        if (Physics.Raycast(enemy.eyes.transform.position, enemy.eyes.transform.forward, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
+        if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
             {
             enemy.chaseTarget = hit.transform;
             ToChaseState();

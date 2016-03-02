@@ -42,7 +42,7 @@ public class StatePatternEnemy : MonoBehaviour
     public int CheckpointCount = 0;                         //! Int for tracking which checkpoint the AI is on
     public bool enemy;
     public Vector3 navPoint = new Vector3(0, 0, 0);         //!<Contains the point to move in the navmesh
-
+    public Transform noiseLoc;
 
 
     [HideInInspector] public Transform chaseTarget;
@@ -81,11 +81,6 @@ public class StatePatternEnemy : MonoBehaviour
         /*
         Set default state of the AI (walking, patroling, guarding)
         set current state to default state
-
-        
-        
-        
-         
         */
         currentState = patrolState; //sets the current state
         Path = Pathways[PathwayCount];
@@ -98,9 +93,16 @@ public class StatePatternEnemy : MonoBehaviour
     {
         navMeshAgent.speed = moveSpeed;
         currentState.UpdateState(); //calls the update of the current state
+        if (currentState == distractedState)
+        {
+            if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance && !navMeshAgent.pathPending)
+            {
+                currentState = searchingState;
+            }
+        }
 	}
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider col)
     {
         /*
         if the player is not sneaking or undetectable in some form
@@ -111,8 +113,6 @@ public class StatePatternEnemy : MonoBehaviour
 
         */
 
-
-
-        currentState.OnTriggerEnter(other); // calls OnTriggerEnter in the current State
+            currentState.OnTriggerEnter(col); // calls OnTriggerEnter in the current State
     }
 }

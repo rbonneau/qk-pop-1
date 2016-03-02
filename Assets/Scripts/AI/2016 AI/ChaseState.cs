@@ -18,7 +18,7 @@ public class ChaseState : IEnemyState
         Chase();
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider col)
     {
 
     }
@@ -45,7 +45,7 @@ public class ChaseState : IEnemyState
         enemy.moveSpeed = 0f;
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }
@@ -87,7 +87,7 @@ public class ChaseState : IEnemyState
             }
             else
             {
-                enemy.seesTarget = true;
+                enemy.seesTarget = false;
             }
         }
         else

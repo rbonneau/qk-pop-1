@@ -15,9 +15,13 @@ public class GuardState : IEnemyState
 
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider col)
     {
-
+        if (col.GetComponent("PlayNoise") != null)
+        {
+            enemy.noiseLoc = col.gameObject.transform;
+            enemy.currentState = enemy.distractedState;
+        }
     }
 
     public void ToPatrolState()
@@ -40,7 +44,7 @@ public class GuardState : IEnemyState
 
     }
 
-    public void ToDistractedState()
+    public void ToDistractedState(Transform distractedPoint)
     {
 
     }

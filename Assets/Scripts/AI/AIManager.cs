@@ -9,6 +9,25 @@ public class AIManager : MonoBehaviour {
 
     public GameObject[] AiChildren;
     public bool playerHidden;
+    public int numberChasing;
+
+    private static AIManager instance;
+
+    private AIManager() { }
+
+    public static AIManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new AIManager();
+            }
+            return instance;
+        }
+    }
+
+
     void Start ()
     {
         AiChildren = new GameObject[transform.childCount];
@@ -20,7 +39,23 @@ public class AIManager : MonoBehaviour {
         }
     }
 
-    //change this to function call
+
+    public int checkChasing()
+    {
+        numberChasing = 0;
+        for (int i = 0; i < AiChildren.Length; i++)
+        {
+            //Checks if any of the AI that were chasing the target can see the player
+            if (AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChaseState" || AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "SearchingState")
+            {
+                numberChasing++;
+            }
+            i++;
+        }
+        return numberChasing;
+    }
+
+
     public bool checkForPlayer ()
     {
         for (int i = 0; i < AiChildren.Length; i++)
@@ -34,11 +69,20 @@ public class AIManager : MonoBehaviour {
             playerHidden = false;
             i++;
         }
-        Debug.Log(playerHidden);
         return playerHidden;
     }
 
-
+    public void resumePatrol ()
+    {
+        for (int i = 0; i < AiChildren.Length; i++)
+        {
+            //Checks if any of the AI that were chasing the target can see the player
+            if (AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChaseState" || AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "SearchingState")
+            {
+                AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToPatrolState();
+            }
+        }
+    }
 
 
     /* OLD CODE
