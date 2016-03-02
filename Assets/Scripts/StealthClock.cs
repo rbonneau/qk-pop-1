@@ -20,8 +20,9 @@ public class StealthClock : MonoBehaviour
 	public float searchSize = 20f;
 
     //list of enemies searching near player
-	public List<Enemy> enemyList = new List<Enemy>();
+//	public List<Enemy> enemyList = new List<Enemy>();
 
+    //reference to the AIManager
 	private AIManager aiMan;
 
 	//start of green area in degrees from x axis
@@ -120,11 +121,29 @@ public class StealthClock : MonoBehaviour
 	void Awake()
 	{
 
-		//get the location of the player
+        //get the location of the player
 		player = GameObject.FindGameObjectWithTag("Player").transform;
+//      player = QK_Character_Movement.Instance.transform;
+        if(player == null)
+        {
 
-		aiMan = GameObject.FindObjectOfType<AIManager>();
+            //end the game if a reference to the player can't be found
+            endGame("StealthClock.Awake(): player == null.");
 
+        }
+        
+        //reference to AIManager
+//change when AIManager becomes singleton
+        aiMan = GetComponent<AIManager>();
+
+        //check for existance of AIManager
+        if(aiMan == null)
+        {
+
+            //end the game if AIManager can't be found
+            endGame("StealthClock.Awake(): aiMan == null.");
+
+        }
 
 
 		//check for nearby enemies that are searching and not chasing player
@@ -156,6 +175,7 @@ public class StealthClock : MonoBehaviour
 
 		//get the number of guards actively searching for player
 //		_numberOfGuards = enemyList.Count;
+        
 		
 		//set difficulty
 		setDifficulty();
@@ -199,16 +219,6 @@ public class StealthClock : MonoBehaviour
 		//check to see if player is found
 		hideCheck();
 
-		//check for at least 1 suspicous enemy
-//AI
-        //if(suspicious < 1)
-        //kill self
-
-		//check for no enemies chasing player
-//AI
-        //if(chasing > 0)
-        //kill self
-
 //should be if(Input.GetButtonDown("Action"))
 		if(Input.GetButtonDown("Jump"))
 		{
@@ -222,11 +232,6 @@ public class StealthClock : MonoBehaviour
                     //increment success count
 					_currentSuccess++;
 
-//TESTING
-					print("SUCCESS: " + _clockHand.transform.localEulerAngles.y);
-					print("startDegree: " + startDegree);
-					print("endDegree: " + endDegree);
-//END TESTING
 					//check to see if zones need to be reset
 					if(_currentSuccess < maxSuccess)
 						{
@@ -236,17 +241,30 @@ public class StealthClock : MonoBehaviour
 
 						}
 
-				}
-				else
+//TESTING
+                    Debug.Log("SUCCESS: " + _clockHand.transform.localEulerAngles.y);
+                    Debug.Log("startDegree: " + startDegree);
+                    Debug.Log("endDegree: " + endDegree);
+//END TESTING
+
+                }
+                else
 				{
 
                     //increment fail count
 					_currentFail++;
 
+                    if(_currentFail < maxFail)
+                    {
+
+                        //reset the red and green zones
+                        setZones();
+
+                    }
 //TESTING
-					print("FAIL: " + _clockHand.transform.localEulerAngles.y);
-					print("startDegree: " + startDegree);
-					print("endDegree: " + endDegree);
+					Debug.Log("FAIL: " + _clockHand.transform.localEulerAngles.y);
+                    Debug.Log("startDegree: " + startDegree);
+                    Debug.Log("endDegree: " + endDegree);
 //END  TESTING
 
 				}
@@ -284,42 +302,52 @@ public class StealthClock : MonoBehaviour
 			//check for win condition
 			if(_currentSuccess >= maxSuccess)
 			{
-				
-				Debug.Log("StealthClock: mini game success");
 
                 //enemies return to normal
-                //				foreach(Enemy guard in enemyList)
-                //				{
+                for(int i = 0; i < aiMan.AiChildren.Length; i++)
+                {
 
-                //AI				guard.enemyCurrentState = enemy.patrolState;
+                    //check for chasing AI
+                    if (aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChaseState")
+                    {
 
-                //				}
+                        //set chasing AI to patrol state
+                        aiMan.AiChildren[i].GetComponent<IEnemyState>().ToPatrolState();
+                    }
+
+                }
 
                 //deactivate lines
                 deactivateLines();
 
                 //deactivate self
-                gameObject.SetActive(false);
+                endGame("StealthClockUpdate(): minigame success.");
 
 			}
 			else if(_currentFail >= maxFail)
 			{
 
-				Debug.Log("StealthClock: mini game fail");
-
                 //alert enemies to player position
-                //				foreach(Enemy guard in enemyList)
-                //				{
+                for(int i = 0; i < aiMan.AiChildren.Length; i++)
+                {
 
-                //AI				guard.enemyCurrentState = clockFace.chaseState;
+                    //set AI to chase state
+                    aiMan.AiChildren[i].GetComponent<IEnemyState>().ToChaseState();
 
-                //				}
+                }
+
+//				foreach(Enemy guard in enemyList)
+//				{
+
+//AI				guard.enemyCurrentState = clockFace.chaseState;
+
+//				}
 
                 //deactivate lines
                 deactivateLines();
 
                 //deactivate self
-                gameObject.SetActive(false);
+                endGame("StealthClock.Update(): mini game fail.");
 
 			}
 
@@ -361,8 +389,6 @@ public class StealthClock : MonoBehaviour
 			//set line renderer material
 			lRend.material = new Material(Shader.Find("Particles/Additive"));
 
-  //          lRend.material = new Material(Shader.Find("Transparent/Diffuse"));
-
             //only one line per game object
             lRend.SetVertexCount(2);
 			
@@ -388,6 +414,8 @@ public class StealthClock : MonoBehaviour
     /*! \brief Sets proper difficulty level based on enemies and resets the red and green zones.
         
         Just calls setDifficulty and setColors.
+
+        \return void
     */
 	void setZones()
 	{
@@ -410,9 +438,24 @@ public class StealthClock : MonoBehaviour
 	void setDifficulty()
 	{
 
+        int tempGuards = 0;
+
 		//call AI manager for suspicious guards
+        for(int i = 0; i < aiMan.AiChildren.Length; i++)
+        {
+            if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer")
+            {
+
+                tempGuards++;
+                
+            }
+        }
+
+//TESTING
 //AI
+//        _numberOfGuards = tempGuards;
 		_numberOfGuards = 1;
+//END TESTING
 
 		//choose random angle to start the green zone
 		_startDegree = Random.Range(0, 360);
@@ -501,7 +544,7 @@ public class StealthClock : MonoBehaviour
 				_startDegree = 0;
 				end = _startDegree + _easySize;
 				
-				Debug.Log("StealthClock.getEndDegree: start == end");
+				Debug.Log("StealthClock.getEndDegree: start == end.");
 
 			}
 
@@ -530,7 +573,7 @@ public class StealthClock : MonoBehaviour
 
 		//set line colors accordingly
 		//check start and end boundaries
-		//green area fills upward from startDegree to endDegree
+		//green area fills counterclockwise from startDegree to endDegree
 		for(int i = 0; i < lines.Length; i++)
 		{
 
@@ -599,47 +642,79 @@ public class StealthClock : MonoBehaviour
 	/*!
 		\brief Checks the aiManager to see if the player is hidden from enemies.
 		
-		Deactivates this gameObject if ai known to the AIManager have found the player.
+		Ends the minigame if the player is not in a hiding spot or if an AI known to the AIManager has found the player.
 		
 		\return void
 	*/
 	void hideCheck()
 	{
 
-		//if the player is not hidden
+        //check for player being in a hiding spot
+
+
+		//if the player is found/not hidden
 		if(!aiMan.checkForPlayer())
 		{
-			
-			//deactivate the miniGame
-			gameObject.SetActive(false);
+
+            //deactivate the miniGame
+            endGame("StealthClock.hideCheck(): Player discovered by AI.");
 			
 		}
 		else
 		{
 
-			int searchingAI = 0;
 			//check for at least one enemy looking for player
 			for(int i = 0; i < aiMan.AiChildren.Length; i++)
 			{
 
 				//if searching for player
-				if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer");
+				if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer")
 				{
 
-					searchingAI++;
+                    endGame("StealthClock.hideCheck(): player found by AI.");
 
 				}
-				if(searchingAI > 0)
-				{
-
-					gameObject.SetActive(false);
-
-				}
-
+				
 			}
 
 		}
 
 	}
+
+    /*!
+        \brief Deactivates the minigame.
+
+        Deactivates the miniGame parent gameObject.
+
+        \return void
+    */
+    void endGame()
+    {
+
+        //deactivate miniGame gameObject
+        transform.parent.gameObject.SetActive(false);
+
+    }
+
+
+    /*!
+        \brief  Outputs a message to the debug log and deactivates the miniGame.
+
+        \param message a message passed as a string to add to the debug log.
+
+        Outputs the string \param message to the debug log and deactivates the miniGame gameObject.
+
+        \return void
+    */
+    void endGame(string message)
+    {
+
+        //output debug message
+        Debug.Log(message + " Exiting miniGame.");
+
+        //deactivate miniGame gameObject
+        transform.parent.gameObject.SetActive(false);
+        
+    }
 
 }
