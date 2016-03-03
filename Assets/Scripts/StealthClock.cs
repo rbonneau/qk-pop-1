@@ -133,8 +133,7 @@ public class StealthClock : MonoBehaviour
         }
         
         //reference to AIManager
-//change when AIManager becomes singleton
-        aiMan = GetComponent<AIManager>();
+		aiMan = AIManager.Instance;
 
         //check for existance of AIManager
         if(aiMan == null)
@@ -440,16 +439,29 @@ public class StealthClock : MonoBehaviour
 
         int tempGuards = 0;
 
-		//call AI manager for suspicious guards
-        for(int i = 0; i < aiMan.AiChildren.Length; i++)
-        {
-            if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer")
-            {
+		if(aiMan.AiChildren == null)
+		{
 
-                tempGuards++;
-                
-            }
-        }
+			//exit minigame
+			endGame("StealthClock.SetDifficulty(): aiMan.AIChildren == null.");
+
+		}
+		else
+		{
+
+			//call AI manager for suspicious guards
+			for(int i = 0; i < aiMan.AiChildren.Length; i++)
+			{
+				if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer")
+				{
+					
+					tempGuards++;
+					
+				}
+				
+			}
+
+		}
 
 //TESTING
 //AI
@@ -702,7 +714,7 @@ public class StealthClock : MonoBehaviour
 
         \param message a message passed as a string to add to the debug log.
 
-        Outputs the string \param message to the debug log and deactivates the miniGame gameObject.
+        Outputs the string \param message to the debug log and calls endGame().
 
         \return void
     */
@@ -713,7 +725,7 @@ public class StealthClock : MonoBehaviour
         Debug.Log(message + " Exiting miniGame.");
 
         //deactivate miniGame gameObject
-        transform.parent.gameObject.SetActive(false);
+		endGame();
         
     }
 
