@@ -89,6 +89,9 @@ public class StealthClock : MonoBehaviour
     private int hardSpeed = 20;
     private int hellSpeed = 40;
 
+    //layer for red/green lines for WatchCamera to display
+    private int stealthLayer = 10;
+
 	//width of red/green lines start is center of circle, end is edge of circle
 	private float _startWidth;
 	private float _endWidth;
@@ -121,6 +124,10 @@ public class StealthClock : MonoBehaviour
 	void Awake()
 	{
 
+        //pause the player camera
+        PoPCamera.State = Camera_2.CameraState.Pause;
+//        QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Wait;
+
         //get the location of the player
 		player = GameObject.FindGameObjectWithTag("Player").transform;
 //      player = QK_Character_Movement.Instance.transform;
@@ -140,7 +147,9 @@ public class StealthClock : MonoBehaviour
         {
 
             //end the game if AIManager can't be found
-            endGame("StealthClock.Awake(): aiMan == null.");
+//TESTING
+//            endGame("StealthClock.Awake(): aiMan == null.");
+//END TESTING
 
         }
 
@@ -190,7 +199,7 @@ public class StealthClock : MonoBehaviour
 	{
 
 		//initialize line parameters
-		_lineLength = transform.localScale.x / 2f;
+		_lineLength = transform.localScale.x / 3.2f;
 		startPos = transform.position;
         //should set line y distance above clock face based on size of clock
 		startPos = new Vector3(startPos.x, startPos.y + transform.lossyScale.y * 2.0f, startPos.z);
@@ -378,6 +387,9 @@ public class StealthClock : MonoBehaviour
 			//create the gameObject to hold the LineRenderer
 			lines[i] = new GameObject();
 
+            //set layer to stealthMiniGame
+            lines[i].layer = stealthLayer;
+
 			//set the position of each game object with line renderers
 			lines[i].transform.position = startPos;
 
@@ -439,11 +451,14 @@ public class StealthClock : MonoBehaviour
 
         int tempGuards = 0;
 
+        //check for existence of enemies
 		if(aiMan.AiChildren == null)
 		{
 
 			//exit minigame
-			endGame("StealthClock.SetDifficulty(): aiMan.AIChildren == null.");
+//TESTING
+//			endGame("StealthClock.SetDifficulty(): aiMan.AIChildren == null.");
+//END TESTING
 
 		}
 		else
@@ -578,8 +593,8 @@ public class StealthClock : MonoBehaviour
 	{
 
 		//set green and red with reduced opacity
-		Color colorG = new Color(0.0f, 1.0f, 0.0f, 0.9f);
-		Color colorR = new Color(1.0f, 0.0f, 0.0f, 0.9f);
+		Color colorG = new Color(0.0f, 1.0f, 0.0f, 0.99f);
+		Color colorR = new Color(1.0f, 0.0f, 0.0f, 0.99f);
 
 		LineRenderer lRend;
 
@@ -696,16 +711,18 @@ public class StealthClock : MonoBehaviour
     /*!
         \brief Deactivates the minigame.
 
-        Deactivates the miniGame parent gameObject.
+        Deactivates the miniGame parent gameObject and reactivates the main camera.
 
         \return void
     */
     void endGame()
     {
+        
+        //allow camera movement
+        PoPCamera.instance.Reset();
 
         //deactivate miniGame gameObject
         transform.parent.gameObject.SetActive(false);
-
     }
 
 
