@@ -49,6 +49,7 @@ public class Checkpoint : MonoBehaviour
     }
 //END OLD CODE
 
+    //These script is for the AI checkpoints however this segment of code is for the players checkpoints
 	void OnTriggerEnter(Collider col)
 	{
 
@@ -67,7 +68,7 @@ public class Checkpoint : MonoBehaviour
 		}
 
 	}//END void OnTriggerEnter(Collider col)
-
+    
 	void OnEnable()
 	{
 

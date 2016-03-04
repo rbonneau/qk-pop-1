@@ -37,9 +37,9 @@ public class AIEditor : Editor {
 	string[] path_types = new string[]{"one way", "loop around", "back and forth", "On Guard"};
 
 	AI_Data[] ai_data = new AI_Data[]{
-		new AI_Data(40f, 60f),
-		new AI_Data(40f, 60f),
-		new AI_Data(40f, 60f)};
+		new AI_Data(40f, 20f),
+		new AI_Data(40f, 20f),
+		new AI_Data(40f, 20f)};
 
 	int ai_types_index = 0;
 	int current_selection = 0;

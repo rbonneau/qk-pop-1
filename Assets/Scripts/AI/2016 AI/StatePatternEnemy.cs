@@ -14,18 +14,18 @@ Update and OnTrigger in this script will run the updateState/OnTriggerstate insi
 
 public class StatePatternEnemy : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public float searchingTurnSpeed = 180f;
-    public float searchingDuration = 4f;
-    public float sightRange = 40f;
-    public float sightAngle = 60f;
-    public Transform[] wayPoints;
+    public float moveSpeed = 5f;                            //!<float to keep adjust the movement speed of the AI
+    public float searchingTurnSpeed = 180f;                 //!<float to adjust how fast the AI turns when in the searching state
+    public float searchingDuration = 4f;                    //!<float to adjust how long the AI stays in the searching state
+    public float sightRange = 40f;                          //!<float to adjust how far the AI can see
+    public float sightAngle = 10f;                          //!<float to adjust the sight angle of the AI
     public Transform eyes;
     public Vector3 offset = new Vector3(0, .5f, 0);
     public MeshRenderer meshRendererFlag;
     public int current_preset = 0;
     public bool customType = false;
     public bool seesTarget;
+    public GameObject player;
 
     //Path Variables
     public List<GameObject> Pathways;                       //!<List of the paths the AI uses. Paths are gameobjects with a list of vectors 3s that the AI uses to as waypoints. See AI's editor for paths.
@@ -33,9 +33,9 @@ public class StatePatternEnemy : MonoBehaviour
     public List<int> nofLoops;                              //!<Number of loops the AI will do on a certain path. Each path has its own nofLoops.
     public List<bool> infinite;                             //!<Sets the number of loops to infinite for an AI that patrols indefinitely.
     private bool looping;                                   //!<Bool to set the AI to the loop type of path.
-    public int LoopCount = 1;                              //!<Int to track the number of times looped.
-    public bool BacknForth;                                //!<Bool to set the AI to the back and forth type of path
-    public bool back = false;                              //!<Bool to determine if it is going back on its path during the back and forth loop.
+    public int LoopCount = 1;                               //!<Int to track the number of times looped.
+    public bool BacknForth;                                 //!<Bool to set the AI to the back and forth type of path
+    public bool back = false;                               //!<Bool to determine if it is going back on its path during the back and forth loop.
     public int PathwayListLength;                           //!<Int to store the number of checkpoints on a path.
     public GameObject Path;                                 //!<Stores the current path of the AI so it's checkpoints can be accessed.
     public int PathwayCount = 0;                            //!<Int for tracking which path the AI is on
@@ -82,6 +82,7 @@ public class StatePatternEnemy : MonoBehaviour
         Set default state of the AI (walking, patroling, guarding)
         set current state to default state
         */
+        player = GameObject.FindGameObjectWithTag("Player");
         currentState = patrolState; //sets the current state
         Path = Pathways[PathwayCount];
         AIPath CheckpointScript = Path.GetComponent<AIPath>();

@@ -10,21 +10,23 @@ public class AIManager : MonoBehaviour {
     public GameObject[] AiChildren;
     public bool playerHidden;
     public int numberChasing;
+    public static AIManager instace = null;
 
     private static AIManager instance;
 
     private AIManager() { }
 
-    public static AIManager Instance
+    void Awake()
     {
-        get
+        if (instance == null)
         {
-            if (instance == null)
-            {
-                instance = new AIManager();
-            }
-            return instance;
+            instance = this;
         }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
     }
 
 

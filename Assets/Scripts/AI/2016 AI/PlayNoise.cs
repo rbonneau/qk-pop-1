@@ -15,11 +15,6 @@ public class PlayNoise : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            this.GetComponent<SphereCollider>().enabled = true;
-            countdown = true;
-        }
         if (countdown == true)
         {
             timer -= Time.deltaTime;
@@ -31,6 +26,11 @@ public class PlayNoise : MonoBehaviour
             }
         }
 
+    }
+    void Sound()
+    {
+        this.GetComponent<SphereCollider>().enabled = true;
+        countdown = true;
     }
 }
 

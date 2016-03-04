@@ -5,7 +5,6 @@ public class PatrolState : IEnemyState
 
 {
     private readonly StatePatternEnemy enemy;
-    private int nextWayPoint;
 
     public PatrolState(StatePatternEnemy statePatternEnemy)
     {
@@ -64,6 +63,7 @@ public class PatrolState : IEnemyState
 
     public void ToSuspiciousState()
     {
+        enemy.seesTarget = false;
         enemy.currentState = enemy.suspiciousState;
     }
 
@@ -79,28 +79,22 @@ public class PatrolState : IEnemyState
 
     private void Look()
     {
-        RaycastHit hit;
         //if (Physics.Raycast(enemy.eyes.transform.position, enemy.eyes.transform.forward, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
-        if (Physics.Raycast(enemy.transform.position, enemy.transform.forward, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
+        RaycastHit hit;
+        if (Vector3.Angle(enemy.player.transform.position - enemy.transform.position, enemy.transform.forward) < enemy.sightAngle)
+        {
+            if (Physics.Raycast(enemy.transform.position, enemy.player.transform.position - enemy.transform.position, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
             {
+                Debug.Log("works");
                 enemy.chaseTarget = hit.transform;
-            //if enemy is alert type
-            //ToChaseState();
-            ToSuspiciousState();
-            } 
+                //if enemy is alert type
+                //ToChaseState();
+                ToSuspiciousState();
+            }
+        }
     }
     void Patrol()
     {
-        /*
-        enemy.meshRendererFlag.material.color = Color.green;
-        enemy.navMeshAgent.destination = enemy.wayPoints[nextWayPoint].position;
-        enemy.navMeshAgent.Resume();
-
-        if (enemy.navMeshAgent.remainingDistance <= enemy.navMeshAgent.stoppingDistance && !enemy.navMeshAgent.pathPending)
-        {
-            nextWayPoint = (nextWayPoint + 1) % enemy.wayPoints.Length;
-        }
-        */
         if (enemy.navMeshAgent.remainingDistance <= enemy.navMeshAgent.stoppingDistance && !enemy.navMeshAgent.pathPending)
         {
             enemy.Path = enemy.Pathways[enemy.PathwayCount];

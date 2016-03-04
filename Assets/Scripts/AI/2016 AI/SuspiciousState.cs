@@ -71,8 +71,6 @@ public class SuspiciousState : IEnemyState
 
     private void Search()
     {
-        enemy.sightAngle = 60f;
-        enemy.sightRange = 20f;
         RaycastHit hit;
         if (Vector3.Angle(enemy.chaseTarget.position - enemy.transform.position, enemy.transform.forward) < enemy.sightAngle)
         {
