@@ -10,9 +10,17 @@ public class AIManager : MonoBehaviour {
     public GameObject[] AiChildren;
     public bool playerHidden;
     public int numberChasing;
-    public static AIManager instace = null;
+    private static AIManager _instance;
+    public static AIManager instance
+    {
+        get
+        {
+            _instance = _instance ?? (_instance = GameObject.FindObjectOfType<AIManager>());
+            return _instance;
+        }
 
-    private static AIManager instance;
+        private set { }
+    }    
 
     private AIManager() { }
 
