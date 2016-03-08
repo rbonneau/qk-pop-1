@@ -20,9 +20,44 @@ public class StealthClock : MonoBehaviour
     //distance from player to search for enemies
 	public float searchSize = 20f;
     
+	//reference to the StealthGameManager
+	private StealthGameManager stealthMan;
 
     //reference to the AIManager
 	private AIManager aiMan;
+
+	//true if the game has been won or lost
+	private bool _gameOver;
+
+	//true if player wins mini-game
+	private bool _win;
+
+	//true if player loses mini-game
+	private bool _fail;
+
+	public bool gameOver
+	{
+		get
+		{
+			return _gameOver;
+		}
+	}
+
+	public bool win
+	{
+		get
+		{
+			return _win;
+		}
+	}
+
+	public bool fail
+	{
+		get
+		{
+			return _fail;
+		}
+	}
 
 	//start of green area in degrees from x axis
 	private int _startDegree;
@@ -141,7 +176,21 @@ public class StealthClock : MonoBehaviour
 
         }
         
-        //reference to AIManager
+		//get reference to StealthGameManager
+		stealthMan = StealthGameManager.Instance;
+
+		//check for existance of StealthGameManager
+		if(stealthMan == null)
+		{
+
+			//end the game if StealthGameManager can't be found
+//TESTING
+			endGame("StealthClock.Awake(): stealthMan == null");
+//END TESTING
+
+		}
+
+        //get reference to AIManager
 		aiMan = AIManager.instance;
 
         //check for existance of AIManager
@@ -169,6 +218,17 @@ public class StealthClock : MonoBehaviour
 //TESTING
 		Debug.Log("player", "StealthClock Awake() complete");
 //END TESTING
+
+	}
+
+	void OnEnable()
+	{
+		
+		_gameOver = false;
+		_win = false;
+		_fail = false;
+		_currentSuccess = 0;
+		_currentFail = 0;
 
 	}
 
@@ -301,6 +361,9 @@ public class StealthClock : MonoBehaviour
                 //deactivate lines
                 deactivateLines();
 
+				//set game win flag
+				_win = true;
+
                 //deactivate self
                 endGame("StealthClockUpdate(): minigame success.");
 
@@ -313,6 +376,9 @@ public class StealthClock : MonoBehaviour
 
                 //deactivate lines
                 deactivateLines();
+
+				//set game loss flag
+				_fail = true;
 
                 //deactivate self
                 endGame("StealthClock.Update(): mini game fail.");
@@ -686,8 +752,12 @@ public class StealthClock : MonoBehaviour
         //allow camera movement
         PoPCamera.instance.Reset();
 
+		//
+		_gameOver = true;
+
         //deactivate miniGame gameObject
-        transform.parent.gameObject.SetActive(false);
+//        transform.parent.gameObject.SetActive(false);
+
     }
 
 
