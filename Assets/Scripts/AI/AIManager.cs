@@ -11,9 +11,8 @@ public class AIManager : MonoBehaviour {
     public bool playerHidden;
     public int numberChasing;
     public static AIManager instace = null;
-
     private static AIManager instance;
-
+    public GameObject alertScript;
     private AIManager() { }
 
     void Awake()
@@ -41,6 +40,31 @@ public class AIManager : MonoBehaviour {
         }
     }
 
+    void Update()
+    {
+
+        numberChasing = 0;
+        for (int i = 0; i < AiChildren.Length; i++)
+        {
+            //Checks if any of the AI that were chasing the target can see the player
+            if (AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChaseState" || AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "SearchingState")
+            {
+                numberChasing++;
+            }
+            i++;
+        }
+        if (numberChasing == 0)
+        {
+            playLessIntense();
+        }
+        else
+        {
+            playIntense();
+        }
+        
+    }
+    
+
 
     public int checkChasing()
     {
@@ -54,6 +78,10 @@ public class AIManager : MonoBehaviour {
             }
             i++;
         }
+        if (numberChasing == 0)
+        {
+            alertScript.GetComponent<Alerted>().stopAudio();
+        }
         return numberChasing;
     }
 
@@ -66,9 +94,11 @@ public class AIManager : MonoBehaviour {
             if (AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChaseState" && AiChildren[i].GetComponent<StatePatternEnemy>().seesTarget == false)
             {
                 playerHidden = true;
+                alertScript.GetComponent<Alerted>().lessintense();
                 break;
             }
             playerHidden = false;
+            alertScript.GetComponent<Alerted>().intense();
             i++;
         }
         return playerHidden;
@@ -85,6 +115,33 @@ public class AIManager : MonoBehaviour {
             }
         }
     }
+
+    private void playIntense()
+    {
+        alertScript.GetComponent<Alerted>().intense();
+    }
+
+    private void playLessIntense()
+    {
+        alertScript.GetComponent<Alerted>().lessintense();
+    }
+
+    /*
+    to add
+        raycast to ovject the player is hiding in
+        if player is colliding with the object then the AI can see them
+
+
+    */
+
+
+
+
+
+
+
+
+
 
 
     /* OLD CODE

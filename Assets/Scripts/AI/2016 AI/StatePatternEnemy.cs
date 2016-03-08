@@ -19,13 +19,11 @@ public class StatePatternEnemy : MonoBehaviour
     public float searchingDuration = 4f;                    //!<float to adjust how long the AI stays in the searching state
     public float sightRange = 40f;                          //!<float to adjust how far the AI can see
     public float sightAngle = 10f;                          //!<float to adjust the sight angle of the AI
-    public Transform eyes;
-    public Vector3 offset = new Vector3(0, .5f, 0);
-    public MeshRenderer meshRendererFlag;
-    public int current_preset = 0;
-    public bool customType = false;
-    public bool seesTarget;
-    public GameObject player;
+    public MeshRenderer meshRendererFlag;                   //!<Used only for showing the gradual change of the AI state
+    public int current_preset = 0;                          //!<preset setting for the AI editor draw from
+    public bool customType = false;                         //!<bool used in the ai editor for custom AI types to be created
+    public bool seesTarget;                                 //!<bool to determine if the AI can see the player or not
+    public GameObject player;                               //!<stores the player so it can be referenced easily
 
     //Path Variables
     public List<GameObject> Pathways;                       //!<List of the paths the AI uses. Paths are gameobjects with a list of vectors 3s that the AI uses to as waypoints. See AI's editor for paths.
@@ -40,7 +38,7 @@ public class StatePatternEnemy : MonoBehaviour
     public GameObject Path;                                 //!<Stores the current path of the AI so it's checkpoints can be accessed.
     public int PathwayCount = 0;                            //!<Int for tracking which path the AI is on
     public int CheckpointCount = 0;                         //! Int for tracking which checkpoint the AI is on
-    public bool enemy;
+    public bool enemy;                                      
     public Vector3 navPoint = new Vector3(0, 0, 0);         //!<Contains the point to move in the navmesh
     public Transform noiseLoc;
 
