@@ -194,25 +194,25 @@ public class StealthClock : MonoBehaviour
 		setDifficulty();
 
 //TESTING
-//		Debug.Log("player", "StealthClock Awake() complete");
+		Debug.Log("player", "StealthClock Awake() complete");
 //END TESTING
 
 	}
 
 	void OnEnable()
 	{
-		
-		_gameOver = false;
+        
+        _gameOver = false;
 		_win = false;
 		_fail = false;
 		_currentSuccess = 0;
 		_currentFail = 0;
 
-	}
+//	}
 
 	// Use this for initialization
-	void Start()
-	{
+//	void Start()
+//	{
 
 		//initialize line parameters
 		_lineLength = transform.localScale.x / 3.2f;
@@ -613,21 +613,30 @@ public class StealthClock : MonoBehaviour
 	{
 
         //check for player being in a hiding spot
-
-
-		//if the player is found/not hidden
-		if(aiMan.checkChasing() > 0)
+        if(!QK_Character_Movement.Instance.isHidden)
+        {
+            endGame("StealthClock.hideCheck(): Player not hidden.");
+        }
+//TESTING
+        Debug.Log("player", "got here");
+//END TESTING
+        //if the player is found/not hidden
+        if (aiMan.checkChasing() > 0)
 		{
-
+//TESTING
+            Debug.Log("player", "got here");
+//END TESTING
             //deactivate the miniGame
             endGame("StealthClock.hideCheck(): Player discovered by AI.");
 			
 		}
 		else
 		{
-
-			//check for at least one enemy looking for player
-			for(int i = 0; i < aiMan.AiChildren.Length; i++)
+//TESTING
+            Debug.Log("player", "got here");
+//END TESTING
+            //check for at least one enemy looking for player
+            for (int i = 0; i < aiMan.AiChildren.Length; i++)
 			{
 
 				//if searching for player

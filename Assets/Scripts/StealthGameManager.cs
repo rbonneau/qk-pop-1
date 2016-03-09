@@ -89,13 +89,21 @@ public class StealthGameManager : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-
-		//if the player won or lost the mini-game or is not hidden from ai
-		if(clock.gameOver || !aiMan.checkForPlayer())
+//TESTING
+        Debug.Log("player", "got here");
+        print("clock.gameOver " + clock.gameOver);
+        print("aiMan.checkChasing() " + aiMan.checkChasing());
+        print("QK_Character_Movement.Instance.isHidden " + QK_Character_Movement.Instance.isHidden);
+//END TESTING
+        //if the player won or lost the mini-game or is not hidden from ai
+//		if(clock.gameOver || !aiMan.checkForPlayer())
+        if(clock.gameOver || !QK_Character_Movement.Instance.isHidden)
 		{
-
-			//if the mini-game is running
-			if(clock.isActiveAndEnabled)
+//TESTING
+            Debug.Log("player", "got here");
+//END TESTING
+            //if the mini-game is running
+            if (clock.isActiveAndEnabled)
 			{
 
 				//check for win
@@ -111,7 +119,7 @@ public class StealthGameManager : MonoBehaviour
 				{
 
                     //notify AI of player location
-//                    aiMan.resumeChase();
+                    aiMan.resumeChase();
 
 
 				}
@@ -129,11 +137,13 @@ public class StealthGameManager : MonoBehaviour
 
 		}
 		//if player is being searched for and in a hiding spot
-		else if((aiMan.checkChasing() > 0)/* && player.isHiding()*/)
+		else if((aiMan.checkChasing() > 0) && QK_Character_Movement.Instance.isHidden)
 		{
-
-			//if mini-game isn't running
-			if(!clock.isActiveAndEnabled)
+//TESTING
+            Debug.Log("player", "got here");
+//END TESTING
+            //if mini-game isn't running
+            if (!clock.isActiveAndEnabled)
 			{
 
                 //calculate mini-game difficulty
@@ -162,13 +172,24 @@ public class StealthGameManager : MonoBehaviour
 
 		}
 		//mini-game is running, no AI searching or player is found by AI or player is not in a hiding spot
-		else if(clock.isActiveAndEnabled && (aiMan.checkChasing() < 1 || !aiMan.checkForPlayer()/* || !player.isHiding*/))
+		else if(clock.isActiveAndEnabled && (aiMan.checkChasing() < 1 || !aiMan.checkForPlayer() || !QK_Character_Movement.Instance.isHidden))
 		{
-
-			//deactivate mini-game
-			transform.GetChild(0).gameObject.SetActive(false);
+//TESTING
+            Debug.Log("player", "got here");
+//END TESTING
+            //deactivate mini-game
+            transform.GetChild(0).gameObject.SetActive(false);
 
 		}
+        else
+        {
+//TESTING
+            print("clock.isActiveAndEnabled = " + clock.isActiveAndEnabled);
+            print("aiMan.checkChasing() = " + aiMan.checkChasing());
+            print("!aiMan.checkForPlayer() = " + !aiMan.checkForPlayer());
+            print("!QK_Character_Movement.Instance.isHidden " + !QK_Character_Movement.Instance.isHidden);
+//END TESTING
+        }
 
 	}
 
@@ -183,7 +204,9 @@ public class StealthGameManager : MonoBehaviour
     */
     bool chooseDifficulty()
     {
-
+//TESTING
+        Debug.Log("player", "got here");
+//END TESTING
         //current count of guards searching for player
         //        int tempGuards = 0;
 
