@@ -110,8 +110,8 @@ public class StealthGameManager : MonoBehaviour
 				else if(clock.fail)
 				{
 
-					//notify AI of player location
-//FINISH THIS
+                    //notify AI of player location
+//                    aiMan.resumeChase();
 
 
 				}

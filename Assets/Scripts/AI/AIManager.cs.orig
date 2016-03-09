@@ -17,6 +17,15 @@ public class AIManager : MonoBehaviour {
         get
         {
             _instance = _instance ?? (_instance = GameObject.FindObjectOfType<AIManager>());
+            return _instance;
+        }
+
+    private static AIManager _instance;
+    public static AIManager instance
+    {
+        get
+        {
+            _instance = _instance ?? (_instance = GameObject.FindObjectOfType<AIManager>());
             if (_instance == null)
             {
                 Debug.Warning("ai", "AI Manager is not in scene but a script is attempting to reference it.");
