@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class AbilityDockController : MonoBehaviour {
 	
+	public static AbilityDockController instance;
+	
 	public Image[] abilities;
 	public float timeTakenDuringLerp = 0.35f;
 	public Image selectionBeam;
@@ -21,6 +23,10 @@ public class AbilityDockController : MonoBehaviour {
 	Vector3[] targetPos = new Vector3[5];
 
     float wheelDelay = 0;
+
+	void Awake(){
+		instance = this;
+	}
 
 	void Start () {
 		canGetInput = true;
@@ -52,15 +58,17 @@ public class AbilityDockController : MonoBehaviour {
 			startLerping();
 		}
 		else if (Input.GetKey(KeyCode.Tab)) {	//Ability dock is open
-            if (Input.GetKeyDown (KeyCode.DownArrow) || Input.GetAxis("Mouse ScrollWheel") < 0) {			//Scroll the icons down
+			if (Input.GetKeyDown (KeyCode.DownArrow) || (Input.GetAxis("Mouse ScrollWheel") < 0 && wheelDelay <= 0)) {			//Scroll the icons down
 				newPos (false);
 				rotating = true;
 				startLerping();
+				wheelDelay = 0.25f;
 			}
-			if (Input.GetKeyDown (KeyCode.UpArrow) || Input.GetAxis("Mouse ScrollWheel") > 0) {			//Scroll the icons up
+			if (Input.GetKeyDown (KeyCode.UpArrow) || (Input.GetAxis("Mouse ScrollWheel") > 0 && wheelDelay <= 0)) {			//Scroll the icons up
 				newPos (true);
 				rotating = true;
 				startLerping();
+				wheelDelay = 0.25f;
 			}
 		}
 		else if (Input.GetKeyUp (KeyCode.Tab)) {				//Close ability dock
@@ -71,33 +79,9 @@ public class AbilityDockController : MonoBehaviour {
 			abilities[selectedAbility].transform.SetAsLastSibling();
 			startLerping();
 		}
-
-        if (wheelDelay <= 0)
-        {
-            if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
-            {
-                if (selectedAbility <= 0)
-                {
-                    selectedAbility = abilities.Length;
-                }
-                setSelectedAbility(selectedAbility - 1);
-                wheelDelay = 0.25f;
-            }
-            else if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
-            {
-                if (selectedAbility >= abilities.Length - 1)
-                {
-                    selectedAbility = -1;
-                }
-                setSelectedAbility(selectedAbility + 1);
-                wheelDelay = 0.25f;
-            }
-        }
-        else
-        {
-            wheelDelay -= Time.deltaTime;
-        }
-
+		if(wheelDelay >= 0){
+			wheelDelay -= Time.deltaTime;
+		}
     }
 
 	void FixedUpdate(){
@@ -105,14 +89,14 @@ public class AbilityDockController : MonoBehaviour {
 			float timeSinceStarted = Time.time - timeStartedLerping;
 			float percentageComplete = timeSinceStarted / timeTakenDuringLerp;
 			if(opening){
-				highligtedIcon.transform.position = Vector3.Lerp(highligtedIcon.transform.position, new Vector3(highligtedIcon.transform.position.x, 215, 0), percentageComplete);
-				selectionBeam.rectTransform.sizeDelta = Vector2.Lerp(selectionBeam.rectTransform.sizeDelta, new Vector2(100, 400), percentageComplete);
-				selectionBeam.transform.position = Vector3.Lerp (selectionBeam.transform.position, new Vector3(selectionBeam.transform.position.x, 215, 0), percentageComplete);
+				highligtedIcon.transform.position = Vector3.Lerp(highligtedIcon.transform.position, new Vector3(highligtedIcon.transform.position.x, 350, 0), percentageComplete);
+				selectionBeam.rectTransform.sizeDelta = Vector2.Lerp(selectionBeam.rectTransform.sizeDelta, new Vector2(150, 650), percentageComplete);
+				selectionBeam.transform.position = Vector3.Lerp (selectionBeam.transform.position, new Vector3(selectionBeam.transform.position.x, 350, 0), percentageComplete);
 			}
 			if(closing){
-				highligtedIcon.transform.position = Vector3.Lerp(highligtedIcon.transform.position, new Vector3(highligtedIcon.transform.position.x, 55, 0), percentageComplete);
+				highligtedIcon.transform.position = Vector3.Lerp(highligtedIcon.transform.position, new Vector3(highligtedIcon.transform.position.x, 100, 0), percentageComplete);
 				selectionBeam.rectTransform.sizeDelta = Vector2.Lerp(selectionBeam.rectTransform.sizeDelta, new Vector2(0, 0), percentageComplete);			
-				selectionBeam.transform.position = Vector3.Lerp (selectionBeam.transform.position, new Vector3(selectionBeam.transform.position.x, 55, 0), percentageComplete);
+				selectionBeam.transform.position = Vector3.Lerp (selectionBeam.transform.position, new Vector3(selectionBeam.transform.position.x, 100, 0), percentageComplete);
 			}
 			for (int i = 0; i < numAbilities; i++) {
 				abilities [i].transform.position = Vector3.Lerp(abilities[i].transform.position, targetPos[i], percentageComplete);
@@ -219,15 +203,15 @@ public class AbilityDockController : MonoBehaviour {
 	float getPos(int i){
 		switch(i){
 		case 0:
-			return 375;
+			return 600;
 		case 1:
-			return 295;
+			return 475;
 		case 2:
-			return 215;
+			return 350;
 		case 3:
-			return 135;
+			return 225;
 		case 4:
-			return 55;
+			return 100;
 		default:
 			return 0;
 		}

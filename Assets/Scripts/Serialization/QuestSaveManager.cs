@@ -3,12 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
 using System.Linq;
-//using Debug = FFP.Debug;
+using Debug = FFP.Debug;
  
 public class QuestSaveManager : SaveManager {
 
+	public static QuestSaveManager S;
+
 	QuestManager _questManager;
 	Quest _quest;
+
+	void Awake(){
+		S = this;
+	}
 
 	public void SaveQuests(List<Quest> currQuests) {
 		if (currQuests == null || currQuests.Count == 0) {
@@ -23,7 +29,7 @@ public class QuestSaveManager : SaveManager {
 			count++;
 		}
 
-		Debug.Log(questJSONNode.ToString ());
+		Debug.Log("quest",questJSONNode.ToString ());
 		PlayerPrefs.SetString ("PlayerQuests", questJSONNode.ToString ());
 	}
 
@@ -33,11 +39,11 @@ public class QuestSaveManager : SaveManager {
 		for(int i = 0; i < q.GetGoal().Count(); i++) {
 			if(q.GetGoal()[i].GetProgress() > -1) {
 				progress[q.GetID().ToString()][-1].AsInt = q.GetGoal()[i].GetProgress();
-				Debug.Log("added progress, progress = " + q.GetGoal()[i].GetProgress().ToString());
+				Debug.Log("quest","added progress, progress = " + q.GetGoal()[i].GetProgress().ToString());
 			}
 			else {
 				progress[q.GetID().ToString()][-1] = "null";
-				Debug.Log("did not add progress");
+				Debug.Log("quest","did not add progress");
 				
 			}
 		}

@@ -36,6 +36,7 @@ public class QK_Character_Movement : MonoBehaviour {
 	[ReadOnly] public float verticalVelocity = 0f;
 	private float terminalVelocity = 30f;
 	private float turnRate = 5f;
+    public bool isHidden = false;
 
 	private Vector3 moveVector = Vector3.zero;
 	private Vector3 desiredMoveVector = Vector3.zero;
