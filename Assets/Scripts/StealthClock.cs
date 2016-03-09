@@ -7,8 +7,9 @@ public class StealthClock : MonoBehaviour
 {
     /*!
         \file  StealthClock.cs
-	    \brief  This class attaches to a clock face.
-	
+	    \brief  Runs the mini-game.
+        
+        This class attaches to the clockFace.
         In order for the minigame success/fail conditions to work properly,
 	    the clock face y axis must be inverted so the y axis is pointing down
         (y rotation = 180, z rotation = 180).
@@ -29,27 +30,27 @@ public class StealthClock : MonoBehaviour
 	//true if the game has been won or lost
 	private bool _gameOver;
 
-	//true if player wins mini-game
-	private bool _win;
+    public bool gameOver
+    {
+        get
+        {
+            return _gameOver;
+        }
+    }
 
-	//true if player loses mini-game
-	private bool _fail;
+    //true if player wins mini-game
+    private bool _win;
 
-	public bool gameOver
-	{
-		get
-		{
-			return _gameOver;
-		}
-	}
+    public bool win
+    {
+        get
+        {
+            return _win;
+        }
+    }
 
-	public bool win
-	{
-		get
-		{
-			return _win;
-		}
-	}
+    //true if player loses mini-game
+    private bool _fail;
 
 	public bool fail
 	{
@@ -61,16 +62,17 @@ public class StealthClock : MonoBehaviour
 
 	//start of green area in degrees from x axis
 	private int _startDegree;
-	//end of green area in degrees from x axis
-	private int _endDegree;
 
-	public float startDegree
-	{
-		get
-		{
-			return _startDegree;
-		}
-	}
+    public float startDegree
+    {
+        get
+        {
+            return _startDegree;
+        }
+    }
+
+    //end of green area in degrees from x axis
+    private int _endDegree;
 
 	public float endDegree
 	{
@@ -90,38 +92,14 @@ public class StealthClock : MonoBehaviour
 			return _clockSpeed;
 		}
 	}
-
-	//size of green area in degrees
-	private int _easySize = 45;
-	private int _mediumSize = 30;
-	private int _hardSize = 20;
-	private int _hellSize = 10;
-
+    
 	//success/fail counts
 	private int _currentSuccess;
 	private int _currentFail;
 
 	//success/fail limits
-	public int maxSuccess;
-	public int maxFail;
-
-    //number of successes necessary for a win
-    private int easySuccess = 3;
-    private int mediumSuccess = 3;
-    private int hardSuccess = 3;
-    private int hellSuccess = 3;
-
-    //number of failures necessary for a loss
-    private int easyFail = 1;
-    private int mediumFail = 1;
-    private int hardFail = 1;
-    private int hellFail = 1;
-
-    //speed of clock hand in rpms
-    public int easySpeed = 20;
-    private int mediumSpeed = 20;
-    private int hardSpeed = 20;
-    private int hellSpeed = 40;
+	private int _maxSuccess;
+	private int _maxFail;
 
     //layer for red/green lines for WatchCamera to display
     private int stealthLayer = 10;
@@ -131,7 +109,7 @@ public class StealthClock : MonoBehaviour
 	private float _endWidth;
 
 	//number of guards near player
-	private int _numberOfGuards;
+/*	private int _numberOfGuards;
 
 	public int numberOfGuards
 	{
@@ -140,7 +118,7 @@ public class StealthClock : MonoBehaviour
 			return _numberOfGuards;
 		}
 	}
-
+*/
     //reference to an empty gameObject will be the parent of the red/green lines
     private Transform lineParent;
 
@@ -216,7 +194,7 @@ public class StealthClock : MonoBehaviour
 		setDifficulty();
 
 //TESTING
-		Debug.Log("player", "StealthClock Awake() complete");
+//		Debug.Log("player", "StealthClock Awake() complete");
 //END TESTING
 
 	}
@@ -280,15 +258,15 @@ public class StealthClock : MonoBehaviour
                     
 //TESTING
                     Debug.Log("player", "SUCCESS: " + _clockHand.transform.localEulerAngles.y);
-                    Debug.Log("player", "startDegree: " + startDegree);
-                    Debug.Log("player", "endDegree: " + endDegree);
+//                    Debug.Log("player", "startDegree: " + startDegree);
+//                    Debug.Log("player", "endDegree: " + endDegree);
 //END TESTING                    
                     
                     //increment success count
                     _currentSuccess++;
 
 					//check to see if zones need to be reset
-					if(_currentSuccess < maxSuccess)
+					if(_currentSuccess < _maxSuccess)
 						{
                             
                             //reset the red and green zones
@@ -296,21 +274,20 @@ public class StealthClock : MonoBehaviour
 
 						}
 
-
                 }
                 else
 				{
 
 //TESTING
                     Debug.Log("player", "FAIL: " + _clockHand.transform.localEulerAngles.y);
-                    Debug.Log("player", "startDegree: " + startDegree);
-                    Debug.Log("player", "endDegree: " + endDegree);
+//                    Debug.Log("player", "startDegree: " + startDegree);
+//                    Debug.Log("player", "endDegree: " + endDegree);
 //END  TESTING
 
                     //increment fail count
                     _currentFail++;
 
-                    if(_currentFail < maxFail)
+                    if(_currentFail < _maxFail)
                     {
 
                         //reset the red and green zones
@@ -332,7 +309,7 @@ public class StealthClock : MonoBehaviour
 					_currentSuccess++;
 
 					//check to see if zones need to be reset
-					if(_currentSuccess < maxSuccess)
+					if(_currentSuccess < _maxSuccess)
 					{
 
                         //reset the zones
@@ -352,7 +329,7 @@ public class StealthClock : MonoBehaviour
 			}
 
 			//check for win condition
-			if(_currentSuccess >= maxSuccess)
+			if(_currentSuccess >= _maxSuccess)
 			{
 
                 //enemies return to normal
@@ -368,7 +345,7 @@ public class StealthClock : MonoBehaviour
                 endGame("StealthClockUpdate(): minigame success.");
 
 			}
-			else if(_currentFail >= maxFail)
+			else if(_currentFail >= _maxFail)
 			{
 
                 //alert enemies to player position
@@ -477,87 +454,15 @@ public class StealthClock : MonoBehaviour
     */
 	void setDifficulty()
 	{
-
-        //current count of guards searching for player
-        int tempGuards = 0;
-
-        //check for existence of enemies
-		if(aiMan.AiChildren == null)
-		{
-
-			//exit minigame
-//TESTING
-			endGame("StealthClock.SetDifficulty(): aiMan.AIChildren == null.");
-//END TESTING
-
-		}
-		else
-		{
-
-            //call AI manager for suspicious guards
-            tempGuards = aiMan.checkChasing();
-
-            //check for guards looking for player
-            if (tempGuards < 1)
-            {
-
-                //exit minigame
-//TESTING
-                endGame("StealthClock.SetDifficulty(): no AI chasing");
-//END TESTING
-            }
-
-		}
-
-//TESTING
-//AI
-//        _numberOfGuards = tempGuards;
-		_numberOfGuards = 1;
-//END TESTING
-
+        
 		//choose random angle to start the green zone
 		_startDegree = Random.Range(0, 360);
-
-		//1 guard
-		if(_numberOfGuards < 2)
-		{
-
-			_endDegree = getEndDegree(_startDegree, _easySize);
-			maxSuccess = easySuccess;
-			maxFail = easyFail;
-			_clockSpeed = easySpeed;
-
-		}
-		//2-3 guards
-		else if(_numberOfGuards < 4)
-		{
-
-			_endDegree = getEndDegree(_startDegree, _mediumSize);
-			maxSuccess = mediumSuccess;
-			maxFail = mediumFail;
-			_clockSpeed = mediumSpeed;
-
-		}
-		//4-9 guards
-		else if(_numberOfGuards < 10)
-		{
-
-			_endDegree = getEndDegree(_startDegree, _hardSize);
-			maxSuccess = hardSuccess;
-			maxFail = hardFail;
-			_clockSpeed = hardSpeed;
-
-		}
-		//10 or more guards
-		else
-		{
-
-			_endDegree = getEndDegree(_startDegree, _hellSize);
-			maxSuccess = hellSuccess;
-			maxFail = hellFail;
-			_clockSpeed = hellSpeed;
-
-		}
+        
+        //set game variables
+		_endDegree = getEndDegree(_startDegree, stealthMan.areaSize);
+		_maxSuccess = stealthMan.maxSuccesses;
+		_maxFail = stealthMan.fails;
+		_clockSpeed = stealthMan.handSpeed;
 
 	}
 
@@ -598,9 +503,9 @@ public class StealthClock : MonoBehaviour
 			if(randomStart == end)
 			{
 
-				//just set to easy range
+				//just set to an easy range
 				_startDegree = 0;
-				end = _startDegree + _easySize;
+				end = _startDegree + 45;
 				
 				Debug.Log("player", "StealthClock.getEndDegree: start == end.");
 

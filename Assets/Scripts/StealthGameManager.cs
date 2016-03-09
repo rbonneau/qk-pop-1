@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Debug = FFP.Debug;
 
 public class StealthGameManager : MonoBehaviour
 {
@@ -30,11 +31,48 @@ public class StealthGameManager : MonoBehaviour
 	//reference to the AIManager
 	private AIManager aiMan;
 
-	//reference to player
+    //reference to player
+    Transform player;
 
+    //maximum number of guards for difficulty level
+    public int easyGuards = 2;
+    public int mediumGuards = 4;
+    public int hardGuards = 10;
 
-	// Use this for initialization
-	void Start()
+    //size of green area in degrees
+    public int easySize = 45;
+    public int mediumSize = 30;
+    public int hardSize = 20;
+    public int hellSize = 10;
+
+    //number of successes necessary for a win
+    public int easySuccess = 3;
+    public int mediumSuccess = 3;
+    public int hardSuccess = 3;
+    public int hellSuccess = 3;
+
+    //number of failures necessary for a loss
+    public int easyFail = 1;
+    public int mediumFail = 1;
+    public int hardFail = 1;
+    public int hellFail = 1;
+
+    //speed of clock hand in rpms
+    public int easySpeed = 20;
+    public int mediumSpeed = 20;
+    public int hardSpeed = 20;
+    public int hellSpeed = 40;
+
+    //settings that the mini-game will use
+    public int areaSize;
+    public int maxSuccesses;
+    public int fails;
+    public int handSpeed;
+
+    private int _numberOfGuards;
+
+    // Use this for initialization
+    void Start()
 	{
 
 		//get reference to the StealthClock
@@ -42,9 +80,11 @@ public class StealthGameManager : MonoBehaviour
 
 		//get reference to AIManager
 		aiMan = AIManager.instance;
-		
 
-	}
+        //reference to player
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+    }
 	
 	// Update is called once per frame
 	void Update()
@@ -71,13 +111,19 @@ public class StealthGameManager : MonoBehaviour
 				{
 
 					//notify AI of player location
+//FINISH THIS
 
 
 				}
 
 				//deactivate mini-game
-				gameObject.GetComponentInChildren<GameObject>().SetActive(false);
+                foreach(Transform child in transform)
+                {
 
+                    //deactivate children
+                    child.gameObject.SetActive(false);
+
+                }
 
 			}
 
@@ -90,8 +136,27 @@ public class StealthGameManager : MonoBehaviour
 			if(!clock.isActiveAndEnabled)
 			{
 
-				//start mini-game
-				transform.GetChild(0).gameObject.SetActive(true);
+                //calculate mini-game difficulty
+                if(chooseDifficulty())
+                {
+
+                    //start mini-game
+                    foreach(Transform child in transform)
+                    {
+
+                        //activate children
+                        child.gameObject.SetActive(true);
+
+                    }
+
+                }
+                else
+                {
+
+                    //output error
+                    Debug.Log("player", "StealthGameManager.chooseDifficulty() == false");
+
+                }
 
 			}
 
@@ -106,5 +171,102 @@ public class StealthGameManager : MonoBehaviour
 		}
 
 	}
+
+    /*
+        \brief  Chooses difficulty of the mini-game
+
+        Checks for exitence of enemies actively searching for the player. Chooses the difficulty of the
+        mini-game based on the number of searching enemies. If there are no enemies, nothing is set and
+        returns false.
+
+        \return bool, true if difficulty was successfully chosen, false otherwise
+    */
+    bool chooseDifficulty()
+    {
+
+        //current count of guards searching for player
+        //        int tempGuards = 0;
+
+        //check for existence of enemies
+        if (aiMan.AiChildren == null)
+        {
+            
+            //no searching guards, difficulty not set
+            return false;
+
+        }
+        else
+        {
+
+            //call AI manager for suspicious guards
+            _numberOfGuards = aiMan.checkChasing();
+
+//TESTING
+//AI
+            //_numberOfGuards = 1;
+//END TESTING
+
+            //check for guards looking for player
+            if (_numberOfGuards < 1)
+            {
+
+                //no guards searching for player
+                Debug.Log("player", "StealthGameManager.ChooseDifficulty(): _numberOfGuards < 1");
+                return false;
+
+            }
+
+            //set mini-game difficulty variables
+            //easy
+            if (_numberOfGuards < easyGuards)
+            {
+
+                //_endDegree = getEndDegree(_startDegree, _easySize);
+                areaSize = easySize;
+                maxSuccesses = easySuccess;
+                fails = easyFail;
+                handSpeed = easySpeed;
+
+            }
+            //medium
+            else if (_numberOfGuards < mediumGuards)
+            {
+
+                //_endDegree = getEndDegree(_startDegree, _mediumSize);
+                areaSize = mediumSize;
+                maxSuccesses = mediumSuccess;
+                fails = mediumFail;
+                handSpeed = mediumSpeed;
+
+            }
+            //hard
+            else if (_numberOfGuards < hardGuards)
+            {
+
+                //_endDegree = getEndDegree(_startDegree, _hardSize);
+                areaSize = hardSize;
+                maxSuccesses = hardSuccess;
+                fails = hardFail;
+                handSpeed = hardSpeed;
+
+            }
+            //hell
+            else
+            {
+
+                //_endDegree = getEndDegree(_startDegree, _hellSize);
+                areaSize = hellSize;
+                maxSuccesses = hellSuccess;
+                fails = hellFail;
+                handSpeed = hellSpeed;
+
+            }
+
+            //difficulty chosen successfully
+            return true;
+
+        }
+
+    }
 
 }

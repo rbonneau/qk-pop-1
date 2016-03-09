@@ -21,11 +21,11 @@ public class StealthHand : MonoBehaviour
 	StealthClock clockFace;
 
 	// Use this for initialization
-	void Start()
+	void OnEnable()
 	{
 
 //TESTING
-		Debug.Log("StealthHand Start() beginning");
+//		Debug.Log("StealthHand Start() beginning");
 //END TESTING
 
 		//get the clock face
