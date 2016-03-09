@@ -84,6 +84,7 @@ public class PatrolState : IEnemyState
         if (Vector3.Angle(enemy.player.transform.position - enemy.transform.position, enemy.transform.forward) < enemy.sightAngle)
         {
             if (Physics.Raycast(enemy.transform.position, enemy.player.transform.position - enemy.transform.position, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
+                //check if player is hidden - if not hidden run below else do nothing (player is not seen)
             {
                 enemy.chaseTarget = hit.transform;
                 //if enemy is alert type

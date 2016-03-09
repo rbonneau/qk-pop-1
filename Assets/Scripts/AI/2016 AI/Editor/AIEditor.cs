@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -108,20 +109,6 @@ public class AIEditor : Editor {
             ai_target.sightRange = EditorGUILayout.FloatField("Sight Range:", ai_target.sightRange);
             ai_target.sightAngle = EditorGUILayout.FloatField("Sight Angle:", ai_target.sightAngle);
 
-
-
-            /* old code
-			ai_target.hp = EditorGUILayout.FloatField("Health:", ai_target.hp);
-			ai_target.sightDistance = EditorGUILayout.FloatField("Sight Distance:", ai_target.sightDistance);
-			ai_target.passiveSightAngle = EditorGUILayout.FloatField("Passive Sight Angle:", ai_target.passiveSightAngle);
-			ai_target.chasingSightAngle = EditorGUILayout.FloatField("Chasing Sight Angle:", ai_target.chasingSightAngle);
-			ai_target.speed = EditorGUILayout.FloatField("Speed:", ai_target.speed);
-			ai_target.runSpeed = EditorGUILayout.FloatField("Running Speed:", ai_target.runSpeed);
-			ai_target.attackDistance = EditorGUILayout.FloatField("Attack Distance:", ai_target.attackDistance);
-			ai_target.suspicionLimit = EditorGUILayout.FloatField("Suspicion Limit:", ai_target.suspicionLimit);
-			ai_target.aggressionLimit = EditorGUILayout.FloatField("Aggression Limit:", ai_target.aggressionLimit);
-			ai_target.enemy = EditorGUILayout.Toggle("Aggressive:", ai_target.enemy);
-            */
         }
         EditorGUILayout.EndFadeGroup();
 

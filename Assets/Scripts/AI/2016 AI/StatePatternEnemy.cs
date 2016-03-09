@@ -11,6 +11,7 @@ Update and OnTrigger in this script will run the updateState/OnTriggerstate insi
 
 
 */
+[System.Serializable]
 
 public class StatePatternEnemy : MonoBehaviour
 {

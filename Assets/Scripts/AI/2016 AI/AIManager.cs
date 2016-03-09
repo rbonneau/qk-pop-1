@@ -116,6 +116,19 @@ public class AIManager : MonoBehaviour {
         }
     }
 
+    public void resumeChase()
+    {
+        for (int i = 0; i < AiChildren.Length; i++)
+        {
+            //Checks if any of the AI that were chasing the target can see the player
+            if (AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChaseState" || AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "SearchingState")
+            {
+                AiChildren[i].GetComponent<StatePatternEnemy>().chaseTarget = AiChildren[i].GetComponent<StatePatternEnemy>().player.transform;
+                AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToChaseState();
+            }
+        }
+    }
+
     private void playIntense()
     {
         alertScript.GetComponent<Alerted>().intense();
