@@ -84,8 +84,8 @@ public class PatrolState : IEnemyState
         if (Vector3.Angle(enemy.player.transform.position - enemy.transform.position, enemy.transform.forward) < enemy.sightAngle)
         {
             if (Physics.Raycast(enemy.transform.position, enemy.player.transform.position - enemy.transform.position, out hit, enemy.sightRange) && hit.collider.CompareTag("Player"))
+                //check if player is hidden - if not hidden run below else do nothing (player is not seen)
             {
-                Debug.Log("works");
                 enemy.chaseTarget = hit.transform;
                 //if enemy is alert type
                 //ToChaseState();
@@ -207,7 +207,6 @@ public class PatrolState : IEnemyState
                         if (enemy.CheckpointCount < CheckpointScript.getPoints().Count)
                         {
 
-                            string CheckpointCountString = enemy.CheckpointCount.ToString();
                             enemy.navPoint = CheckpointScript.getPoints()[enemy.CheckpointCount];
                             if (enemy.navMeshAgent.remainingDistance <= enemy.navMeshAgent.stoppingDistance && !enemy.navMeshAgent.pathPending)
                                 enemy.transform.rotation = Quaternion.RotateTowards(enemy.transform.rotation, CheckpointScript.getRotations()[enemy.CheckpointCount], enemy.searchingTurnSpeed * 2 * Time.deltaTime);
