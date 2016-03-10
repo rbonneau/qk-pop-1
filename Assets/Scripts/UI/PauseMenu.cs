@@ -3,8 +3,6 @@ using System.Collections;
 
 public class PauseMenu : MonoBehaviour {
 	private bool isPaused = false;
-
-	public bool isOnPauseMenu = false;
 	public GameHUD GHud;
     public MainMenuManager Options;
     public float speed = 2.0f;
@@ -23,11 +21,23 @@ public class PauseMenu : MonoBehaviour {
 
         // if (InputManager.input.isPause){}
         //  if (InputManager.input.)
+
+        if (isPaused)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape)) {      // This will need to be changed to call inputManager  
 			
-			if(!isPaused && !isOnPauseMenu) {                         
+			if(!isPaused) {                         
 				pauseGame();
-			} else if(isPaused && isOnPauseMenu) {
+			} else if(isPaused) {
 				unPauseGame();	
 			}
 		}
@@ -40,26 +50,10 @@ public class PauseMenu : MonoBehaviour {
 
 	}
 
-	/* Shows and unlocks the mouse cursor if playing on PC
-	 */
-	public void showCursor(){
-		Cursor.lockState = CursorLockMode.None;
-		Cursor.visible = true;
-	}
 
-	/* Hides the mouse cursor and locks it to the center of the screen
-	 */
-	public void hideCursor(){
-		Cursor.lockState = CursorLockMode.Locked;
-		Cursor.visible = false;
-	}
-
-	// Pauses the game and brings up the Pause Menu
-	public void pauseGame()
-    {                       
-		isOnPauseMenu = true;
-		isPaused = true;
-		showCursor ();
+    public void pauseGame()
+    {                       // Pauses the game and brings up the Pause Menu
+        isPaused = true;
         Time.timeScale = 0f;
         GHud.showPauseMenu();
         if (Options != null)
@@ -68,48 +62,35 @@ public class PauseMenu : MonoBehaviour {
         }
 	}
 
-	// Unpauses the game and hides menu
-	public void unPauseGame() {
-		isOnPauseMenu = false;
+	public void unPauseGame() {                     // Unpauses the game and hides menu
 		isPaused = false;
-		hideCursor ();
 		Time.timeScale = 1f;
 		GHud.hidePauseMenu();
 	}
-
-	// When button is used to unpause this function is called
-	public void unPauseGameBtt() {                  
+	public void unPauseGameBtt() {                  // When button is used to unpause this function is called
 		isPaused = false;
 		Time.timeScale = 1f;
 		
 	}
 
-	// It is called if game needs to be paused w/o Menu
-    public void setPause() {                        
+    public void setPause() {                        // It is called if game needs to be paused w/o Menu
         isPaused = true;
         Time.timeScale = 0f;
     }
 
-	// It is called to set the time back to normal .. to unpause the game
-    public void setTimeNormal() {                   
+    public void setTimeNormal() {                   // It is called to set the time back to normal .. to unpause the game
         isPaused = false;
         Time.timeScale = 1f;
     }
 
-	/* Manipulate time if needed by getting a float and setting it
-	 * to Time.timeScale ... Slows down Time or Speeds up Time
-	 */
-    public void manipulateTime(float speed) {
-        Time.timeScale = speed;
+    public void manipulateTime(float speed) {       // Manipulate time if needed by getting a float and setting it
+        Time.timeScale = speed;                     // to Time.timeScale ... Slows down Time or Speeds up Time
     }
-
-	public void openOptions() {        
-		// UIhud.SetActive(false);
-		mainHUD.SetActive(true);     
-		Options.GoToOptions();
-	}
-
-	public void OpenJournal(){
-
-	}
-}
+    public void openOptions() {
+        
+       // UIhud.SetActive(false);
+        mainHUD.SetActive(true);
+     
+        Options.GoToOptions();
+    }
+    }

@@ -78,12 +78,4 @@ public sealed class MasterSceneManager : MonoBehaviour {
 			Debug.Log("core", "Level " + levelName + " loaded\nAdditive = " + additive + ".");
 		}
 	}
-
-	public void loadLevelWithIndex (int levelIndex){
-		Application.LoadLevel (levelIndex);
-	}
-	
-	public void quitGame(){
-		Application.Quit ();
-	}
 }

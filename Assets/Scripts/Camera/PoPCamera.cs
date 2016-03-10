@@ -505,12 +505,6 @@ public sealed class PoPCamera : Camera_2
 	 }
 	#endregion
 
-    public void StartDialog(GameObject targetObj)
-    {
-        target = targetObj.transform;
-        _curState = CameraState.Pause;
-    }
-
 	// Resets camera variables to default values
 	public void Reset()
 	{
@@ -528,13 +522,6 @@ public sealed class PoPCamera : Camera_2
         targetResetTimer = 3f;
 		_curState = CameraState.Normal;
 	}
-
-    // Resets camera back to looking at player and normal state
-    public void SoftReset()
-    {
-        target = player;
-        _curState = CameraState.Normal;
-    }
 
     // Used to smoothly transition camera back to player after targeting
     private void TargetReset()

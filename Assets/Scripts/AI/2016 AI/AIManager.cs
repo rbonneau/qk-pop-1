@@ -11,6 +11,8 @@ public class AIManager : MonoBehaviour {
     public GameObject[] AiChildren;
     public bool playerHidden;
     public int numberChasing;
+    public GameObject alertScript;
+
     private static AIManager _instance;
     public static AIManager instance
     {
@@ -25,7 +27,6 @@ public class AIManager : MonoBehaviour {
         }
     }
 
-    public GameObject alertScript;
     private AIManager() { }
 
     void Awake()
