@@ -140,7 +140,7 @@ public class StealthClock : MonoBehaviour
 	{
 
         //pause the player camera
-        PoPCamera.State = Camera_2.CameraState.Pause;
+//        PoPCamera.State = Camera_2.CameraState.Pause;
 //        QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Wait;
 
         //get the location of the player

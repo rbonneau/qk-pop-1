@@ -103,7 +103,7 @@ public class StealthGameManager : MonoBehaviour
             Debug.Log("player", "got here");
 //END TESTING
             //if the mini-game is running
-            if (clock.isActiveAndEnabled)
+            if(clock.isActiveAndEnabled)
 			{
 
 				//check for win
@@ -131,19 +131,29 @@ public class StealthGameManager : MonoBehaviour
                     //deactivate children
                     child.gameObject.SetActive(false);
 
+
+					//allow player to move
+					resumeMovement();
+
+					//allow camera movement
+//					PoPCamera.instance.Reset();
+
+					//allow player movement
+//					QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Normal;
+
                 }
 
 			}
 
 		}
-		//if player is being searched for and in a hiding spot
-		else if((aiMan.checkChasing() > 0) && QK_Character_Movement.Instance.isHidden)
+		//if button pressed and player is being searched for and in a hiding spot
+		else if(Input.GetKeyDown("f") && (aiMan.checkChasing() > 0) && QK_Character_Movement.Instance.isHidden)
 		{
 //TESTING
             Debug.Log("player", "got here");
 //END TESTING
             //if mini-game isn't running
-            if (!clock.isActiveAndEnabled)
+            if(!clock.isActiveAndEnabled)
 			{
 
                 //calculate mini-game difficulty
@@ -156,6 +166,15 @@ public class StealthGameManager : MonoBehaviour
 
                         //activate children
                         child.gameObject.SetActive(true);
+
+						//stop player movement
+						stopMovement();
+
+						//freeze camera
+//						PoPCamera.State =  Camera_2.CameraState.Pause;
+
+						//freeze movement
+//        				QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Wait;
 
                     }
 
@@ -179,6 +198,15 @@ public class StealthGameManager : MonoBehaviour
 //END TESTING
             //deactivate mini-game
             transform.GetChild(0).gameObject.SetActive(false);
+
+			//resume movement
+			resumeMovement();
+
+			//allow camera movement
+//			PoPCamera.instance.Reset();
+
+			//allow player movement
+//			QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Normal;
 
 		}
         else
@@ -211,7 +239,7 @@ public class StealthGameManager : MonoBehaviour
         //        int tempGuards = 0;
 
         //check for existence of enemies
-        if (aiMan.AiChildren == null)
+        if(aiMan.AiChildren == null)
         {
             
             //no searching guards, difficulty not set
@@ -230,7 +258,7 @@ public class StealthGameManager : MonoBehaviour
 //END TESTING
 
             //check for guards looking for player
-            if (_numberOfGuards < 1)
+            if(_numberOfGuards < 1)
             {
 
                 //no guards searching for player
@@ -241,7 +269,7 @@ public class StealthGameManager : MonoBehaviour
 
             //set mini-game difficulty variables
             //easy
-            if (_numberOfGuards < easyGuards)
+            if(_numberOfGuards < easyGuards)
             {
 
                 //_endDegree = getEndDegree(_startDegree, _easySize);
@@ -252,7 +280,7 @@ public class StealthGameManager : MonoBehaviour
 
             }
             //medium
-            else if (_numberOfGuards < mediumGuards)
+            else if(_numberOfGuards < mediumGuards)
             {
 
                 //_endDegree = getEndDegree(_startDegree, _mediumSize);
@@ -263,7 +291,7 @@ public class StealthGameManager : MonoBehaviour
 
             }
             //hard
-            else if (_numberOfGuards < hardGuards)
+            else if(_numberOfGuards < hardGuards)
             {
 
                 //_endDegree = getEndDegree(_startDegree, _hardSize);
@@ -291,5 +319,27 @@ public class StealthGameManager : MonoBehaviour
         }
 
     }
+
+	private void resumeMovement()
+	{
+
+		//allow camera movement
+		PoPCamera.instance.Reset();
+		
+		//allow player movement
+//		QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Normal;
+
+	}
+
+	private void stopMovement()
+	{
+
+		//freeze camera
+		PoPCamera.State =  Camera_2.CameraState.Pause;
+		
+		//freeze movement
+//      QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Wait;
+
+	}
 
 }
