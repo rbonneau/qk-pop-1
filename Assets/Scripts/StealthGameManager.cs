@@ -84,74 +84,70 @@ public class StealthGameManager : MonoBehaviour
         //reference to player
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
+        //deactivate mini-game
+        foreach(Transform child in transform)
+        {
+
+            //deactivate children
+            child.gameObject.SetActive(false);
+
+        }
+
+        if(clock == null)
+        {
+            Debug.Log("player", "clock = null");
+        }
+        else
+        {
+            Debug.Log("player", "StealthGameManager.Start(): clock.isActiveAndEnabled = " + clock.isActiveAndEnabled);
+        }
+
     }
 	
 	// Update is called once per frame
 	void Update()
 	{
-//TESTING
-        Debug.Log("player", "got here");
-        print("clock.gameOver " + clock.gameOver);
-        print("aiMan.checkChasing() " + aiMan.checkChasing());
-        print("QK_Character_Movement.Instance.isHidden " + QK_Character_Movement.Instance.isHidden);
-//END TESTING
+
         //if the player won or lost the mini-game or is not hidden from ai
-//		if(clock.gameOver || !aiMan.checkForPlayer())
-        if(clock.gameOver || !QK_Character_Movement.Instance.isHidden)
-		{
-//TESTING
-            Debug.Log("player", "got here");
-//END TESTING
-            //if the mini-game is running
-            if(clock.isActiveAndEnabled)
+        if(clock.isActiveAndEnabled && (clock.gameOver || !QK_Character_Movement.Instance.isHidden))
+        {
+            
+			//check for win
+			if(clock.win)
 			{
 
-				//check for win
-				if(clock.win)
-				{
-
-					//reset searching AI
-					aiMan.resumePatrol();
-
-				}
-				//check for loss
-				else if(clock.fail)
-				{
-
-                    //notify AI of player location
-                    aiMan.resumeChase();
-
-
-				}
-
-				//deactivate mini-game
-                foreach(Transform child in transform)
-                {
-
-                    //deactivate children
-                    child.gameObject.SetActive(false);
-
-
-					//allow player to move
-					resumeMovement();
-
-					//allow camera movement
-//					PoPCamera.instance.Reset();
-
-					//allow player movement
-//					QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Normal;
-
-                }
+				//reset searching AI
+				aiMan.resumePatrol();
+                Debug.Log("player", "mini-game won, ai resuming patrol");
 
 			}
+			//check for loss
+			else if(clock.fail)
+			{
 
-		}
-		//if button pressed and player is being searched for and in a hiding spot
-		else if(Input.GetKeyDown("f") && (aiMan.checkChasing() > 0) && QK_Character_Movement.Instance.isHidden)
-		{
-//TESTING
-            Debug.Log("player", "got here");
-//END TESTING
+                //notify AI of player location
+                aiMan.resumeChase();
+                Debug.Log("player", "mini-game lost, ai resuming chase");
+
+            }
+
+			//deactivate mini-game
+            foreach(Transform child in transform)
+            {
+
+                //deactivate children
+                child.gameObject.SetActive(false);
+
+            }
+
+            //allow player to move
+            resumeMovement();
+
+        }
+		//if button pressed and player is being searched for and in a hiding spot - NEED CHECK FOR GAME !PAUSED
+        else if(!clock.isActiveAndEnabled && Input.GetKeyDown("f") && (aiMan.numberChasing > 0) && QK_Character_Movement.Instance.isHidden)
+        {
+
             //if mini-game isn't running
             if(!clock.isActiveAndEnabled)
 			{
@@ -170,12 +166,6 @@ public class StealthGameManager : MonoBehaviour
 						//stop player movement
 						stopMovement();
 
-						//freeze camera
-//						PoPCamera.State =  Camera_2.CameraState.Pause;
-
-						//freeze movement
-//        				QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Wait;
-
                     }
 
                 }
@@ -190,36 +180,38 @@ public class StealthGameManager : MonoBehaviour
 			}
 
 		}
-		//mini-game is running, no AI searching or player is found by AI or player is not in a hiding spot
-		else if(clock.isActiveAndEnabled && (aiMan.checkChasing() < 1 || !aiMan.checkForPlayer() || !QK_Character_Movement.Instance.isHidden))
-		{
-//TESTING
-            Debug.Log("player", "got here");
-//END TESTING
+        //mini-game is running, no AI searching or player is not in a hiding spot
+		else if(clock.isActiveAndEnabled && (aiMan.checkChasing() < 1 || !QK_Character_Movement.Instance.isHidden))
+        {
+            
             //deactivate mini-game
             transform.GetChild(0).gameObject.SetActive(false);
 
 			//resume movement
 			resumeMovement();
-
-			//allow camera movement
-//			PoPCamera.instance.Reset();
-
-			//allow player movement
-//			QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Normal;
-
+            
 		}
-        else
-        {
-//TESTING
-            print("clock.isActiveAndEnabled = " + clock.isActiveAndEnabled);
-            print("aiMan.checkChasing() = " + aiMan.checkChasing());
-            print("!aiMan.checkForPlayer() = " + !aiMan.checkForPlayer());
-            print("!QK_Character_Movement.Instance.isHidden " + !QK_Character_Movement.Instance.isHidden);
-//END TESTING
-        }
 
-	}
+//TESTING
+//        else
+//        {
+/*            if(clock == null)
+            {
+                Debug.Log("player", "StealthMiniGame.Update(): (clock = null) " + (clock == null));
+            }
+            else
+            {
+                Debug.Log("player", "clock.isActiveAndEnabled = " + clock.isActiveAndEnabled);
+            }
+//            Debug.Log("player", "aiMan.checkChasing() = " + aiMan.checkChasing());
+//            Debug.Log("player", "aiMan.numberChasing() = " + aiMan.numberChasing);
+//            Debug.Log("player", "!aiMan.checkForPlayer() = " + !aiMan.checkForPlayer());
+//            Debug.Log("player", "!QK_Character_Movement.Instance.isHidden " + !QK_Character_Movement.Instance.isHidden);
+        
+        }
+*/
+//END TESTING
+    }
 
     /*
         \brief  Chooses difficulty of the mini-game
@@ -233,7 +225,7 @@ public class StealthGameManager : MonoBehaviour
     bool chooseDifficulty()
     {
 //TESTING
-        Debug.Log("player", "got here");
+        Debug.Log("player", "StealthGameManager.chooseDifficulty: started");
 //END TESTING
         //current count of guards searching for player
         //        int tempGuards = 0;
@@ -251,11 +243,6 @@ public class StealthGameManager : MonoBehaviour
 
             //call AI manager for suspicious guards
             _numberOfGuards = aiMan.checkChasing();
-
-//TESTING
-//AI
-            //_numberOfGuards = 1;
-//END TESTING
 
             //check for guards looking for player
             if(_numberOfGuards < 1)
@@ -320,6 +307,14 @@ public class StealthGameManager : MonoBehaviour
 
     }
 
+    /*
+        \brief  Resume camera and player movement
+
+        Resets camera to allow for movement. Should allow player movement but can't due to set
+        accessor being inaccessible.
+
+        \return void
+    */
 	private void resumeMovement()
 	{
 
@@ -331,6 +326,14 @@ public class StealthGameManager : MonoBehaviour
 
 	}
 
+    /*
+        \brief  Stop camera and player movement
+
+        Pauses camera movement.Should keep player from moving while the mini-game is active. Can't
+        stop player movement due to set accessor being inaccessible.
+
+        \return void
+    */
 	private void stopMovement()
 	{
 

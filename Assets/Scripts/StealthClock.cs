@@ -139,10 +139,6 @@ public class StealthClock : MonoBehaviour
 	void Awake()
 	{
 
-        //pause the player camera
-//        PoPCamera.State = Camera_2.CameraState.Pause;
-//        QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Wait;
-
         //get the location of the player
 		player = GameObject.FindGameObjectWithTag("Player").transform;
 
@@ -162,9 +158,7 @@ public class StealthClock : MonoBehaviour
 		{
 
 			//end the game if StealthGameManager can't be found
-//TESTING
 			endGame("StealthClock.Awake(): stealthMan == null");
-//END TESTING
 
 		}
 
@@ -176,26 +170,12 @@ public class StealthClock : MonoBehaviour
         {
 
             //end the game if AIManager can't be found
-//TESTING
             endGame("StealthClock.Awake(): aiMan == null.");
-//END TESTING
 
         }
-
-//TESTING
-        //alert all enemies to player
-        alertEnemies();
-//END TESTING
         
         //get reference to empty gameObject parent of lines
         lineParent = transform.FindChild("lineManager").transform;
-		
-		//set difficulty
-		setDifficulty();
-
-//TESTING
-		Debug.Log("player", "StealthClock Awake() complete");
-//END TESTING
 
 	}
 
@@ -208,14 +188,8 @@ public class StealthClock : MonoBehaviour
 		_currentSuccess = 0;
 		_currentFail = 0;
 
-//	}
-
-	// Use this for initialization
-//	void Start()
-//	{
-
-		//initialize line parameters
-		_lineLength = transform.localScale.x / 3.2f;
+        //initialize line parameters
+        _lineLength = transform.localScale.x / 3.2f;
 		startPos = transform.position;
         //should set line y distance above clock face based on size of clock
 		startPos = new Vector3(startPos.x, startPos.y + transform.lossyScale.y * 2.0f, startPos.z);
@@ -227,22 +201,20 @@ public class StealthClock : MonoBehaviour
 
 		//initialize lines for arc
 		lineSetup();
-		
-		//set red and green zones accordingly
-		setColors();
+
+        //set red and green zones accordingly
+        setZones();
+
 
 		//get reference to clockHand
 		_clockHand = GetComponentInChildren<StealthHand>().gameObject;
-		
-	}
+        
+    }
 
-	// Update is called once per frame
-	void Update()
+    // Update is called once per frame
+    void Update()
 	{
-
-		//check to see if player is found
-		hideCheck();
-
+        
         //is button pressed
 //TESTING
         if(Input.GetKeyDown("f"))
@@ -348,9 +320,6 @@ public class StealthClock : MonoBehaviour
 			else if(_currentFail >= _maxFail)
 			{
 
-                //alert enemies to player position
-                alertEnemies();
-
                 //deactivate lines
                 deactivateLines();
 
@@ -362,9 +331,17 @@ public class StealthClock : MonoBehaviour
 
 			}
 
-		}
+//TESTING
+            Debug.Log("player", "StealthClock._maxSuccess: " + _maxSuccess);
+            Debug.Log("player", "StealthClock._maxFail: " + _maxFail);
+//END TESTING
 
-	}
+        }
+        //TESTING
+        Debug.Log("player", "Update(): completed");
+//END TESTING
+
+    }
 
     /*!
         \brief Creates a line renderer for each object in the lines array.
@@ -424,8 +401,10 @@ public class StealthClock : MonoBehaviour
 			lRend.SetPosition(1, linePos);
 			
 		}
-		
-	}
+//TESTING
+        Debug.Log("player", "StealthClock.lineSetup(): completed");
+//END TESTING
+    }
 
 
     /*! \brief Sets proper difficulty level based on enemies and resets the red and green zones.
@@ -434,15 +413,18 @@ public class StealthClock : MonoBehaviour
 
         \return void
     */
-	void setZones()
+    void setZones()
 	{
 
 		setDifficulty();
 		setColors();
+//TESTING
+        Debug.Log("player", "StealthClock.setZones(): completed");
+//END TESTING
 
-	}
+    }
 
-	/*! \brief  Sets the minigame difficulty.
+    /*! \brief  Sets the minigame difficulty.
     
         Sets the location and size of green area, successes needed to win, fails allowed
         before losing, and speed of clock hand based on the number of guards presently
@@ -452,7 +434,7 @@ public class StealthClock : MonoBehaviour
 
         \return void
     */
-	void setDifficulty()
+    void setDifficulty()
 	{
         
 		//choose random angle to start the green zone
@@ -521,7 +503,8 @@ public class StealthClock : MonoBehaviour
 	    \brief Sets the colors for each line renderer that make up the red and green zones.
 	    
         Cycles through each object in the lines array and sets its line renderer to the proper
-        color based on _startDegree and _endDegree
+        color based on _startDegree and _endDegree. Currently red lines are appearing yellow
+        in the Unity editor for some reason.
 
         \return void
     */
@@ -548,14 +531,16 @@ public class StealthClock : MonoBehaviour
 				if((_startDegree <= i) && (i <= _endDegree))
 				{
 
+                    //set to green
 					lRend.SetColors(colorG, colorG);
 				}
 				else
 				{
 
+                    //set to red
 					lRend.SetColors(colorR, colorR);
 
-				}
+                }
 
 			}
 			else
@@ -563,20 +548,24 @@ public class StealthClock : MonoBehaviour
 				if((_startDegree <= i) || (i <= _endDegree))
 				{
 
-					lRend.SetColors(colorR, colorG);
+                    //set to green
+					lRend.SetColors(colorG, colorG);
 
 				}
 				else
 				{
 
-					lRend.SetColors(Color.clear, colorR);
+                    //set to red
+					lRend.SetColors(colorR, colorR);
 
-				}
+                }
 
 			}
 
 		}
-
+//TESTING
+        Debug.Log("player", "StealthClock.setColors(): completed");
+//END TESTING
 	}
 
     /*!
@@ -601,58 +590,7 @@ public class StealthClock : MonoBehaviour
         }
 
     }
-
-	/*!
-		\brief Checks the aiManager to see if the player is hidden from enemies.
-		
-		Ends the minigame if the player is not in a hiding spot or if an AI known to the AIManager has found the player.
-		
-		\return void
-	*/
-	void hideCheck()
-	{
-
-        //check for player being in a hiding spot
-        if(!QK_Character_Movement.Instance.isHidden)
-        {
-            endGame("StealthClock.hideCheck(): Player not hidden.");
-        }
-//TESTING
-        Debug.Log("player", "got here");
-//END TESTING
-        //if the player is found/not hidden
-        if (aiMan.checkChasing() > 0)
-		{
-//TESTING
-            Debug.Log("player", "got here");
-//END TESTING
-            //deactivate the miniGame
-            endGame("StealthClock.hideCheck(): Player discovered by AI.");
-			
-		}
-		else
-		{
-//TESTING
-            Debug.Log("player", "got here");
-//END TESTING
-            //check for at least one enemy looking for player
-            for (int i = 0; i < aiMan.AiChildren.Length; i++)
-			{
-
-				//if searching for player
-				if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer")
-				{
-
-                    endGame("StealthClock.hideCheck(): player found by AI.");
-
-				}
-				
-			}
-
-		}
-
-	}
-
+    
     /*!
         \brief Deactivates the minigame.
 
@@ -698,19 +636,63 @@ public class StealthClock : MonoBehaviour
     void alertEnemies()
     {
 
-        if (aiMan.AiChildren != null)
-        {
-
-            for (int i = 0; i < aiMan.AiChildren.Length; i++)
-            {
-
-                //set AI to chase state
-                aiMan.AiChildren[i].GetComponent<IEnemyState>().ToChaseState();
-
-            }
-
-        }
+        aiMan.resumeChase();
 
     }
 
 }
+
+/*!
+    \brief Checks the aiManager to see if the player is hidden from enemies.
+
+    Ends the minigame if the player is not in a hiding spot or if an AI known to the AIManager has found the player.
+
+    \return void
+*/
+/*	void hideCheck()
+	{
+
+        //check for player being in a hiding spot
+        if(!QK_Character_Movement.Instance.isHidden)
+        {
+            endGame("StealthClock.hideCheck(): Player not hidden.");
+        }
+//TESTING
+        Debug.Log("player", "StealthClock.hideCheck: player is hidden");
+//END TESTING
+        //if the player is found/not hidden
+        if (aiMan.checkChasing() > 0)
+		{
+//TESTING
+            Debug.Log("player", "StealthClock.hideCheck(): at least one chasing");
+//END TESTING
+            //deactivate the miniGame
+            endGame("StealthClock.hideCheck(): Player discovered by AI.");
+			
+		}
+		else
+		{
+//TESTING
+            Debug.Log("player", "StealthClock.hideCheck(): player hidden, no chasing");
+//END TESTING
+            //check for at least one enemy looking for player
+            for (int i = 0; i < aiMan.AiChildren.Length; i++)
+			{
+
+				//if searching for player
+				if(aiMan.AiChildren[i].GetComponent<StatePatternEnemy>().currentState.ToString() == "ChasingPlayer")
+				{
+
+                    endGame("StealthClock.hideCheck(): player found by AI.");
+
+				}
+				
+			}
+
+        }
+//TESTING
+        Debug.Log("player", "StealthClock.hideCheck(): completed");
+//END TESTING
+
+    }
+*/
