@@ -194,7 +194,7 @@ public class StealthClock : MonoBehaviour
         //should set line y distance above clock face based on size of clock
 		startPos = new Vector3(startPos.x, startPos.y + transform.lossyScale.y * 2.0f, startPos.z);
 		_startWidth = 0f;
-		_endWidth = transform.localScale.x * Mathf.PI / 360f;
+		_endWidth = 0.63f * transform.localScale.x * Mathf.PI / 360f;
 
 		//array of empty gameobjects to hold a single line renderer each
 		lines = new GameObject[_degrees];
@@ -215,10 +215,10 @@ public class StealthClock : MonoBehaviour
     void Update()
 	{
         
-        //is button pressed
+        //is button pressed while game is not paused
 //TESTING
-        if(Input.GetKeyDown("f"))
-//        if(InputManager.input.isActionPressed())
+        if(Input.GetKeyDown("f") && !GameHUD.Instance.pauseMenu.activeInHierarchy)
+//        if(InputManager.input.isActionPressed() && !GameHUD.Instance.pauseMenu.activeInHierarchy)
 //END TESTING
 		{
 
@@ -475,23 +475,17 @@ public class StealthClock : MonoBehaviour
 		end = randomStart + range;
 
 		//check for upper bound
-		while(end > 360)
+		end %= _degrees;
+
+		//check for same start and end degrees
+		if(randomStart == end)
 		{
 
-			//move end within bounds
-			end = end - 360;
-
-			//check for same start and end degrees
-			if(randomStart == end)
-			{
-
-				//just set to an easy range
-				_startDegree = 0;
-				end = _startDegree + 45;
+			//just set to an easy range
+			_startDegree = 0;
+			end = _startDegree + 45;
 				
-				Debug.Log("player", "StealthClock.getEndDegree: start == end.");
-
-			}
+			Debug.Log("player", "StealthClock.getEndDegree: start == end.");
 
 		}
 		

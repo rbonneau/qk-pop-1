@@ -144,8 +144,8 @@ public class StealthGameManager : MonoBehaviour
             resumeMovement();
 
         }
-		//if button pressed and player is being searched for and in a hiding spot - NEED CHECK FOR GAME !PAUSED
-        else if(!clock.isActiveAndEnabled && Input.GetKeyDown("f") && (aiMan.numberChasing > 0) && QK_Character_Movement.Instance.isHidden)
+		//if button pressed and player is being searched for and in a hiding spot, and the game is not paused
+        else if(!clock.isActiveAndEnabled && Input.GetKeyDown("f") && (aiMan.numberChasing > 0) && QK_Character_Movement.Instance.isHidden && !GameHUD.Instance.pauseMenu.activeInHierarchy)
         {
 
             //if mini-game isn't running
