@@ -19,7 +19,7 @@ public class StealthClock : MonoBehaviour
     Transform player;
 
     //distance from player to search for enemies
-	public float searchSize = 20f;
+//	public float searchSize = 20f;          /*!<distance from player to */
     
 	//reference to the StealthGameManager
 	private StealthGameManager stealthMan;
@@ -30,7 +30,7 @@ public class StealthClock : MonoBehaviour
 	//true if the game has been won or lost
 	private bool _gameOver;
 
-    public bool gameOver
+    public bool gameOver                    /*!<returns true if the mini-game has ended*/
     {
         get
         {
@@ -41,7 +41,7 @@ public class StealthClock : MonoBehaviour
     //true if player wins mini-game
     private bool _win;
 
-    public bool win
+    public bool win                         /*!<returns true if player wins the mini-game*/
     {
         get
         {
@@ -52,8 +52,8 @@ public class StealthClock : MonoBehaviour
     //true if player loses mini-game
     private bool _fail;
 
-	public bool fail
-	{
+	public bool fail                        /*!<returns true if player loses the mini-game*/
+    {
 		get
 		{
 			return _fail;
@@ -63,7 +63,7 @@ public class StealthClock : MonoBehaviour
 	//start of green area in degrees from x axis
 	private int _startDegree;
 
-    public float startDegree
+    public float startDegree                /*!<start degree of the green zone moving counterclockwise across clock face*/
     {
         get
         {
@@ -74,8 +74,8 @@ public class StealthClock : MonoBehaviour
     //end of green area in degrees from x axis
     private int _endDegree;
 
-	public float endDegree
-	{
+	public float endDegree                  /*!<end degree of the green zone moving counterclockwise across clock face*/
+    {
 		get
 		{
 			return _endDegree;
@@ -83,10 +83,10 @@ public class StealthClock : MonoBehaviour
 	}
 
 	//clock hand speed multiplyer, used by StealthHand object
-	public float _clockSpeed = 1f;
+	public float _clockSpeed = 1f;          /*!<clock hand speed multiplier, this should be private*/
 
-	public float clockSpeed
-	{
+    public float clockSpeed                 /*!<clock hand speed multiplier*/
+    {
 		get
 		{
 			return _clockSpeed;
@@ -108,17 +108,6 @@ public class StealthClock : MonoBehaviour
 	private float _startWidth;
 	private float _endWidth;
 
-	//number of guards near player
-/*	private int _numberOfGuards;
-
-	public int numberOfGuards
-	{
-		get
-		{
-			return _numberOfGuards;
-		}
-	}
-*/
     //reference to an empty gameObject will be the parent of the red/green lines
     private Transform lineParent;
 
@@ -128,13 +117,13 @@ public class StealthClock : MonoBehaviour
 	private int _degrees = 360;
 
 	//starting point of each line, above center of clock face
-	public Vector3 startPos;
+	public Vector3 startPos;                /*!<starting point of each line, should be the center of the clock face*/
 
-	//array of empty objects to hold line renderers, one object/line for each degree
-	public GameObject[] lines;
-	
+    //array of empty objects to hold line renderers, one object/line for each degree
+    public GameObject[] lines;              /*!<array of empty objects to hold line renderers, one object/line for each degree*/
+
     //hand of clock, child of this gameObject
-	private GameObject _clockHand;
+    private GameObject _clockHand;
 
 	void Awake()
 	{

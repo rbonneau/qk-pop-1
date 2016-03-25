@@ -5,16 +5,17 @@ using Debug = FFP.Debug;
 public class StealthGameManager : MonoBehaviour
 {
 
-	/*!
+    /*!
 		\file StealthGameManager.cs
-		\brief This class attaches to an empty gameObject that is the parent of the mini-game objects
+		\brief This class manages the stealth mini-game gameObjects.
 
-		This class manages the stealth mini-game gameObjects. It monitors game conditions and activates
-		and deactivates the mini-game components accordingly.
+		StealthGameManger should be attached to an empty gameObject that is the parent of the mini-game objects.
+        It monitors game conditions and activates and deactivates the mini-game components accordingly. This class
+        is a singleton.
 	*/
 
-	//singleton instance
-	private static StealthGameManager instance;
+    //singleton instance
+    private static StealthGameManager instance;
 
 	//make this a singleton
 	public static StealthGameManager Instance
@@ -35,41 +36,39 @@ public class StealthGameManager : MonoBehaviour
     Transform player;
 
     //maximum number of guards for difficulty level
-    public int easyGuards = 2;
-    public int mediumGuards = 4;
-    public int hardGuards = 10;
+    public int easyGuards = 2;      /*!<max number of guards searching for player for the mini-game to be easy difficulty*/
+    public int mediumGuards = 4;    /*!<max number of guards searching for player for the mini-game to be medium difficulty*/
+    public int hardGuards = 10;     /*!<max number of guards searching for player for the mini-game to be hard difficulty*/
 
     //size of green area in degrees
-    public int easySize = 45;
-    public int mediumSize = 30;
-    public int hardSize = 20;
-    public int hellSize = 10;
+    public int easySize = 45;       /*!<size of green area for easy difficulty*/
+    public int mediumSize = 30;     /*!<size of green area for medium difficulty*/
+    public int hardSize = 20;       /*!<size of green area for hard difficulty*/
+    public int hellSize = 10;       /*!<size of green area for hell difficulty*/
 
     //number of successes necessary for a win
-    public int easySuccess = 3;
-    public int mediumSuccess = 3;
-    public int hardSuccess = 3;
-    public int hellSuccess = 3;
+    public int easySuccess = 3;     /*!<number of successes necessary for a win with easy difficulty*/
+    public int mediumSuccess = 3;   /*!<number of successes necessary for a win with medium difficulty*/
+    public int hardSuccess = 3;     /*!<number of successes necessary for a win with hard difficulty*/
+    public int hellSuccess = 3;     /*!<number of successes necessary for a win with hell difficulty*/
 
     //number of failures necessary for a loss
-    public int easyFail = 1;
-    public int mediumFail = 1;
-    public int hardFail = 1;
-    public int hellFail = 1;
+    public int easyFail = 1;        /*!<number of failures necessary for a loss with easy difficulty*/
+    public int mediumFail = 1;      /*!<number of failures necessary for a loss with medium difficulty*/
+    public int hardFail = 1;        /*!<number of failures necessary for a loss with hard difficulty*/
+    public int hellFail = 1;        /*!<number of failures necessary for a loss with hell difficulty*/
 
     //speed of clock hand in rpms
-    public int easySpeed = 20;
-    public int mediumSpeed = 20;
-    public int hardSpeed = 20;
-    public int hellSpeed = 40;
+    public int easySpeed = 20;      /*!<speed of clock hand in rpms with easy difficulty*/
+    public int mediumSpeed = 20;    /*!<speed of clock hand in rpms with medium difficulty*/
+    public int hardSpeed = 20;      /*!<speed of clock hand in rpms with hard difficulty*/
+    public int hellSpeed = 40;      /*!<speed of clock hand in rpms with hell difficulty*/
 
     //settings that the mini-game will use
-    public int areaSize;
-    public int maxSuccesses;
-    public int fails;
-    public int handSpeed;
-
-    private int _numberOfGuards;
+    public int areaSize;            /*!<current size of green area in degrees that will be used by the mini-game*/
+    public int maxSuccesses;        /*!<current number of successes necessary to win the mini-game*/
+    public int fails;               /*!<current number of fails necessary to win the mini-game*/
+    public int handSpeed;           /*!<current speed of the mini-game clock hand*/
 
     // Use this for initialization
     void Start()
@@ -93,6 +92,7 @@ public class StealthGameManager : MonoBehaviour
 
         }
 
+        //check for clock existence
         if(clock == null)
         {
             Debug.Log("player", "clock = null");
@@ -222,13 +222,16 @@ public class StealthGameManager : MonoBehaviour
 
         \return bool, true if difficulty was successfully chosen, false otherwise
     */
-    bool chooseDifficulty()
+    private bool chooseDifficulty()
     {
 //TESTING
         Debug.Log("player", "StealthGameManager.chooseDifficulty: started");
 //END TESTING
         //current count of guards searching for player
         //        int tempGuards = 0;
+
+        //number of suspicious guards
+        int _numberOfGuards;
 
         //check for existence of enemies
         if(aiMan.AiChildren == null)
