@@ -74,14 +74,14 @@ public class PopEvent : MonoBehaviour {
 
     void OnTriggerEnter(Collider other) {
         if (isActive == false) { return; }
-        if (other.gameObject.GetComponent<QK_Controller>())
+        if (other.gameObject.GetComponent<QK_Character_Movement>())
         {
             EventListener.SlowUpdate(this);
         }
     }
     void OnTriggerExit(Collider other) {
         if (isActive == false) { return; }
-		if (other.gameObject.GetComponent<QK_Controller>())
+		if (other.gameObject.GetComponent<QK_Character_Movement>())
         {
             EventListener.SlowUpdate(this);
         }
