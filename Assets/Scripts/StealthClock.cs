@@ -171,9 +171,11 @@ public class StealthClock : MonoBehaviour
 	void OnEnable()
 	{
         
+        //initialize win/loss flags
         _gameOver = false;
 		_win = false;
 		_fail = false;
+        //set current game stats to zero
 		_currentSuccess = 0;
 		_currentFail = 0;
 
@@ -349,6 +351,7 @@ public class StealthClock : MonoBehaviour
 		for(int i = 0; i < lines.Length; i++)
 		{
 
+            //x and z coordinates for line ends
 			float lineX;
 			float lineZ;
 			Vector3 linePos;
@@ -450,6 +453,7 @@ public class StealthClock : MonoBehaviour
     int getEndDegree(int randomStart, int range)
 	{
 
+        //the last degree that will be green, this will be returned
 		int end;
 
 		//check for range
@@ -614,13 +618,6 @@ public class StealthClock : MonoBehaviour
         //deactivate miniGame gameObject
 		endGame();
         
-    }
-
-    void alertEnemies()
-    {
-
-        aiMan.resumeChase();
-
     }
 
 }

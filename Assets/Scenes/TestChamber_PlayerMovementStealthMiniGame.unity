@@ -16233,11 +16233,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 484826, guid: a9145e7631806de43b0a1647d560065e, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -38.3300018
+      value: -54.7900009
       objectReference: {fileID: 0}
     - target: {fileID: 484826, guid: a9145e7631806de43b0a1647d560065e, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1.42999995
+      value: -2.79999995
       objectReference: {fileID: 0}
     - target: {fileID: 484826, guid: a9145e7631806de43b0a1647d560065e, type: 2}
       propertyPath: m_LocalPosition.z
@@ -16269,7 +16269,7 @@ Prefab:
       objectReference: {fileID: 1070648001}
     - target: {fileID: 11469288, guid: a9145e7631806de43b0a1647d560065e, type: 2}
       propertyPath: isHidden
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a9145e7631806de43b0a1647d560065e, type: 2}
@@ -16654,10 +16654,9 @@ MonoBehaviour:
   player: {fileID: 0}
   Pathways:
   - {fileID: 1889828677}
-  - {fileID: 429670659}
-  PathType: 0100000000000000
-  nofLoops: 0100000001000000
-  infinite: 0100
+  PathType: 01000000
+  nofLoops: 01000000
+  infinite: 01
   LoopCount: 1
   BacknForth: 0
   back: 0
