@@ -11,21 +11,33 @@ public struct AI_Data
 	private List<GameObject> paths;
     public float sightRange_;
     public float sightAngle_;
+    public float suspiciousCheckRange_;
+    public float patrolSpeed_;
+    public float chaseSpeed_;
 
 
     public AI_Data(
         float SightRange,
-        float SightAngle)
+        float SightAngle,
+        float SuspiciousCheckRange,
+        float PatrolSpeed,
+        float ChaseSpeed)
 	{
 		paths = new List<GameObject> ();
         sightRange_ = SightRange;
         sightAngle_ = SightAngle;
+        suspiciousCheckRange_ = SuspiciousCheckRange;
+        patrolSpeed_ = PatrolSpeed;
+        chaseSpeed_ = ChaseSpeed;
 	}
 
 	public void loadData(StatePatternEnemy target)
 	{
         target.sightRange = sightRange_;
         target.sightAngle = sightAngle_;
+        target.suspiciousCheckRange = suspiciousCheckRange_;
+        target.patrolSpeed = patrolSpeed_;
+        target.chaseSpeed = chaseSpeed_;
 	}
 }
 
@@ -38,9 +50,9 @@ public class AIEditor : Editor {
 	string[] path_types = new string[]{"one way", "loop around", "back and forth", "On Guard"};
 
 	AI_Data[] ai_data = new AI_Data[]{
-		new AI_Data(40f, 20f),
-		new AI_Data(40f, 20f),
-		new AI_Data(40f, 20f)};
+		new AI_Data(40f, 20f, 10f, 5f, 10f),
+		new AI_Data(40f, 20f, 10f, 5f, 10f),
+		new AI_Data(40f, 20f, 10f,5f, 10f)};
 
 	int ai_types_index = 0;
 	int current_selection = 0;
@@ -108,6 +120,9 @@ public class AIEditor : Editor {
 		{
             ai_target.sightRange = EditorGUILayout.FloatField("Sight Range:", ai_target.sightRange);
             ai_target.sightAngle = EditorGUILayout.FloatField("Sight Angle:", ai_target.sightAngle);
+            ai_target.suspiciousCheckRange = EditorGUILayout.FloatField("Suspicious Check Range:", ai_target.suspiciousCheckRange);
+            ai_target.patrolSpeed = EditorGUILayout.FloatField("Patrol Speed:", ai_target.patrolSpeed);
+            ai_target.chaseSpeed = EditorGUILayout.FloatField("Chase Speed:", ai_target.chaseSpeed);
 
         }
         EditorGUILayout.EndFadeGroup();

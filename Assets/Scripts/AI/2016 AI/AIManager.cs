@@ -11,9 +11,7 @@ public class AIManager : MonoBehaviour {
     public GameObject[] AiChildren;
     public bool playerHidden;
     public int numberChasing;
-//<<<<<<< HEAD:Assets/Scripts/AI/2016 AI/AIManager.cs
     public GameObject alertScript;
-//=======
 
     private static AIManager _instance;
     public static AIManager instance
@@ -29,12 +27,17 @@ public class AIManager : MonoBehaviour {
         }
     }
 
-//>>>>>>> ab4d637cfa6d1913cec8f6b825e8eb4036a272a7:Assets/Scripts/AI/AIManager.cs
     private AIManager() { }
 
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        //for each object with the StatePatternEnemy script and that is not a child of this object, add as a child to this object
+        StatePatternEnemy[] notChildren = FindObjectsOfType(typeof(StatePatternEnemy)) as StatePatternEnemy[];
+        foreach(StatePatternEnemy ai in notChildren)
+        {
+            ai.transform.parent = this.gameObject.transform;
+        }
     }
 
 
