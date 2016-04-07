@@ -11,30 +11,47 @@ using Debug = FFP.Debug;
  */
 [EventVisible("UI")]
 public class GameHUD : MonoBehaviour {
-	#region singletonEnforcement
-	private static GameHUD instance;
-	public static GameHUD Instance {
-		get {
-			return instance;
-		}
-		private set { }
-	}
-	#endregion
+    #region Singleton Enforcement
+    private static GameHUD instance;
+    public static GameHUD Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = GameObject.FindObjectOfType<GameHUD>();
+            }
+            return instance;
+        }
+    }
+    #endregion
 
 #pragma warning disable 0219
 #pragma warning disable 0414
     GameObject UIhud;
-	GameObject mainHUDCanvas;				//!<The canvas HUD is rendered on
-	GameObject worldMapCanvas;				//!<All the game map elements
+    GameObject mainHUDCanvas;               //!<The canvas HUD is rendered on
+    GameObject worldMapCanvas;              //!<All the game map elements
 	GameObject gameMap;						//!<The map iamge on a plane
-	GameObject player;						//!<reference to player
-	public GameObject pauseMenu;
+    GameObject player;                      //!<reference to player
+    public GameObject pauseMenu;
 
-	public PauseMenu accessManager;
+    public PauseMenu accessManager;
     public MainMenuManager menuManager;
+    public bool showMinimap = true;
+    public RenderTexture MiniMapRenderTexture;
+    public Material MiniMapMaterial;
+    public float minimapXOffset;
+    public float minimapYOffset;
+    public Sprite[] targetableIcons;
+    public Sprite enemyIcon;
+
+    //public GameObject closestTargetIconPrefab;
 	
-	GameObject mapCam;								//!<Camera used for minimap
+    GameObject mapCam;								//!<Camera used for minimap
+    
+
 	static GameObject objectiveText;						//!<Objective Text UI element
+    static Text QuestNotText;
 
 	GameObject[] mapLabels;							//!<Array of text taht appears on minimap
 
@@ -42,64 +59,62 @@ public class GameHUD : MonoBehaviour {
 	bool canSpin = false;
 	GameObject closeMapButton;
 	GameObject phoneButtons;
-	GameObject mapElements;
+	//GameObject mapElements;
 	GameObject compassCameraPoint;					//!<Point at camera location used to calculate objective positions
 	GameObject compass;
 	GameObject slider;
 	GameObject leftArrow;
 	GameObject rightArrow;
+	public GameObject testObjective;
 
 	GameObject testObjective;
 
-	void Awake() {
-		#region singletonEnforcement
-		if(instance == null) {
-			instance = this;
-		} else {
-			Destroy(this.gameObject);
-			Debug.Error("core", "Second GameHUD detected. Deleting gameOject.");
-			return;
-		}
-		#endregion
-
-        UIhud = GameObject.Find("_UI");
-		mainHUDCanvas = GameObject.Find("mainHUD");
-		worldMapCanvas = GameObject.Find("worldMapCanvas");
-		gameMap = GameObject.Find("mapBG");
-		player = GameObject.Find("_Player");
+    void Awake()
+    {
+        UIhud = GameObject.Find("UI");
+        mainHUDCanvas = GameObject.Find("mainHUD");
+        worldMapCanvas = GameObject.Find("worldMapCanvas");
+        //gameMap = GameObject.Find("mapBG");
+        player = GameObject.Find("_Player");
 		testObjective = GameObject.Find("TestObjective");
-        if (!pauseMenu)
+        if (!pauseMenu) {
         {
             pauseMenu = GameObject.Find("pauseMenu");
         }
-		pauseMenu.SetActive (false);
+        pauseMenu.SetActive(false);
 		
-		//!Turn on UI stuff
-		worldMapCanvas.SetActive(true);
+        //!Turn on UI stuff
+        worldMapCanvas.SetActive(true);
 
-		//!Fill mapLabels array
-		mapLabels = GameObject.FindGameObjectsWithTag("worldMapLabel");
-		closeMapButton = GameObject.Find("CloseMapButton");
-		closeMapButton.SetActive(false);
+        //!Fill mapLabels array
+        mapLabels = GameObject.FindGameObjectsWithTag("worldMapLabel");
+        closeMapButton = GameObject.Find("CloseMapButton");
+        if (closeMapButton) {
+            closeMapButton.SetActive(false);
+        }
 
 		//!Set mapcam reference
 		mapCam = GameObject.Find("mapCam");
-		//!Set compassCameraPoint reference
-		compassCameraPoint = GameObject.Find("compassCameraPoint");
-		compass = GameObject.Find("compassSlider");
-		slider = compass.transform.FindChild ("Handle Slide Area").gameObject;
-		slider.SetActive (false);
-		leftArrow = compass.transform.FindChild ("leftArrow").gameObject;
-		leftArrow.SetActive (false);
-		rightArrow = compass.transform.FindChild ("rightArrow").gameObject;
-		rightArrow.SetActive (false);
+        //!Set compassCameraPoint reference
+        compassCameraPoint = GameObject.Find("compassCameraPoint");
+        compass = GameObject.Find("compassSlider");
+        slider = compass.transform.FindChild("Handle Slide Area").gameObject;
+        //slider.SetActive (false);
+        leftArrow = compass.transform.FindChild("leftArrow").gameObject;
+        //leftArrow.SetActive (false);
+        rightArrow = compass.transform.FindChild("rightArrow").gameObject;
+        //rightArrow.SetActive (false);
 
-		//!Set objective text reference
-		objectiveText = GameObject.Find("objectiveText");
+        //!Set objective text reference
+        objectiveText = GameObject.Find("ObjectiveNotice");
+        QuestNotText = GameObject.Find("objectiveText").GetComponent<Text>();
+        Debug.Log("ui", QuestNotText.text);
+        objectiveText.SetActive(false);
 
-		phoneButtons = GameObject.Find("PhoneButtons");
-		mapElements = GameObject.Find("MapElements");
-		mapElements.SetActive(false);
+        phoneButtons = GameObject.Find("PhoneButtons");
+		//mapElements = GameObject.Find("MapElements");
+		//mapElements.SetActive(false);
+			Debug.Log ("ui", "Could not find the 'Journal' GameObject in the current Scene: " + Application.loadedLevelName);
 
 	}
 
@@ -116,10 +131,30 @@ public class GameHUD : MonoBehaviour {
 		setCompassValue(calculateObjectiveAngle(testObjective));
 	}
 
+		if (showMinimap) {
+			Graphics.DrawTexture (new Rect (minimapXOffset, Screen.height - 256 - minimapYOffset, 256, 256), MiniMapRenderTexture, MiniMapMaterial);
+		}
+	}
+
+    IEnumerator DisplayObjectiveNotification(string message)
+    {
+        objectiveText.SetActive(true);
+        QuestNotText.text = message;
+        yield return new WaitForSeconds(3);
+        CanvasGroup canvas = objectiveText.GetComponent<CanvasGroup>();
+        while (canvas.alpha > 0)
+        {
+            canvas.alpha -= 0.05f;
+            yield return new WaitForEndOfFrame();
+        }
+        canvas.alpha = 1f;
+        objectiveText.SetActive(false);
+    }
 	//!Call this to update objective tet at top of the screen
 	[EventVisible]
-	public void UpdateObjectiveText(string newObjective) {
-		objectiveText.GetComponent<Text>().text = newObjective;
+	public void UpdateObjectiveText(string newObjective)
+    {
+        StartCoroutine(DisplayObjectiveNotification(newObjective));
 	}
 
 	//!Rotates map labels so that the text is always right side up, call this from anything that rotates the camera
@@ -192,7 +227,7 @@ public class GameHUD : MonoBehaviour {
 
 
 		//!create vector3 from player to objective and normalize it
-		pointToObjective = objective.gameObject.transform.position - compassCameraPoint.transform.position;
+		pointToObjective = objective.transform.position - compassCameraPoint.transform.position;
 		pointToObjective.Normalize();
 
 		//!Set this vector to point right away from camera
@@ -215,7 +250,7 @@ public class GameHUD : MonoBehaviour {
 
 
 	//Shows map on phone and roates and resizes phone to screen
-	public void showMap() {
+	/*public void showMap() {
 		phoneButtons.SetActive(false);
 		mapElements.SetActive(true);
 		closeMapButton.SetActive(true);
@@ -230,7 +265,7 @@ public class GameHUD : MonoBehaviour {
 		GameObject.Find("PhoneMenu").GetComponent<Animator>().SetBool("mapActive", false);
 
 	}
-
+	*/
 	public void ChangeInputToUI(bool change = true) {/*
 		if(change)
 		InputManager.instance.ChangeInputType("UIInputType");
@@ -280,4 +315,10 @@ public class GameHUD : MonoBehaviour {
     {
         menuManager.GoToOptions();
     }
+		showMinimap = false;
+		showMinimap = true;
+        
+		/*
+        if(targetObject.GetComponent<Enemy>()){
+        */
 }

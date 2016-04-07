@@ -12,20 +12,11 @@ public sealed class MasterSceneManager : MonoBehaviour {
 
 	#region singletonEnforcement
 	private static MasterSceneManager instance;
-	public static MasterSceneManager Instance {
-		get {
-			return instance;
-		}
-		private set { }
-	}
-
-	void Awake(){
-		if (instance == null){
-			instance = this;
-		}else {
-			Destroy(this.gameObject);
-			Debug.Error("core", "Second MasterSceneManager detected. Deleting gameOject.");
-			return;
+	public static MasterSceneManager Instance
+    {
+		get 
+        {
+			return instance ?? (instance = GameObject.FindObjectOfType<MasterSceneManager>());
 		}
 	}
 	#endregion

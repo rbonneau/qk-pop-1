@@ -1,9 +1,9 @@
 {
 	"1":
 		[
-			"Got out of graveyard, go Home",
+			"Head to the market",
 			"Gavyn needs to exit the graveyard",
-			"Interact with items to exit graveyard",
+			"Interact with items to exit graveyard and make your way to the market.",
 			[ 
 				
 				{
@@ -13,12 +13,12 @@
 		],
 	"2":	
 		[
-			"Go to market instead",
-			"Gavyn gets a message from QuInC and needs to go to the market before home and talk to the marketer, then go home",
-			"Go to market then go home",
+			"Collect Posters",
+			"Collect all the wanted posters",
+			"There seem to be some wanted posters with familiar faces lying around here. See how many you can find.",
 			[
 				{
-				"Goal1" : 2
+				"Posters Found" : 15
 				}
 			]
 		],
