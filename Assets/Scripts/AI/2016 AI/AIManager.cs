@@ -32,6 +32,12 @@ public class AIManager : MonoBehaviour {
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        //for each object with the StatePatternEnemy script and that is not a child of this object, add as a child to this object
+        StatePatternEnemy[] notChildren = FindObjectsOfType(typeof(StatePatternEnemy)) as StatePatternEnemy[];
+        foreach(StatePatternEnemy ai in notChildren)
+        {
+            ai.transform.parent = this.gameObject.transform;
+        }
     }
 
 
