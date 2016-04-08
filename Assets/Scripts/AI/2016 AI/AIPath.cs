@@ -97,7 +97,79 @@ public class AIPath : MonoBehaviour {
         return search;
     }
 
-	void OnDrawGizmosSelected()
+    public List<float> getMinAngle()
+    {
+        List<float> minAngle = new List<float>();
+        foreach (GameObject minA in checkpoints)
+        {
+            if (minA == null)
+            {
+                checkpoints.Remove(minA);
+            }
+            else
+            {
+                Checkpoint data = minA.GetComponent<Checkpoint>();
+                minAngle.Add(data.getMinAngle());
+            }
+        }
+        return minAngle;
+    }
+
+    public List<float> getMaxAngle()
+    {
+        List<float> maxAngle = new List<float>();
+        foreach (GameObject maxA in checkpoints)
+        {
+            if (maxA == null)
+            {
+                checkpoints.Remove(maxA);
+            }
+            else
+            {
+                Checkpoint data = maxA.GetComponent<Checkpoint>();
+                maxAngle.Add(data.getMaxAngle());
+            }
+        }
+        return maxAngle;
+    }
+
+    public List<float> getTurnSpeed()
+    {
+        List<float> turnSpeed = new List<float>();
+        foreach (GameObject ts in checkpoints)
+        {
+            if (ts == null)
+            {
+                checkpoints.Remove(ts);
+            }
+            else
+            {
+                Checkpoint data = ts.GetComponent<Checkpoint>();
+                turnSpeed.Add(data.getTurnSpeed());
+            }
+        }
+        return turnSpeed;
+    }
+
+    public List<int> getLoopCount()
+    {
+        List<int> loopCount = new List<int>();
+        foreach (GameObject lc in checkpoints)
+        {
+            if (lc == null)
+            {
+                checkpoints.Remove(lc);
+            }
+            else
+            {
+                Checkpoint data = lc.GetComponent<Checkpoint>();
+                loopCount.Add(data.getLoopCount());
+            }
+        }
+        return loopCount;
+    }
+
+    void OnDrawGizmosSelected()
 	{
 		List<Vector3> points = getPoints();
 		int length = points.Count;

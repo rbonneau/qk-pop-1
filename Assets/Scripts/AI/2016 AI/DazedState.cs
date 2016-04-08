@@ -27,7 +27,7 @@ public class DazedState : IEnemyState
     {
         enemy.currentState = enemy.patrolState;
         dazeTimer = 0f;
-        enemy.moveSpeed = 5f;
+        enemy.moveSpeed = enemy.patrolSpeed;
     }
 
     public void ToChaseState()
@@ -66,6 +66,11 @@ public class DazedState : IEnemyState
     }
 
     public void ToWalkState()
+    {
+
+    }
+
+    public void ToPointSearchState(float minAngle, float maxAngle, float turnSpeed, int searchCount)
     {
 
     }

@@ -53,7 +53,7 @@ public class ChaseState : IEnemyState
     {
         enemy.currentState = enemy.searchingState;
         chaseTimer = 0f;
-        enemy.moveSpeed = 5f;
+        enemy.moveSpeed = enemy.patrolSpeed;
     }
 
     public void ToSuspiciousState()
@@ -68,6 +68,11 @@ public class ChaseState : IEnemyState
 
     public void ToWalkState()
     { 
+
+    }
+
+    public void ToPointSearchState(float minAngle, float maxAngle, float turnSpeed, int searchCount)
+    {
 
     }
 
