@@ -17,16 +17,19 @@ public class AbilityDockController : MonoBehaviour {
 	bool rotating;
 	bool opening;
 	bool closing;
+    bool closed;
 	bool canGetInput;
 	Vector3[] targetPos = new Vector3[5];
 
     float wheelDelay = 0;
+    float selectSkillTimer = 0f;
 
 	void Start () {
 		canGetInput = true;
 		opening = false;
 		rotating = false;
 		closing = false;
+        closed = true;
 		selectionBeam.rectTransform.sizeDelta = new Vector2 (0, 0);
 		selectionBeam.transform.position = new Vector3 (selectionBeam.transform.position.x, 55, 0);
 		position = new int[abilities.Length];
@@ -36,7 +39,7 @@ public class AbilityDockController : MonoBehaviour {
 		}
 		hideIcons ();
 		xPosition = abilities [0].transform.position.x;
-
+        highligtedIcon.gameObject.SetActive(false);
 		setSelectedAbility (1); 								//Sets the default ability to "Push"
 
 		abilities[selectedAbility].transform.SetAsLastSibling();
@@ -44,7 +47,7 @@ public class AbilityDockController : MonoBehaviour {
 	
 	void Update () {
 
-		if (Input.GetKeyDown (KeyCode.Tab)) {					//Open ability dock
+		/*if (Input.GetKeyDown (KeyCode.Tab)) {					//Open ability dock
 			targetPosition();
 			opening = true;
 			closing = false;
@@ -70,34 +73,51 @@ public class AbilityDockController : MonoBehaviour {
 			selectedAbility = position [2];
 			abilities[selectedAbility].transform.SetAsLastSibling();
 			startLerping();
-		}
+		}*/
 
-        if (wheelDelay <= 0)
+        if (InputManager.input.ScrollTarget() != 0)
         {
-            if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
+            if (closed)
             {
-                if (selectedAbility <= 0)
-                {
-                    selectedAbility = abilities.Length;
-                }
-                setSelectedAbility(selectedAbility - 1);
-                wheelDelay = 0.25f;
+                targetPosition();
+                opening = true;
+                closing = false;
+                showIcons();
+                startLerping();
+                closed = false;
+                highligtedIcon.gameObject.SetActive(true);
+                selectSkillTimer = 2f;
             }
-            else if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
+            else if(wheelDelay <= 0)
             {
-                if (selectedAbility >= abilities.Length - 1)
-                {
-                    selectedAbility = -1;
-                }
-                setSelectedAbility(selectedAbility + 1);
+                if(InputManager.input.ScrollTarget() < 0) { newPos(false); }
+                else if(InputManager.input.ScrollTarget() > 0) { newPos(true); }
+                rotating = true;
+                startLerping();
                 wheelDelay = 0.25f;
+                selectSkillTimer = 2f;
             }
+        }
+        else if (selectSkillTimer > 0f)
+        {
+            selectSkillTimer -= Time.deltaTime;
         }
         else
         {
+            highligtedIcon.gameObject.SetActive(false);
+            closedPosition();
+            closing = true;
+            opening = false;
+            closed = true;
+            selectedAbility = position[2];
+            abilities[selectedAbility].transform.SetAsLastSibling();
+            startLerping();
+        }
+         
+        if(wheelDelay > 0f)
+        {
             wheelDelay -= Time.deltaTime;
         }
-
     }
 
 	void FixedUpdate(){
@@ -128,10 +148,11 @@ public class AbilityDockController : MonoBehaviour {
 				}
 				canGetInput = true;
 			}
-			if(percentageComplete >= 1f){
-				rotating = false;
-				opening = false;
-				closing = false;
+			if(percentageComplete >= 1f)
+            {
+                rotating = false;
+                opening = false;
+                closing = false;
 			}
 		}
 	}

@@ -6,7 +6,7 @@ using System;
 
 public class Quest {
 
-	const string questListFilePath = "/Resources/questList.json";
+	const string questListFilePath = "questList";
 
 	int iden;
 	string name;
@@ -121,15 +121,22 @@ public class Quest {
 		return null;
 	}
 
-	private JSONNode RetrieveQuestsFromJSON() {
-
-		if(!System.IO.File.Exists(Application.dataPath + "/Resources/questList.json"))
+	private JSONNode RetrieveQuestsFromJSON()
+    {
+		/*if(!System.IO.File.Exists(Application.dataPath + "/Resources/questList.json"))
 		{
 			Debug.LogError ("Could not find Quest List JSON file");
 			return null;
-		}
+		}*/
 
-		string jsonRead = System.IO.File.ReadAllText(Application.dataPath + "/Resources/questList.json");
+        TextAsset json = Resources.Load<TextAsset>(questListFilePath);
+
+        if(json == null)
+        {
+            Debug.LogError("QuestList not loaded from JSON");
+        }
+
+		string jsonRead = json.text;
 		JSONNode jsonParsed = JSON.Parse (jsonRead);
 
 		return jsonParsed;

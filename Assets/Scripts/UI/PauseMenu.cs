@@ -1,8 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PauseMenu : MonoBehaviour {
-	private bool isPaused = false;
+public class PauseMenu : MonoBehaviour
+{
+
+    #region Singleton
+    private static PauseMenu _instance;
+    public static PauseMenu Instance
+    {
+        get
+        {
+            if(_instance == null)
+            {
+                _instance = GameObject.FindObjectOfType<PauseMenu>();
+            }
+            return _instance;
+        }
+    }
+    #endregion
+
+    private bool isPaused = false;
+
+	public bool isOnPauseMenu = false;
 	public GameHUD GHud;
     public MainMenuManager Options;
     public float speed = 2.0f;
@@ -41,13 +60,6 @@ public class PauseMenu : MonoBehaviour {
 				unPauseGame();	
 			}
 		}
-
-        if (InputManager.input.isActionPressed()) {
-
-            Debug.Log("Pressing down");
-            
-       }
-
 	}
 
 

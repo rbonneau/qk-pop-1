@@ -62,13 +62,21 @@ public sealed class PoPCamera : Camera_2
 	public int NoOcclusionLM = 1;
 	///@}
 
-	private bool occluded = false;						//!< Used to check if camera is compensating for occlusion
-	[ReadOnly] public float targetingRange = 40f;		//!< Range allowed to target objects
-	[ReadOnly] public float screenTargetArea = 20f;		//!< Area of screen object can be targeted
-	[HideInInspector] public int targetindex = 0;	    //!< Index in list of target objects to look at
-    private float targetResetTimer = 0f;				//!< Timeframe camera resets after losing track of target
+	private bool occluded = false;						                //!< Used to check if camera is compensating for occlusion
+	[ReadOnly] public float targetingRange = 20f;		                //!< Range allowed to target objects
+	[ReadOnly] public float screenTargetArea = 20f;		                //!< Area of screen object can be targeted
+	[HideInInspector] public int targetindex = 0;	                    //!< Index in list of target objects to look at
+    private float targetResetTimer = 0f;		                        //!< Timeframe camera resets after losing track of target
+    private float resettingTimer = 0f;                                  //!< Temp fix for camera getting stuck in target reset
 	private List<GameObject> targetedObjects = new List<GameObject>();	//!< List of objects player is targeting
 	private List<GameObject> allTargetables = new List<GameObject>();	//!< Master List of all available targets in scene
+    private Shader targetOutline;
+    private Dictionary<string, Color> outlineColors = new Dictionary<string, Color>
+    {
+        { "default", new Color(0, 255, 253) },
+        { "enemy", new Color(255, 0, 0) },
+        { "push", new Color(255, 20, 0) }
+    };
 
 	void Awake()
 	{
@@ -88,10 +96,14 @@ public sealed class PoPCamera : Camera_2
 				Debug.Error ("camera","Cannot find this.target. Please connect the GameObject to the component using the inspector.");
 				target = transform;
 			}
-			if(!gameObject.GetComponent<CheckTargets>()) {
-				Debug.Warning("camera", "\"CheckTargets\" object not on Camera. Targeting is not enabled");
-			}
 		}
+
+        targetOutline = Resources.Load<Shader>("TargetOutline");
+        if(targetOutline == null)
+        {
+            Debug.Log("ui", "Could not find targetOutline shader");
+            targetOutline = Shader.Find("Standard");
+        }
 
 		Go.defaultUpdateType = GoUpdateType.FixedUpdate;
 		distance = Mathf.Clamp(distance, distanceMin, distanceMax);
@@ -193,6 +205,7 @@ public sealed class PoPCamera : Camera_2
 
             /*** Target Lock Behavior ***/
             case CameraState.TargetLock:
+                resettingTimer = 2f;
                 if (targetedObjects.Count == 0f)
                 {
 					// Attempt to get targets, if no targets found break out
@@ -240,10 +253,11 @@ public sealed class PoPCamera : Camera_2
 				CalculateDesiredPosition();
 				UpdatePosition();
 				Quaternion rotation = Quaternion.LookRotation(targetLookAt - transform.position);
-				if (transform.rotation == rotation)
+				if (transform.rotation == rotation || resettingTimer <= 0f)
 				{
 					_curState = CameraState.Normal;
 				}
+                resettingTimer -= Time.deltaTime;
 				break;
 			/***********************/
 
@@ -339,22 +353,36 @@ public sealed class PoPCamera : Camera_2
 		List<GameObject> targets = new List<GameObject>();
 
 		foreach(GameObject go in PoPCamera.instance.allTargetables) {
-			if(go.GetComponent<Targetable>().isTargetable) {
-				if(Vector3.Angle(_instance.transform.forward, go.transform.position - _instance.transform.position) <= _instance.screenTargetArea) {
-					if(targets.Count == 0) {
+			if(go.GetComponent<Targetable>().isTargetable)
+            {
+				if(Vector3.Angle(_instance.transform.forward, go.transform.position - _instance.transform.position) <= _instance.screenTargetArea)
+                {
+					if(targets.Count == 0)
+                    {
 						targets.Add(go);
-					} else {
+					}
+                    else
+                    {
 						int i = 0;
 
-						while(i < targets.Count && (Vector3.Distance(go.transform.position, _instance.transform.position) > Vector3.Distance(targets[i].transform.position, _instance.transform.position))) {
+						while(i < targets.Count && (Vector3.Distance(go.transform.position, _instance.transform.position) > Vector3.Distance(targets[i].transform.position, _instance.transform.position)))
+                        {
 							i++;
 						}
 
 						targets.Insert(i, go);
 					}
 				}
+                go.GetComponent<Renderer>().material.shader = Shader.Find("Standard");
 			}
+            go.GetComponent<Renderer>().material.shader = Shader.Find("Standard");
 		}
+
+        if (targets.Count > 0)
+        {
+            targets[0].GetComponent<Renderer>().material.shader = PoPCamera.instance.targetOutline;
+            targets[0].GetComponent<Renderer>().material.SetColor("_OutlineColor", PoPCamera.instance.outlineColors["default"]);
+        }
 
         return targets;
 	}

@@ -11,30 +11,44 @@ using Debug = FFP.Debug;
  */
 [EventVisible("UI")]
 public class GameHUD : MonoBehaviour {
-	#region singletonEnforcement
-	private static GameHUD instance;
-	public static GameHUD Instance {
-		get {
-			return instance;
-		}
-		private set { }
-	}
-	#endregion
+    #region Singleton Enforcement
+    private static GameHUD instance;
+    public static GameHUD Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = GameObject.FindObjectOfType<GameHUD>();
+            }
+            return instance;
+        }
+    }
+    #endregion
 
 #pragma warning disable 0219
 #pragma warning disable 0414
     GameObject UIhud;
-	GameObject mainHUDCanvas;				//!<The canvas HUD is rendered on
-	GameObject worldMapCanvas;				//!<All the game map elements
-	GameObject gameMap;						//!<The map iamge on a plane
-	GameObject player;						//!<reference to player
-	public GameObject pauseMenu;
-
-	public PauseMenu accessManager;
+    GameObject mainHUDCanvas;               //!<The canvas HUD is rendered on
+    GameObject worldMapCanvas;              //!<All the game map elements
+    GameObject player;                      //!<reference to player
+    public GameObject pauseMenu;
+    public PauseMenu accessManager;
     public MainMenuManager menuManager;
-	
-	GameObject mapCam;								//!<Camera used for minimap
+    public bool showMinimap = true;
+    public RenderTexture MiniMapRenderTexture;
+    public Material MiniMapMaterial;
+    public float minimapXOffset;
+    public float minimapYOffset;
+    public Sprite[] targetableIcons;
+    public Sprite enemyIcon;
+
+    //public GameObject closestTargetIconPrefab;
+
+    GameObject mapCam;								//!<Camera used for minimap
+    
 	static GameObject objectiveText;						//!<Objective Text UI element
+    static Text QuestNotText;
 
 	GameObject[] mapLabels;							//!<Array of text taht appears on minimap
 
@@ -42,65 +56,71 @@ public class GameHUD : MonoBehaviour {
 	bool canSpin = false;
 	GameObject closeMapButton;
 	GameObject phoneButtons;
-	GameObject mapElements;
+	//GameObject mapElements;
 	GameObject compassCameraPoint;					//!<Point at camera location used to calculate objective positions
 	GameObject compass;
 	GameObject slider;
 	GameObject leftArrow;
 	GameObject rightArrow;
+	GameObject journal;
+	GameObject questManagerUI;
+	GameObject minimapRedArrow; 					//!<Arrow for the player representation on the minimap
+	GameObject mainCamera;
+	GameObject minimapCamera;
+	GameObject minimapCompass;
+	public GameObject testObjective;
 
 	GameObject testObjective;
 
-	void Awake() {
-		#region singletonEnforcement
-		if(instance == null) {
-			instance = this;
-		} else {
-			Destroy(this.gameObject);
-			Debug.Error("core", "Second GameHUD detected. Deleting gameOject.");
-			return;
-		}
-		#endregion
+    void Awake()
+    {
+        UIhud = GameObject.Find("UI");
+        mainHUDCanvas = GameObject.Find("mainHUD");
+        worldMapCanvas = GameObject.Find("worldMapCanvas");
+        //gameMap = GameObject.Find("mapBG");
+        player = GameObject.Find("_Player");
 
-        UIhud = GameObject.Find("_UI");
-		mainHUDCanvas = GameObject.Find("mainHUD");
-		worldMapCanvas = GameObject.Find("worldMapCanvas");
-		gameMap = GameObject.Find("mapBG");
-		player = GameObject.Find("_Player");
-		testObjective = GameObject.Find("TestObjective");
-        if (!pauseMenu)
-        {
+        if (!pauseMenu) {
             pauseMenu = GameObject.Find("pauseMenu");
         }
-		pauseMenu.SetActive (false);
-		
-		//!Turn on UI stuff
-		worldMapCanvas.SetActive(true);
+        pauseMenu.SetActive(false);
+        //!Turn on UI stuff
+        worldMapCanvas.SetActive(true);
 
-		//!Fill mapLabels array
-		mapLabels = GameObject.FindGameObjectsWithTag("worldMapLabel");
-		closeMapButton = GameObject.Find("CloseMapButton");
-		closeMapButton.SetActive(false);
+        //!Fill mapLabels array
+        mapLabels = GameObject.FindGameObjectsWithTag("worldMapLabel");
+        closeMapButton = GameObject.Find("CloseMapButton");
 
-		//!Set mapcam reference
-		mapCam = GameObject.Find("mapCam");
-		//!Set compassCameraPoint reference
-		compassCameraPoint = GameObject.Find("compassCameraPoint");
-		compass = GameObject.Find("compassSlider");
-		slider = compass.transform.FindChild ("Handle Slide Area").gameObject;
-		slider.SetActive (false);
-		leftArrow = compass.transform.FindChild ("leftArrow").gameObject;
-		leftArrow.SetActive (false);
-		rightArrow = compass.transform.FindChild ("rightArrow").gameObject;
-		rightArrow.SetActive (false);
+        if (closeMapButton) {
+            closeMapButton.SetActive(false);
+        }
 
-		//!Set objective text reference
-		objectiveText = GameObject.Find("objectiveText");
+        //!Set compassCameraPoint reference
+        compassCameraPoint = GameObject.Find("compassCameraPoint");
+        compass = GameObject.Find("compassSlider");
+        slider = compass.transform.FindChild("Handle Slide Area").gameObject;
+        //slider.SetActive (false);
+        leftArrow = compass.transform.FindChild("leftArrow").gameObject;
+        //leftArrow.SetActive (false);
+        rightArrow = compass.transform.FindChild("rightArrow").gameObject;
+        //rightArrow.SetActive (false);
 
-		phoneButtons = GameObject.Find("PhoneButtons");
-		mapElements = GameObject.Find("MapElements");
-		mapElements.SetActive(false);
+        //!Set objective text reference
+        objectiveText = GameObject.Find("ObjectiveNotice");
+        QuestNotText = GameObject.Find("objectiveText").GetComponent<Text>();
+        Debug.Log("ui", QuestNotText.text);
+        objectiveText.SetActive(false);
 
+        phoneButtons = GameObject.Find("PhoneButtons");
+
+		//mapElements = GameObject.Find("MapElements");
+		//mapElements.SetActive(false);
+		journal = GameObject.Find ("Journal");
+		if (!journal) {
+			Debug.Log ("ui", "Could not find the 'Journal' GameObject in the current Scene: " + Application.loadedLevelName);
+		} else {
+			journal.SetActive (false);
+		}
 	}
 
 	void Start() {
@@ -116,10 +136,32 @@ public class GameHUD : MonoBehaviour {
 		setCompassValue(calculateObjectiveAngle(testObjective));
 	}
 
+	void OnGUI(){
+		//!Calls the DrawTexture function to display the minimap on the screen
+		if (showMinimap) {
+			Graphics.DrawTexture (new Rect (minimapXOffset, Screen.height - 256 - minimapYOffset, 256, 256), MiniMapRenderTexture, MiniMapMaterial);
+		}
+	}
+
+    IEnumerator DisplayObjectiveNotification(string message)
+    {
+        objectiveText.SetActive(true);
+        QuestNotText.text = message;
+        yield return new WaitForSeconds(3);
+        CanvasGroup canvas = objectiveText.GetComponent<CanvasGroup>();
+        while (canvas.alpha > 0)
+        {
+            canvas.alpha -= 0.05f;
+            yield return new WaitForEndOfFrame();
+        }
+        canvas.alpha = 1f;
+        objectiveText.SetActive(false);
+    }
 	//!Call this to update objective tet at top of the screen
 	[EventVisible]
-	public void UpdateObjectiveText(string newObjective) {
-		objectiveText.GetComponent<Text>().text = newObjective;
+	public void UpdateObjectiveText(string newObjective)
+    {
+        StartCoroutine(DisplayObjectiveNotification(newObjective));
 	}
 
 	//!Rotates map labels so that the text is always right side up, call this from anything that rotates the camera
@@ -192,7 +234,7 @@ public class GameHUD : MonoBehaviour {
 
 
 		//!create vector3 from player to objective and normalize it
-		pointToObjective = objective.gameObject.transform.position - compassCameraPoint.transform.position;
+		pointToObjective = objective.transform.position - compassCameraPoint.transform.position;
 		pointToObjective.Normalize();
 
 		//!Set this vector to point right away from camera
@@ -215,7 +257,7 @@ public class GameHUD : MonoBehaviour {
 
 
 	//Shows map on phone and roates and resizes phone to screen
-	public void showMap() {
+	/*public void showMap() {
 		phoneButtons.SetActive(false);
 		mapElements.SetActive(true);
 		closeMapButton.SetActive(true);
@@ -230,7 +272,7 @@ public class GameHUD : MonoBehaviour {
 		GameObject.Find("PhoneMenu").GetComponent<Animator>().SetBool("mapActive", false);
 
 	}
-
+	*/
 	public void ChangeInputToUI(bool change = true) {/*
 		if(change)
 		InputManager.instance.ChangeInputType("UIInputType");
@@ -280,4 +322,76 @@ public class GameHUD : MonoBehaviour {
     {
         menuManager.GoToOptions();
     }
+}
+
+	/*!This function activates the journal and deactivates the pause menu
+	 * The function also highlights the quests button (the first item in the journal)
+	 */
+	public void ShowJournal(){
+		showMinimap = false;
+		journal.SetActive (true);
+		accessManager.isOnPauseMenu = false;
+		journal.transform.FindChild ("MainScrollView").FindChild ("JournalItems").FindChild ("QuestsItem").GetComponent<Button>().Select();
+		pauseMenu.SetActive (false);
+	}
+
+	/*!This function deactivates the journal and activates the pause menu
+	 */
+	public void CloseJournal(){
+		showMinimap = true;
+		journal.SetActive (false);
+		pauseMenu.SetActive (true);
+		accessManager.isOnPauseMenu = true;
+	}
+
+	/*!This function activates the QuestManagerUI and deactivates the Journal
+	 */
+	public void ShowQMUI(){
+		questManagerUI.SetActive (true);
+		questManagerUI.GetComponent<QuestManagerUIController> ().showQuests ();
+		journal.SetActive (false);
+	}
+	/*!This function deactivates the QuestManagerUI and activates the Journal
+	 */
+	public void HideQMUI(){
+		questManagerUI.SetActive (false);
+		journal.SetActive (true);
+		journal.transform.FindChild ("MainScrollView").FindChild ("JournalItems").FindChild ("QuestsItem").GetComponent<Button>().Select();
+	}
+
+	/*! This function displays an icon above the object that will be targeted by the player should they press the target button
+	 *  The function takes in a GameObject that the icon will be displayed above
+	 *  If an object is currently being targeted, the icon will stay above it
+	 *  If the object is an enemy, the enemy icon will be displayed above it
+	 *  If the object can be affected by the player's selected ability, an icon with a corresponding color to the ability will be displayed above the object
+	 *  Otherwise a blue icon is shown above the object
+	 */
+	void DisplayIconAboveTarget(GameObject targetObject){
+        
+		/*
+        if(targetObject.GetComponent<Enemy>()){
+			closestTargetIcon.GetComponent<Image>().sprite = enemyIcon;
+		}
+		else if(AbilityDockController.instance.getSelectedAbility() == 0 && targetObject.GetComponent<Item>().pullCompatible){
+			closestTargetIcon.GetComponent<Image>().sprite = targetableIcons[0];
+		}
+		else if(AbilityDockController.instance.getSelectedAbility() == 1 && targetObject.GetComponent<Item>().pushCompatible){
+			closestTargetIcon.GetComponent<Image>().sprite = targetableIcons[1];
+		}
+		else if(AbilityDockController.instance.getSelectedAbility() == 2 && targetObject.GetComponent<Item>().stunCompatible){
+			closestTargetIcon.GetComponent<Image>().sprite = targetableIcons[2];
+		}
+		else if(AbilityDockController.instance.getSelectedAbility() == 3 && targetObject.GetComponent<Item>().soundThrowCompatible){
+			closestTargetIcon.GetComponent<Image>().sprite = targetableIcons[3];
+		}
+		else if(AbilityDockController.instance.getSelectedAbility() == 4 && targetObject.GetComponent<Item>().cutCompatible){
+			closestTargetIcon.GetComponent<Image>().sprite = targetableIcons[4];
+		}
+		else{
+			closestTargetIcon.GetComponent<Image>().sprite = targetableIcons[5];
+		}
+		closestTargetIcon.transform.position = targetObject.transform.position + new Vector3(0, 3, 0);
+		closestTargetIcon.transform.rotation = mainCamera.transform.rotation;
+        */
+	}
 }
