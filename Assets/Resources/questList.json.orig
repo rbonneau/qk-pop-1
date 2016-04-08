@@ -1,0 +1,41 @@
+{
+	"1":
+		[
+<<<<<<< HEAD
+			"Got out of graveyard, go Home",
+=======
+			"Head to the market",
+>>>>>>> 385506660b02ad724edd0146a4cfc6469fecd734
+			"Gavyn needs to exit the graveyard",
+			"Interact with items to exit graveyard and make your way to the market.",
+			[ 
+				
+				{
+				"Goal1" : 1
+				}
+			]
+		],
+	"2":	
+		[
+			"Collect Posters",
+			"Collect all the wanted posters",
+			"There seem to be some wanted posters with familiar faces lying around here. See how many you can find.",
+			[
+				{
+				"Posters Found" : 15
+				}
+			]
+		],
+	"3":
+		[
+			"Obtain letter, go to Independence Hall via market",
+			"Gavyn gets the letter that needs to be delivered to Independence Hall",
+			"Make way to Independence Hall",
+			[ 
+				
+				{
+				"Goal1" : 1
+				}
+			]
+		]
+}
