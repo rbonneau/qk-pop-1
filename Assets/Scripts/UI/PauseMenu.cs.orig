@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-<<<<<<< HEAD
-public class PauseMenu : MonoBehaviour {
-	private bool isPaused = false;
-=======
 public class PauseMenu : MonoBehaviour
 {
 
@@ -23,10 +19,9 @@ public class PauseMenu : MonoBehaviour
     }
     #endregion
 
-    private bool isPaused = false;
+    public bool isPaused = false;
 
 	public bool isOnPauseMenu = false;
->>>>>>> 385506660b02ad724edd0146a4cfc6469fecd734
 	public GameHUD GHud;
     public MainMenuManager Options;
     public float speed = 2.0f;
@@ -58,19 +53,44 @@ public class PauseMenu : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.Escape)) {      // This will need to be changed to call inputManager  
+<<<<<<< HEAD
 			
 			if(!isPaused) {                         
+=======
+			OpenOrClosePauseMenu ();
+			/*
+			if(!isPaused && !isOnPauseMenu) {                         
+>>>>>>> 8d63d8675c4a0953adbbce887c859c05d0fc7b96
 				pauseGame();
 			} else if(isPaused) {
 				unPauseGame();	
 			}
+			*/
+		}
+	}
+
+	public void OpenOrClosePauseMenu(){
+		if(!isPaused && !isOnPauseMenu) {                         
+			pauseGame();
+		} else if(isPaused && isOnPauseMenu) {
+			unPauseGame();	
 		}
 	}
 
 
+<<<<<<< HEAD
     public void pauseGame()
     {                       // Pauses the game and brings up the Pause Menu
         isPaused = true;
+=======
+	// Pauses the game and brings up the Pause Menu
+	public void pauseGame()
+    {                       
+		GHud.showMinimap = false;
+		isOnPauseMenu = true;
+		isPaused = true;
+		showCursor ();
+>>>>>>> 8d63d8675c4a0953adbbce887c859c05d0fc7b96
         Time.timeScale = 0f;
         GHud.showPauseMenu();
         if (Options != null)
@@ -79,12 +99,27 @@ public class PauseMenu : MonoBehaviour
         }
 	}
 
+<<<<<<< HEAD
 	public void unPauseGame() {                     // Unpauses the game and hides menu
+=======
+	// Unpauses the game and hides menu
+	public void unPauseGame() {
+		if(!DialogueManager.Instance._showing){
+			GHud.showMinimap = true;
+		}
+		isOnPauseMenu = false;
+>>>>>>> 8d63d8675c4a0953adbbce887c859c05d0fc7b96
 		isPaused = false;
 		Time.timeScale = 1f;
 		GHud.hidePauseMenu();
 	}
+<<<<<<< HEAD
 	public void unPauseGameBtt() {                  // When button is used to unpause this function is called
+=======
+
+	// When button is used to unpause this function is called
+	public void unPauseGameBtt() {
+>>>>>>> 8d63d8675c4a0953adbbce887c859c05d0fc7b96
 		isPaused = false;
 		Time.timeScale = 1f;
 		

@@ -482,6 +482,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &133720
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 432086}
+  - 135: {fileID: 13559314}
+  - 114: {fileID: 11447286}
+  m_Layer: 9
+  m_Name: DialogueColliderGA
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &138440
 GameObject:
   m_ObjectHideFlags: 1
@@ -612,10 +629,8 @@ GameObject:
   - 4: {fileID: 484826}
   - 143: {fileID: 14393170}
   - 114: {fileID: 11469288}
-  - 114: {fileID: 11480410}
   - 114: {fileID: 11478546}
   - 114: {fileID: 11455632}
-  - 114: {fileID: 11412442}
   m_Layer: 9
   m_Name: _Player
   m_TagString: Player
@@ -1760,6 +1775,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 443708}
   m_RootOrder: 0
+--- !u!4 &432086
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 133720}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: .986999989, z: 1.20000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 484826}
+  m_RootOrder: 2
 --- !u!4 &432630
 Transform:
   m_ObjectHideFlags: 1
@@ -2418,11 +2445,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 142278}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -115.900002, y: 0, z: 152.600006}
+  m_LocalPosition: {x: -115.120003, y: 0, z: 151.860001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 481282}
   - {fileID: 461574}
+  - {fileID: 432086}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &485960
@@ -2661,17 +2689,21 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &11412442
+--- !u!114 &11447286
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 142278}
+  m_GameObject: {fileID: 133720}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20ab7c15d57dc0d42878fb25e1f74ab8, type: 3}
+  m_Script: {fileID: 11500000, guid: 679dbf03660602a4693c57d339d5e94f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NPCDialogueNumber: 0
+  NPCDialogue: 0
+  NPCFocus: {fileID: 0}
+  NPCProgressQuest: 0
 --- !u!114 &11455632
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2683,6 +2715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fec4b7c492b31c43a875bff9aed037f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  compassTargetPrefab: {fileID: 180234, guid: 7510c511ac84d2245a5106545f5e04b7, type: 2}
   questCount: 0
 --- !u!114 &11469288
 MonoBehaviour:
@@ -2699,6 +2732,7 @@ MonoBehaviour:
   runSpeed: 10
   jumpSpeed: 9
   verticalVelocity: 0
+  isHidden: 0
 --- !u!114 &11476126
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2740,17 +2774,18 @@ MonoBehaviour:
   coldRange: 20
   activeAbility: 0
   abilitySelector: {fileID: 0}
---- !u!114 &11480410
-MonoBehaviour:
+--- !u!135 &13559314
+SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 142278}
+  m_GameObject: {fileID: 133720}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57e34305fd9ef674da4c23001a8427ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &13709484
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

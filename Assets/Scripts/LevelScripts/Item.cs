@@ -492,7 +492,10 @@ public class Item : MonoBehaviour
 			break;
 		case push_type.TwoAxis:
 			heading = gameObject.transform.position - player_pos;
-			angle = Vector3.Angle(heading, Vector3.Normalize(Vector3.forward + new Vector3(Mathf.Sin(offset), 0.0f, Mathf.Cos(offset))));
+			heading.Normalize();
+			Vector3 pointStraightFromObject = new Vector3(Mathf.Sin (Mathf.Deg2Rad * angle_offset), 0.0f, Mathf.Cos(Mathf.Deg2Rad * angle_offset));
+			pointStraightFromObject.Normalize ();
+			angle = Vector3.Angle (pointStraightFromObject, heading);
 			if(angle > 0.0f && angle <= 90.0f) heading = new Vector3(Mathf.Sin(offset), 0.0f, Mathf.Cos(offset));
 			else if(angle > 90.0f && angle <= 180.0f) heading = new Vector3(Mathf.Sin(offset + Mathf.PI), 0.0f, Mathf.Cos(offset + Mathf.PI));
 			else heading = Vector3.zero;

@@ -211,7 +211,7 @@ public class CompileEventLibrary : EditorWindow {
         #if UNITY_EDITOR_OSX
                     string fileName = Application.dataPath + "/Scripts/Events/Plugins/EventLibrary.cs";
         #else
-                string fileName = Application.dataPath + "\\Scripts\\Events\\Plugins\\EventLibrary.cs";
+                string fileName = Application.dataPath + "\\Scripts\\Plugins\\Events\\Plugins\\EventLibrary.cs";
         #endif
 
         StreamWriter streamWriter;
@@ -229,7 +229,9 @@ public class CompileEventLibrary : EditorWindow {
 
         //fileInfo.IsReadOnly = true;
 
-        AssetDatabase.ImportAsset("Assets/Scripts/Events/Plugins/EventLibrary.cs");
+       AssetDatabase.ImportAsset("Assets/Scripts/Plugins/Events/Plugins/EventLibrary.cs");
+
+        // AssetDatabase.ImportAsset("Assets/Scripts/Events/Plugins/EventLibrary.cs");
     }
 }
 #endif

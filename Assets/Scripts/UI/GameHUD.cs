@@ -35,18 +35,19 @@ public class GameHUD : MonoBehaviour {
     public GameObject pauseMenu;
     public PauseMenu accessManager;
     public MainMenuManager menuManager;
-    public bool showMinimap = true;
-    public RenderTexture MiniMapRenderTexture;
-    public Material MiniMapMaterial;
-    public float minimapXOffset;
-    public float minimapYOffset;
-    public Sprite[] targetableIcons;
-    public Sprite enemyIcon;
+	public bool showMinimap = true;
+	public RenderTexture MiniMapRenderTexture;
+	public Material MiniMapMaterial;
+	public float minimapXOffset;
+	public float minimapYOffset;
+	public Sprite[] targetableIcons;
+	public Sprite enemyIcon;
+	public bool calcCompass = false;
+	
+	//public GameObject closestTargetIconPrefab;
 
-    //public GameObject closestTargetIconPrefab;
+	GameObject mapCam;								//!<Camera used for minimap
 
-    GameObject mapCam;								//!<Camera used for minimap
-    
 	static GameObject objectiveText;						//!<Objective Text UI element
     static Text QuestNotText;
 
@@ -94,7 +95,7 @@ public class GameHUD : MonoBehaviour {
         if (closeMapButton) {
             closeMapButton.SetActive(false);
         }
-
+		
         //!Set compassCameraPoint reference
         compassCameraPoint = GameObject.Find("compassCameraPoint");
         compass = GameObject.Find("compassSlider");
@@ -109,7 +110,7 @@ public class GameHUD : MonoBehaviour {
         objectiveText = GameObject.Find("ObjectiveNotice");
         QuestNotText = GameObject.Find("objectiveText").GetComponent<Text>();
         Debug.Log("ui", QuestNotText.text);
-        objectiveText.SetActive(false);
+        //objectiveText.SetActive(false);
 
         phoneButtons = GameObject.Find("PhoneButtons");
 
@@ -128,12 +129,33 @@ public class GameHUD : MonoBehaviour {
 		//SpawnHudAbilityIcons ();
 	}
 
+		if (Input.GetKeyDown (KeyCode.Tab) && (!journal.activeSelf && !questManagerUI.activeSelf && !PauseMenu.Instance.isOnPauseMenu)){
+			//Time.timeScale = 0f;
+			//ShowJournal();
+			PauseMenu.Instance.OpenOrClosePauseMenu ();
+			ButtonController.instane.ClickJournalButton_PauseMenu();
+			}
+		else if(Input.GetKeyDown (KeyCode.Tab) && journal.activeSelf){
+			CloseJournal();
+			PauseMenu.Instance.OpenOrClosePauseMenu ();
+		}
+		/* Function calls for displaying icon above a target object.
+		   This is no longer used.
+		   targetsInRange = PoPCamera.AcquireTarget ();
+		*/
 	void FixedUpdate() {
 		//!This is for testing, call update map from player movements
 		rotateMapObjects();
 
 		//!Set the compass indicator
-		setCompassValue(calculateObjectiveAngle(testObjective));
+		if(!testObjective || !calcCompass){
+			leftArrow.SetActive (false);
+			slider.SetActive (false);
+			rightArrow.SetActive (false);
+		}
+		else{
+			setCompassValue(calculateObjectiveAngle(testObjective));
+		}
 	}
 
 	void OnGUI(){
@@ -248,6 +270,23 @@ public class GameHUD : MonoBehaviour {
 
 	}
 
+	[EventVisibleAttribute]
+	public void MoveCompassTargetPoint(GameObject NextQuestLocation){
+		testObjective.transform.position = NextQuestLocation.transform.position;
+		calcCompass = true;
+		return;
+	}
+
+	[EventVisibleAttribute]
+	public void TriggerDialoguer(int dialogueIndex){
+		QK_Character_Movement.Instance.inADialogue = true;
+		Dialoguer.StartDialogue (dialogueIndex, dialoguerCallback);
+	}
+
+	void dialoguerCallback(){
+		QK_Character_Movement.Instance.inADialogue = false;
+	}
+
 	//This is for testing
 	void OnTriggerEnter(Collider col) {
 		if(col.gameObject.tag == "Finish") {
@@ -335,10 +374,12 @@ public class GameHUD : MonoBehaviour {
 		pauseMenu.SetActive (false);
 	}
 
+	
+
 	/*!This function deactivates the journal and activates the pause menu
 	 */
 	public void CloseJournal(){
-		showMinimap = true;
+		//showMinimap = true;
 		journal.SetActive (false);
 		pauseMenu.SetActive (true);
 		accessManager.isOnPauseMenu = true;

@@ -21,10 +21,11 @@ public class QK_Character_Movement : MonoBehaviour {
 
 	public enum CharacterState {Idle, Move, Pivot, Sprint, Crouch, Hang, Ladder, Sidle, Wait, Normal}
 	public CharacterState _moveState { get; private set; }
-	public CharacterState _stateModifier { get; private set; }
+	public CharacterState _stateModifier { get; set; }
 
 	public static CharacterController charCont;
-
+	public bool inADialogue = false;
+	
 	[ReadOnly] public float curSpeed = 0f;
 	private float acceleration = 0.3f;
 	[ReadOnly] public float runSpeed = 8f;
@@ -60,6 +61,8 @@ public class QK_Character_Movement : MonoBehaviour {
 	private Quaternion targetAngle = Quaternion.identity;
 	private PoPCamera cam;
 
+
+
     void Awake()
     {
         _instance = null;
@@ -94,6 +97,9 @@ public class QK_Character_Movement : MonoBehaviour {
 				ClimbLadder();
 				break;
 
+			case CharacterState.Wait:
+				break;
+				
 			default:
 				ProcessStandardMotion();
 				break;
@@ -250,6 +256,8 @@ public class QK_Character_Movement : MonoBehaviour {
 				_stateModifier = CharacterState.Sprint;
 			} else if (false) {
 				_stateModifier = CharacterState.Crouch;
+			} else if (inADialogue){
+				_stateModifier = CharacterState.Wait;
 			} else {
 				_stateModifier = CharacterState.Normal;
 			}

@@ -5,18 +5,25 @@ using System.Collections.Generic;
 [EventVisibleAttribute]
 public class QuestManager : MonoBehaviour {
 
+	public static QuestManager instance;
+
 	public List <Quest> currentQuests;
 	public List <Quest> failedQuests;
 	public List <Quest> completedQuests;
+	public GameObject compassTargetPrefab;
+	
 	Quest _quest;
 	QuestSaveManager _questSaveManager;
 	public int questCount;
 	GameObject questManagerUI;
 	QuestManagerUIController qmUI;
-
+	GameObject compassTarget;
+	
     void Awake()
     {
         gameObject.AddComponent<DebugOnScreen>();
+		instance = this;
+		compassTarget = Instantiate (compassTargetPrefab);
     }
 
     void Start() {
@@ -71,7 +78,6 @@ public class QuestManager : MonoBehaviour {
 				DebugOnScreen.Log(currentQuests[count].GetName() + " quest has failed and removed fom Current Quests List and added to Failed Quests List!");
 				failedQuests.Add(currentQuests[count]);
 				currentQuests.RemoveAt(count);
-				qmUI.showQuests();
 				continue;
 			}
 
@@ -80,7 +86,6 @@ public class QuestManager : MonoBehaviour {
 				_questSaveManager.SaveCompletedQuest(currentQuests[count]);
 				completedQuests.Add(currentQuests[count]);
 				currentQuests.RemoveAt(count);
-				qmUI.showQuests();
 			}
 		}
 
@@ -119,6 +124,12 @@ public class QuestManager : MonoBehaviour {
 	void Update() {
 		questCount = currentQuests.Count;
 	}
+	
+	/*void MoveCompassTargetPoint(GameObject NextQuestLocation){
+		compassTarget.transform.position = NextQuestLocation.transform.position;
+		GameHUD.Instance.calcCompass = true;
+		return;
+	}*/
 
 	[EventVisibleAttribute]
 	public void AddQuest(int questID) {
@@ -145,6 +156,8 @@ public class QuestManager : MonoBehaviour {
 
 		return;
 	}
+
+	
 
 	IEnumerator StartTimer(Quest q) {
 		DebugOnScreen.Log ("Starting timer for " + q.GetTimerLength() + " seconds.");

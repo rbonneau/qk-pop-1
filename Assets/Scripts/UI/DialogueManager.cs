@@ -6,11 +6,13 @@ using UnityEngine.UI;
 [EventVisibleAttribute]
 public class DialogueManager : MonoBehaviour {
 
+	public static DialogueManager Instance;
+
 	public GameObject[] _choiceButtons;
 
 	private static string portraitPATH = "DialoguePortraits/";
 
-	private bool _showing = false;
+	public bool _showing = false;
 	private bool _needToChange = false;
 	private string _text;
 	private string[] _choices;
@@ -31,7 +33,8 @@ public class DialogueManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		//Dialoguer.Initialize ();
+		Instance = this;
+		Dialoguer.Initialize ();
 		_choiceButtons = new GameObject[5];
 	}
 
@@ -93,17 +96,42 @@ public class DialogueManager : MonoBehaviour {
 		} else {
 			Debug.Log("Theme is neither 'Good' or 'Bad'. Check Dialogue Tree");
 		}
+		
+		if (isGood) {
+			_goodBackgroundAndPortrait.SetActive (true);
+			_badBackgroundAndPortrait.SetActive (false);
+		} else {
+			_goodBackgroundAndPortrait.SetActive (false);
+			_badBackgroundAndPortrait.SetActive (true);
+		}
+		SetPortrait ();
+		if (_choices == null || _choices.Length < 1) {
+			for(int i = 0; i < _choiceButtons.Length; i++) {
+				_choiceButtons[i].SetActive (false);
+			}
+			ShowContinueButton();
+		} else {
+			for(int i = 0; i < _choices.Length; i++) {
+				//Debug.Log (_choices[i]);
+				_choiceButtons[i].SetActive (true);
+				_choiceButtons[i].transform.FindChild ("Text").GetComponent<Text>().text = _choices[i];
+			}
+			HideContinueButton();
+		}
 	}
 
 	private void SetPortrait() {
+		_portraitImage.SetActive (true);
 		Sprite tempSprite = Resources.Load<Sprite> (portraitPATH + _portrait);
 		if (tempSprite != null) {
 			_portraitImage.GetComponent<Image> ().sprite = tempSprite;
 		} else {
+			_portraitImage.SetActive (false);
 			Debug.Log ("Portrait does not exist");
 		}
 	}
 
+		
 	void OnGUI() {
 		if (!_showing) {
 			//GameHUD.Instance.showMinimap = true;
@@ -118,12 +146,13 @@ public class DialogueManager : MonoBehaviour {
 		if (_dialogueGO.activeInHierarchy == false) {
 			_dialogueGO.SetActive(true);
 		}
-
+	}
+/*
 		if (isGood) {
-			/*_goodBackground.SetActive (true);
-			_badBackground.SetActive (false);
-			_badPortrait.SetActive(false);
-			*/
+			//_goodBackground.SetActive (true);
+			//_badBackground.SetActive (false);
+			//_badPortrait.SetActive(false);
+			//
 			_goodBackgroundAndPortrait.SetActive (true);
 			_badBackgroundAndPortrait.SetActive (false);
 			if(_portrait != "") {
@@ -136,10 +165,10 @@ public class DialogueManager : MonoBehaviour {
 			}
 
 		} else {
-			/*_goodBackground.SetActive (false);
-			_badBackground.SetActive (true);
-			_goodPortrait.SetActive(false);
-			*/
+			//_goodBackground.SetActive (false);
+			//_badBackground.SetActive (true);
+			//_goodPortrait.SetActive(false);
+			//
 			_goodBackgroundAndPortrait.SetActive (false);
 			_badBackgroundAndPortrait.SetActive (true);
 			if(_portrait != "") {
@@ -166,7 +195,9 @@ public class DialogueManager : MonoBehaviour {
 			HideContinueButton();
 		}
 	}
-
+	*/
+	
+	
 	private void ShowContinueButton() {
 		_continueButton.GetComponent<Image> ().enabled = true;
 		_continueButton.GetComponent<Button> ().enabled = true;

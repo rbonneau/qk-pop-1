@@ -19,7 +19,7 @@ public class PauseMenu : MonoBehaviour
     }
     #endregion
 
-    private bool isPaused = false;
+    public bool isPaused = false;
 
 	public bool isOnPauseMenu = false;
 	public GameHUD GHud;
@@ -53,18 +53,28 @@ public class PauseMenu : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.Escape)) {      // This will need to be changed to call inputManager  
-			
-			if(!isPaused) {                         
+			OpenOrClosePauseMenu ();
+			/*
 				pauseGame();
 			} else if(isPaused) {
 				unPauseGame();	
 			}
+			*/
+		}
+	}
+
+	public void OpenOrClosePauseMenu(){
+		if(!isPaused && !isOnPauseMenu) {                         
+			pauseGame();
+		} else if(isPaused && isOnPauseMenu) {
+			unPauseGame();	
 		}
 	}
 
 
     public void pauseGame()
     {                       // Pauses the game and brings up the Pause Menu
+		GHud.showMinimap = false;
         isPaused = true;
         Time.timeScale = 0f;
         GHud.showPauseMenu();
@@ -75,11 +85,15 @@ public class PauseMenu : MonoBehaviour
 	}
 
 	public void unPauseGame() {                     // Unpauses the game and hides menu
+		if(!DialogueManager.Instance._showing){
+			GHud.showMinimap = true;
+		}
 		isPaused = false;
 		Time.timeScale = 1f;
 		GHud.hidePauseMenu();
 	}
 	public void unPauseGameBtt() {                  // When button is used to unpause this function is called
+	public void unPauseGameBtt() {
 		isPaused = false;
 		Time.timeScale = 1f;
 		

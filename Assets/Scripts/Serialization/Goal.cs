@@ -31,7 +31,7 @@ public class Goal {
 		}
 		completed = true;
 
-		Debug.Log ("Goal Completed");
+		//Debug.Log ("Goal Completed");
 		return;
 	}
 

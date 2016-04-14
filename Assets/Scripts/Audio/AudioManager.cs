@@ -10,6 +10,7 @@ using Debug = FFP.Debug;
  *	Manages audio loading and playing for all audio types. This class also handles preloading of priority audio.
  *	written by Ace Spring 2015
  */
+[EventVisibleAttribute]
 public class AudioManager : MonoBehaviour {
 
 	#region singletonEnforcement
@@ -525,6 +526,30 @@ public class AudioManager : MonoBehaviour {
 		else
 			return true;
 	}
+
+    /* THIS IS A NEW TEST */
+    [EventVisible]
+    public void playAudio(GameObject gO)
+    {
+        float length, timeLeft;
+        AudioSource aSource;
+        aSource = gO.GetComponent<AudioSource>();
+        length = aSource.clip.length;
+        //print(length);
+		length -= aSource.time;
+		if (length == 0 || length == aSource.clip.length)
+			aSource.Play ();
+		else
+			aSource.mute = false;
+    }
+    [EventVisible]
+    public void muteAudio(GameObject gO)
+    {
+        AudioSource aSource;
+        aSource = gO.GetComponent<AudioSource>();
+        // Plays when the player enters the pop event
+        aSource.mute = true;
+    }
     #endregion	//play functions
 
 	#region stop functions

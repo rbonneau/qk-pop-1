@@ -9,11 +9,14 @@ public class ButtonController : MonoBehaviour {
 	 * The function naming convention is ClickButtonName_MenuTheButtonIsOn()
 	 */
 
+	public static ButtonController instane;
+
 	GameHUD gHUD;
 	PauseMenu pMenu;
 	MasterSceneManager masterSceneManager;
 
 	void Awake(){
+		instane = this;
         gHUD = GameHUD.Instance;
 		pMenu = PauseMenu.Instance;
 		masterSceneManager = MasterSceneManager.Instance;
