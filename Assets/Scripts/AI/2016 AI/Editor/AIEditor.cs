@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,21 +11,25 @@ public struct AI_Data
 	private List<GameObject> paths;
     public float sightRange_;
     public float sightAngle_;
+    public float suspiciousCheckRange_;
 
 
     public AI_Data(
         float SightRange,
-        float SightAngle)
+        float SightAngle,
+        float SuspiciousCheckRange)
 	{
 		paths = new List<GameObject> ();
         sightRange_ = SightRange;
         sightAngle_ = SightAngle;
+        suspiciousCheckRange_ = SuspiciousCheckRange;
 	}
 
 	public void loadData(StatePatternEnemy target)
 	{
         target.sightRange = sightRange_;
         target.sightAngle = sightAngle_;
+        target.suspiciousCheckRange = suspiciousCheckRange_;
 	}
 }
 
@@ -37,9 +42,9 @@ public class AIEditor : Editor {
 	string[] path_types = new string[]{"one way", "loop around", "back and forth", "On Guard"};
 
 	AI_Data[] ai_data = new AI_Data[]{
-		new AI_Data(40f, 20f),
-		new AI_Data(40f, 20f),
-		new AI_Data(40f, 20f)};
+		new AI_Data(40f, 20f, 10f),
+		new AI_Data(40f, 20f, 10f),
+		new AI_Data(40f, 20f, 10f)};
 
 	int ai_types_index = 0;
 	int current_selection = 0;
@@ -107,21 +112,8 @@ public class AIEditor : Editor {
 		{
             ai_target.sightRange = EditorGUILayout.FloatField("Sight Range:", ai_target.sightRange);
             ai_target.sightAngle = EditorGUILayout.FloatField("Sight Angle:", ai_target.sightAngle);
+            ai_target.suspiciousCheckRange = EditorGUILayout.FloatField("Suspicious Check Range:", ai_target.suspiciousCheckRange);
 
-
-
-            /* old code
-			ai_target.hp = EditorGUILayout.FloatField("Health:", ai_target.hp);
-			ai_target.sightDistance = EditorGUILayout.FloatField("Sight Distance:", ai_target.sightDistance);
-			ai_target.passiveSightAngle = EditorGUILayout.FloatField("Passive Sight Angle:", ai_target.passiveSightAngle);
-			ai_target.chasingSightAngle = EditorGUILayout.FloatField("Chasing Sight Angle:", ai_target.chasingSightAngle);
-			ai_target.speed = EditorGUILayout.FloatField("Speed:", ai_target.speed);
-			ai_target.runSpeed = EditorGUILayout.FloatField("Running Speed:", ai_target.runSpeed);
-			ai_target.attackDistance = EditorGUILayout.FloatField("Attack Distance:", ai_target.attackDistance);
-			ai_target.suspicionLimit = EditorGUILayout.FloatField("Suspicion Limit:", ai_target.suspicionLimit);
-			ai_target.aggressionLimit = EditorGUILayout.FloatField("Aggression Limit:", ai_target.aggressionLimit);
-			ai_target.enemy = EditorGUILayout.Toggle("Aggressive:", ai_target.enemy);
-            */
         }
         EditorGUILayout.EndFadeGroup();
 
