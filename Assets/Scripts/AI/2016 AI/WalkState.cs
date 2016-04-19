@@ -63,4 +63,9 @@ public class WalkState : IEnemyState
     {
 
     }
+
+    public void ToPointSearchState(float minAngle, float maxAngle, float turnSpeed, int searchCount)
+    {
+
+    }
 }

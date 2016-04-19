@@ -6,7 +6,6 @@ public class ChaseState : IEnemyState
     private readonly StatePatternEnemy enemy;
     private float chaseTimer;
 
-
     public ChaseState(StatePatternEnemy statePatternEnemy)
     {
         enemy = statePatternEnemy;
@@ -72,11 +71,15 @@ public class ChaseState : IEnemyState
 
     }
 
+    public void ToPointSearchState(float minAngle, float maxAngle, float turnSpeed, int searchCount)
+    {
+
+    }
+
     private void Look()
     {
         RaycastHit hit;
         //Vector3 enemyToTarget = (enemy.chaseTarget.position + enemy.offset) - enemy.eyes.transform.position;
-        Vector3 enemyToTarget = enemy.chaseTarget.position;
 
         if (Vector3.Angle(enemy.chaseTarget.position - enemy.transform.position, enemy.transform.forward) < enemy.sightAngle)
         {

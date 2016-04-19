@@ -70,6 +70,11 @@ public class DazedState : IEnemyState
 
     }
 
+    public void ToPointSearchState(float minAngle, float maxAngle, float turnSpeed, int searchCount)
+    {
+
+    }
+
     private void Dazed()
     {
         dazeTimer += Time.deltaTime;
