@@ -56,6 +56,33 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &198202
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 404020}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &404020
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 198202}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 455554}
+  m_RootOrder: 2
 --- !u!4 &455554
 Transform:
   m_ObjectHideFlags: 1
@@ -63,11 +90,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 124274}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -35.9000092, y: 29.2566242, z: 105.499992}
+  m_LocalPosition: {x: -53.8031387, y: -3.28319764, z: -10.7299995}
   m_LocalScale: {x: .716802418, y: .716802359, z: .716802359}
   m_Children:
   - {fileID: 495492}
   - {fileID: 471854}
+  - {fileID: 404020}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &471854
@@ -230,15 +258,17 @@ MonoBehaviour:
   searchingDuration: 4
   sightRange: 40
   sightAngle: 20
+  suspiciousCheckRange: 10
   meshRendererFlag: {fileID: 2354292}
   current_preset: 1
   customType: 0
   seesTarget: 0
   player: {fileID: 0}
-  Pathways: []
-  PathType: 
-  nofLoops: 
-  infinite: 
+  Pathways:
+  - {fileID: 0}
+  PathType: 01000000
+  nofLoops: 01000000
+  infinite: 00
   LoopCount: 1
   BacknForth: 0
   back: 0
@@ -249,6 +279,10 @@ MonoBehaviour:
   enemy: 0
   navPoint: {x: 0, y: 0, z: 0}
   noiseLoc: {fileID: 0}
+  _minAngle: 0
+  _maxAngle: 0
+  _turnSpeed: 0
+  _searchCount: 0
   chaseTarget: {fileID: 0}
   navMeshAgent: {fileID: 0}
 --- !u!136 &13698270
