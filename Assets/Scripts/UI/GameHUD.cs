@@ -51,8 +51,7 @@ public class GameHUD : MonoBehaviour {
 
 	static GameObject objectiveText;						//!<Objective Text UI element
     static Text QuestNotText;
-
-	
+    GameObject questNotice;
 
 	public bool skillsOpen = false;
 	bool canSpin = false;
@@ -125,6 +124,9 @@ public class GameHUD : MonoBehaviour {
         Debug.Log("ui", QuestNotText.text);
         objectiveText.SetActive(false);
 
+        questNotice = GameObject.Find("QuestCompleteNotice");
+        questNotice.SetActive(false);
+
         phoneButtons = GameObject.Find("PhoneButtons");
 
 		//mapElements = GameObject.Find("MapElements");
@@ -181,7 +183,8 @@ public class GameHUD : MonoBehaviour {
 		}
 	}
 
-	void Start() {
+	void Start()
+    {
 		Dictionary<string, string> keyboardButtons = InputManager.input.keyButtons;
 		Dictionary<string, string> controllerButtons = InputManager.input.controllerButtons;
 		/*
@@ -202,8 +205,8 @@ public class GameHUD : MonoBehaviour {
 	/*!Update function that is called once every frame
 	 * Handles the opening and closing of the journal and when to display an icon above the selected or closest target
 	 */
-	void Update(){
-		
+	void Update()
+    {		
 		if (Input.GetKeyDown (KeyCode.Escape) && controls.activeSelf) {
 			HideControls();
 		}
@@ -256,6 +259,11 @@ public class GameHUD : MonoBehaviour {
 
     IEnumerator DisplayObjectiveNotification(string message)
     {
+        while(questNotice.activeSelf || DialogueManager.Instance._showing)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
         objectiveText.SetActive(true);
         QuestNotText.text = message;
         yield return new WaitForSeconds(3);
@@ -275,6 +283,30 @@ public class GameHUD : MonoBehaviour {
     {
         StartCoroutine(DisplayObjectiveNotification(newObjective));
 	}
+
+    IEnumerator DisplayQuestComplete()
+    {
+        while (objectiveText.activeSelf || DialogueManager.Instance._showing)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        questNotice.SetActive(true);
+        yield return new WaitForSeconds(3);
+        CanvasGroup canvas = questNotice.GetComponent<CanvasGroup>();
+        while (canvas.alpha > 0)
+        {
+            canvas.alpha -= 0.05f;
+            yield return new WaitForEndOfFrame();
+        }
+        canvas.alpha = 1f;
+        questNotice.SetActive(false);
+    }
+
+    public void QuestCompletedNotification()
+    {
+        StartCoroutine(DisplayQuestComplete());
+    }
 
 	//!Rotates and moves all of the relevant objects on the minimap
 	public void UpdateMapObjects() {

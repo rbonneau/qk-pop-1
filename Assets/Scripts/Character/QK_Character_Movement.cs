@@ -115,7 +115,7 @@ public class QK_Character_Movement : MonoBehaviour {
 
 		DetermineCharacterState ();
 
-		switch (_stateModifier) 
+		switch (_moveState) 
 		{
 			case CharacterState.Ladder:
 				ClimbLadder();
@@ -152,7 +152,7 @@ public class QK_Character_Movement : MonoBehaviour {
 			else if (_stateModifier == CharacterState.Crouch)
 			{
 				curSpeed = Mathf.Clamp(curSpeed, 0f, crouchSpeed);
-				this.gameObject.GetComponent<CapsuleCollider>().height = 1;
+				//this.gameObject.GetComponent<CapsuleCollider>().height = 1;
 			}
 			else {
 				curSpeed = Mathf.Clamp(curSpeed, 0f, runSpeed);

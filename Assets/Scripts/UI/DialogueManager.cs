@@ -4,11 +4,25 @@ using SimpleJSON;
 using UnityEngine.UI;
 
 [EventVisibleAttribute]
-public class DialogueManager : MonoBehaviour {
+public class DialogueManager : MonoBehaviour
+{
+    #region Singleton Enforcement
+    private static DialogueManager _instance;
+    public static DialogueManager Instance
+    {
+        get
+        {
+            _instance = _instance ?? (_instance = GameObject.FindObjectOfType<DialogueManager>());
+            if(_instance == null)
+            {
+                Debug.Log("DialogueManager is not in the scene but a script is attempting to access it.");
+            }
+            return _instance;
+        }
+    }
+    #endregion
 
-	public static DialogueManager Instance;
-
-	public GameObject[] _choiceButtons;
+    public GameObject[] _choiceButtons;
 
 	private static string portraitPATH = "DialoguePortraits/";
 
@@ -33,7 +47,6 @@ public class DialogueManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		Instance = this;
 		Dialoguer.Initialize ();
 		_choiceButtons = new GameObject[5];
 	}
@@ -70,6 +83,7 @@ public class DialogueManager : MonoBehaviour {
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 		PoPCamera.State = Camera_2.CameraState.Pause;
+        QK_Character_Movement.Instance.inADialogue = true;
 	}
 	
 	private void onEnded() {
@@ -78,6 +92,7 @@ public class DialogueManager : MonoBehaviour {
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 		PoPCamera.State = Camera_2.CameraState.Normal;
+        QK_Character_Movement.Instance.inADialogue = false;
 //		_goodBackground.SetActive (false);
 //		_badBackground.SetActive (false);
 	}
@@ -246,15 +261,17 @@ public class DialogueManager : MonoBehaviour {
 		return;
 	}
 
-	private JSONNode RetrieveDialogueFromJSON() {
-		
-		if(!System.IO.File.Exists(Application.dataPath + "/Resources/dialogueList.json"))
+	private JSONNode RetrieveDialogueFromJSON()
+    {
+        TextAsset text = Resources.Load<TextAsset>("dialogueList");
+
+		if(text == null)
 		{
 			Debug.LogError ("Could not find Dialogue List JSON file");
 			return null;
 		}
 		
-		string jsonRead = System.IO.File.ReadAllText(Application.dataPath + "/Resources/dialogueList.json");
+		string jsonRead = text.text;
 		JSONNode jsonParsed = JSON.Parse (jsonRead);
 		
 		return jsonParsed;

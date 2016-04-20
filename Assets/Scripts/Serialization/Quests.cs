@@ -199,6 +199,7 @@ public class Quest {
 		}
 
 		goal [goalIndex].Complete ();
+
 		return;
 	}
 
