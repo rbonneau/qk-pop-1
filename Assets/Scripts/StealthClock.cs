@@ -233,7 +233,7 @@ public class StealthClock : MonoBehaviour
 						{
                             
                             //reset the red and green zones
-							setZones();
+							resetZones();
 
 						}
 
@@ -254,7 +254,7 @@ public class StealthClock : MonoBehaviour
                     {
 
                         //reset the red and green zones
-                        setZones();
+                        resetZones();
 
                     }
 
@@ -262,7 +262,7 @@ public class StealthClock : MonoBehaviour
 				}
 
 			}
-			//endDegree <= startDegree
+			//_endDegree <= _startDegree
 			else
 			{
 				if((_startDegree <= _clockHand.transform.localEulerAngles.y) || (_clockHand.transform.localEulerAngles.y <= endDegree))
@@ -276,7 +276,7 @@ public class StealthClock : MonoBehaviour
 					{
 
                         //reset the zones
-						setZones();
+						resetZones();
 
 					}
 
@@ -416,6 +416,14 @@ public class StealthClock : MonoBehaviour
 
     }
 
+    void resetZones()
+    {
+
+        deactivateLines();
+        setZones();
+
+    }
+
     /*! \brief  Sets the minigame difficulty.
     
         Sets the location and size of green area, successes needed to win, fails allowed
@@ -430,10 +438,37 @@ public class StealthClock : MonoBehaviour
 	{
         
 		//choose random angle to start the green zone
-		_startDegree = Random.Range(0, 360);
-        
+		_startDegree = Random.Range(0, (_degrees - 1));
+
+
+        //check for range
+        if (_startDegree < 0)
+        {
+
+            _startDegree = 0;
+
+        }
+
+        //find end degree
+        _endDegree = _startDegree + stealthMan.areaSize;
+
+        //adjust for upper bound
+        _endDegree %= _degrees;
+
+        //check for same start and end degrees
+        if (_startDegree == _endDegree)
+        {
+
+            //just set to an easy range
+            _startDegree = 0;
+            _endDegree = _startDegree + 45;
+
+            Debug.Log("player", "StealthClock.setDifficulty(): start == end.");
+
+        }
+
         //set game variables
-		_endDegree = getEndDegree(_startDegree, stealthMan.areaSize);
+//        _endDegree = getEndDegree(_startDegree, stealthMan.areaSize);
 		_maxSuccess = stealthMan.maxSuccesses;
 		_maxFail = stealthMan.fails;
 		_clockSpeed = stealthMan.handSpeed;
@@ -449,7 +484,7 @@ public class StealthClock : MonoBehaviour
         Called by setDifficulty()
 
         /return int
-	*/
+	*//*
     int getEndDegree(int randomStart, int range)
 	{
 
@@ -467,7 +502,7 @@ public class StealthClock : MonoBehaviour
 		//find end degree
 		end = randomStart + range;
 
-		//check for upper bound
+		//adjust for upper bound
 		end %= _degrees;
 
 		//check for same start and end degrees
@@ -485,7 +520,7 @@ public class StealthClock : MonoBehaviour
 		return end;
 
 	}
-
+*/
     /*!
 	    \brief Sets the colors for each line renderer that make up the red and green zones.
 	    
@@ -520,13 +555,14 @@ public class StealthClock : MonoBehaviour
 
                     //set to green
 					lRend.SetColors(colorG, colorG);
+//                    lRend.material.color = colorG;
 				}
 				else
 				{
 
                     //set to red
 					lRend.SetColors(colorR, colorR);
-
+//                    lRend.material.color = colorR;
                 }
 
 			}
@@ -537,14 +573,14 @@ public class StealthClock : MonoBehaviour
 
                     //set to green
 					lRend.SetColors(colorG, colorG);
-
+//                    lRend.material.color = colorG;
 				}
 				else
 				{
 
                     //set to red
 					lRend.SetColors(colorR, colorR);
-
+//                    lRend.material.color = colorR;
                 }
 
 			}

@@ -325,7 +325,7 @@ public class StealthGameManager : MonoBehaviour
 		PoPCamera.instance.Reset();
 		
 		//allow player movement
-//		QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Normal;
+		QK_Character_Movement.Instance._moveState = CharacterStates.Normal;
 
 	}
 
@@ -344,7 +344,7 @@ public class StealthGameManager : MonoBehaviour
 		PoPCamera.State =  Camera_2.CameraState.Pause;
 		
 		//freeze movement
-//      QK_Character_Movement.Instance._moveState = QK_Character_Movement.CharacterState.Wait;
+      QK_Character_Movement.Instance._moveState = CharacterStates.Wait;
 
 	}
 
