@@ -51,8 +51,10 @@ public class GameHUD : MonoBehaviour {
 	GameObject mapCam;								//!<Camera used for minimap
 
 	static GameObject objectiveText;						//!<Objective Text UI element
+    static GameObject goldObjectiveText;
     static Text QuestNotText;
-
+    bool blueNotification = false;
+    bool goldNotification = false;
 	
 
 	public bool skillsOpen = false;
@@ -233,9 +235,18 @@ public class GameHUD : MonoBehaviour {
 		}
 	}
 
-    IEnumerator DisplayObjectiveNotification(string message, bool isGold)
+    public void StartBlueNotification() {
+        blueNotification = true;
+        StartCorotine(DisplayObjectiveNotification("Test"));
+    }
+
+    IEnumerator DisplayObjectiveNotification(string message)
     {
+        while (goldNotification) {
+            yield return null;
+        }
         objectiveText.SetActive(true);
+        /*
 		if (isGold) {
 			objectiveText.transform.FindChild ("BlueBackground").gameObject.SetActive (false);
 			objectiveText.transform.FindChild ("ExclamationMark").gameObject.SetActive (false);
@@ -243,7 +254,7 @@ public class GameHUD : MonoBehaviour {
 		else {
 			objectiveText.transform.FindChild ("GoldBackground").gameObject.SetActive (false);
 		}
-
+        */
         QuestNotText.text = message;
 		while (true) {
 			float delayTime = Time.realtimeSinceStartup + 3f;
@@ -259,15 +270,52 @@ public class GameHUD : MonoBehaviour {
             canvas.alpha -= 0.05f;
             yield return new WaitForEndOfFrame();
         }
+        /*
 		objectiveText.transform.FindChild ("BlueBackground").gameObject.SetActive (true);
 		objectiveText.transform.FindChild ("ExclamationMark").gameObject.SetActive (true);
 		objectiveText.transform.FindChild ("GoldBackground").gameObject.SetActive (true);
+        */
         canvas.alpha = 1f;
+        blueNotification = false;
         objectiveText.SetActive(false);
     }
 
-	//!Call this to update objective tet at top of the screen
-	[EventVisible]
+    public void StartGoldNotification()
+    {
+        goldNotification = true;
+        StartCorotine(DisplayGoldObjectiveNotification("Test"));
+    }
+
+    IEnumerator DisplayGoldObjectiveNotification(string message)
+    {
+        while (blueNotification)
+        {
+            yield return null;
+        }
+        goldObjectiveText.SetActive(true);
+        goldObjectiveText.GetComponent<Text>().text = message;
+        while (true)
+        {
+            float delayTime = Time.realtimeSinceStartup + 3f;
+            while (Time.realtimeSinceStartup < delayTime)
+            {
+                yield return null;
+            }
+            break;
+        }
+        CanvasGroup canvas = goldObjectiveText.GetComponent<CanvasGroup>();
+        while (canvas.alpha > 0)
+        {
+            canvas.alpha -= 0.05f;
+            yield return new WaitForEndOfFrame();
+        }
+        canvas.alpha = 1f;
+        goldNotification = false;
+        goldObjectiveText.SetActive(false);
+    }
+
+    //!Call this to update objective tet at top of the screen
+    [EventVisible]
 	public void UpdateObjectiveText(string newObjective, bool isGold)
     {
         StartCoroutine(DisplayObjectiveNotification(newObjective, isGold));

@@ -152,13 +152,14 @@ public class QuestManager : MonoBehaviour {
 		}
 
 		currentQuests.Add (newQuest);
-		DebugOnScreen.Log ("Added quest!");
+        //DebugOnScreen.Log ("Added quest!");
+        GameHUD.Instance.StartBlueNotification();
 
-		if (newQuest.HasTimer () == true) {
+        if (newQuest.HasTimer () == true) {
 
 			StartCoroutine("StartTimer", newQuest);
 		}
-
+        
 		return;
 	}
 
