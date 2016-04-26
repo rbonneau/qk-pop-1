@@ -36,7 +36,7 @@ public class PopEvent : MonoBehaviour {
     public float conditionRegionRadius = 1;
     
     bool activeOnce = false;		//! Used to execute commands exactly one time when the pop event becomes active
-
+	bool isQuitting = false;
 	GameObject minimapCanvas;
 	GameObject mapIcon;
 	
@@ -158,10 +158,16 @@ public class PopEvent : MonoBehaviour {
         isActive = active;
     }
     
+	void OnApplicationQuit(){
+		isQuitting = true;
+	}
+
     void OnDestroy(){
-    	if(mapIcon){
-    		GameHUD.Instance.mapLabels.Remove (mapIcon);
-    		Destroy(mapIcon);
-    	}
+		if (!isQuitting) {
+			if (mapIcon) {
+				GameHUD.Instance.mapLabels.Remove (mapIcon);
+				Destroy (mapIcon);
+			}
+		}
     }
 }

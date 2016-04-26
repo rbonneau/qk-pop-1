@@ -10,5 +10,6 @@
 	Sidle,
 	Wait, 
 	Normal,
-	Ability
+	Ability,
+	Jump
 }
