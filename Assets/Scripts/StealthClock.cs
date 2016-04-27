@@ -221,8 +221,8 @@ public class StealthClock : MonoBehaviour
                     
 //TESTING
                     Debug.Log("player", "SUCCESS: " + _clockHand.transform.localEulerAngles.y);
-//                    Debug.Log("player", "startDegree: " + startDegree);
-//                    Debug.Log("player", "endDegree: " + endDegree);
+                    Debug.Log("player", "startDegree: " + _startDegree);
+                    Debug.Log("player", "endDegree: " + endDegree);
 //END TESTING                    
                     
                     //increment success count
@@ -243,8 +243,8 @@ public class StealthClock : MonoBehaviour
 
 //TESTING
                     Debug.Log("player", "FAIL: " + _clockHand.transform.localEulerAngles.y);
-//                    Debug.Log("player", "startDegree: " + startDegree);
-//                    Debug.Log("player", "endDegree: " + endDegree);
+                    Debug.Log("player", "startDegree: " + _startDegree);
+                    Debug.Log("player", "endDegree: " + endDegree);
 //END  TESTING
 
                     //increment fail count
@@ -267,9 +267,15 @@ public class StealthClock : MonoBehaviour
 			{
 				if((_startDegree <= _clockHand.transform.localEulerAngles.y) || (_clockHand.transform.localEulerAngles.y <= endDegree))
 				{
+                    
+//TESTING
+                    Debug.Log("player", "SUCCESS: " + _clockHand.transform.localEulerAngles.y);
+                    Debug.Log("player", "startDegree: " + _startDegree);
+                    Debug.Log("player", "endDegree: " + endDegree);
+//END TESTING                    
 
                     //increment success count
-					_currentSuccess++;
+                    _currentSuccess++;
 
 					//check to see if zones need to be reset
 					if(_currentSuccess < _maxSuccess)
@@ -284,8 +290,15 @@ public class StealthClock : MonoBehaviour
 				else
 				{
 
+
+//TESTING
+                    Debug.Log("player", "FAIL: " + _clockHand.transform.localEulerAngles.y);
+                    Debug.Log("player", "startDegree: " + _startDegree);
+                    Debug.Log("player", "endDegree: " + endDegree);
+//END  TESTING
+
                     //increment fail count
-					_currentFail++;
+                    _currentFail++;
 
 				}
 
@@ -459,18 +472,22 @@ public class StealthClock : MonoBehaviour
         if (_startDegree == _endDegree)
         {
 
+//TESTING
+            Debug.Log("player", "StealthClock.setDifficulty(): start == end.");
+            Debug.Log("player", "StealthClock.setDifficulty(): _startDegree: " + _startDegree);
+            Debug.Log("player", "StealthClock.setDifficulty(): _endDegree: " + _endDegree);
+//END TESTING
+
             //just set to an easy range
             _startDegree = 0;
             _endDegree = _startDegree + 45;
-
-            Debug.Log("player", "StealthClock.setDifficulty(): start == end.");
 
         }
 
         //set game variables
 //        _endDegree = getEndDegree(_startDegree, stealthMan.areaSize);
 		_maxSuccess = stealthMan.maxSuccesses;
-		_maxFail = stealthMan.fails;
+		_maxFail = stealthMan.maxFails;
 		_clockSpeed = stealthMan.handSpeed;
 
 	}
@@ -542,50 +559,66 @@ public class StealthClock : MonoBehaviour
 		//set line colors accordingly
 		//check start and end boundaries
 		//green area fills counterclockwise from startDegree to endDegree
-		for(int i = 0; i < lines.Length; i++)
+//		for(int i = 0; i < lines.Length; i++)
+//		{
+
+//			lRend = lines[i].GetComponent<LineRenderer>();
+
+		if(_startDegree < _endDegree)
 		{
+            for (int i = 0; i < lines.Length; i++)
+            {
 
-			lRend = lines[i].GetComponent<LineRenderer>();
+                lRend = lines[i].GetComponent<LineRenderer>();
 
-			if(_startDegree < _endDegree)
-			{
-
-				if((_startDegree <= i) && (i <= _endDegree))
-				{
+                if ((_startDegree <= i) && (i <= _endDegree))
+                {
 
                     //set to green
-					lRend.SetColors(colorG, colorG);
+                    lRend.SetColors(colorG, colorG);
 //                    lRend.material.color = colorG;
-				}
-				else
-				{
+                }
+                else
+                {
 
                     //set to red
-					lRend.SetColors(colorR, colorR);
+                    lRend.SetColors(colorR, colorR);
 //                    lRend.material.color = colorR;
                 }
 
-			}
-			else
-			{
-				if((_startDegree <= i) || (i <= _endDegree))
-				{
+                lines[i].SetActive(true);
 
-                    //set to green
-					lRend.SetColors(colorG, colorG);
-//                    lRend.material.color = colorG;
-				}
-				else
-				{
-
-                    //set to red
-					lRend.SetColors(colorR, colorR);
-//                    lRend.material.color = colorR;
-                }
-
-			}
+            }
 
 		}
+		else
+		{
+            for (int i = 0; i < lines.Length; i++)
+            {
+
+                lRend = lines[i].GetComponent<LineRenderer>();
+
+                if ((_startDegree <= i) || (i <= _endDegree))
+                {
+
+                    //set to green
+                    lRend.SetColors(colorG, colorG);
+//                    lRend.material.color = colorG;
+                }
+                else
+                {
+
+                    //set to red
+                    lRend.SetColors(colorR, colorR);
+//                    lRend.material.color = colorR;
+                }
+
+                lines[i].SetActive(true);
+            }
+
+		}
+
+//		}
 //TESTING
         Debug.Log("player", "StealthClock.setColors(): completed");
 //END TESTING

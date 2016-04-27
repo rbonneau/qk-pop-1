@@ -67,8 +67,13 @@ public class StealthGameManager : MonoBehaviour
     //settings that the mini-game will use
     public int areaSize;            /*!<current size of green area in degrees that will be used by the mini-game*/
     public int maxSuccesses;        /*!<current number of successes necessary to win the mini-game*/
-    public int fails;               /*!<current number of fails necessary to win the mini-game*/
+    public int maxFails;            /*!<current number of fails necessary to win the mini-game*/
     public int handSpeed;           /*!<current speed of the mini-game clock hand*/
+
+//TESTING
+    public float areaStart;
+    public float areaEnd;
+//END TESTING
 
     // Use this for initialization
     void Start()
@@ -192,7 +197,11 @@ public class StealthGameManager : MonoBehaviour
             
 		}
 
-//TESTING
+        //TESTING
+
+        areaStart = clock.startDegree;
+        areaEnd = clock.endDegree;
+
 //        else
 //        {
 /*            if(clock == null)
@@ -265,8 +274,10 @@ public class StealthGameManager : MonoBehaviour
                 //_endDegree = getEndDegree(_startDegree, _easySize);
                 areaSize = easySize;
                 maxSuccesses = easySuccess;
-                fails = easyFail;
+                maxFails = easyFail;
                 handSpeed = easySpeed;
+
+                Debug.Log("player", "StealthGameManager.chooseDifficulty(): difficulty set to easy");
 
             }
             //medium
@@ -276,8 +287,10 @@ public class StealthGameManager : MonoBehaviour
                 //_endDegree = getEndDegree(_startDegree, _mediumSize);
                 areaSize = mediumSize;
                 maxSuccesses = mediumSuccess;
-                fails = mediumFail;
+                maxFails = mediumFail;
                 handSpeed = mediumSpeed;
+
+                Debug.Log("player", "StealthGameManager.chooseDifficulty(): difficulty set to medium");
 
             }
             //hard
@@ -287,8 +300,10 @@ public class StealthGameManager : MonoBehaviour
                 //_endDegree = getEndDegree(_startDegree, _hardSize);
                 areaSize = hardSize;
                 maxSuccesses = hardSuccess;
-                fails = hardFail;
+                maxFails = hardFail;
                 handSpeed = hardSpeed;
+
+                Debug.Log("player", "StealthGameManager.chooseDifficulty(): difficulty set to hard");
 
             }
             //hell
@@ -298,8 +313,10 @@ public class StealthGameManager : MonoBehaviour
                 //_endDegree = getEndDegree(_startDegree, _hellSize);
                 areaSize = hellSize;
                 maxSuccesses = hellSuccess;
-                fails = hellFail;
+                maxFails = hellFail;
                 handSpeed = hellSpeed;
+
+                Debug.Log("player", "StealthGameManager.chooseDifficulty(): difficulty set to hell");
 
             }
 
@@ -344,7 +361,7 @@ public class StealthGameManager : MonoBehaviour
 		PoPCamera.State =  Camera_2.CameraState.Pause;
 		
 		//freeze movement
-      QK_Character_Movement.Instance._moveState = CharacterStates.Wait;
+        QK_Character_Movement.Instance._moveState = CharacterStates.Wait;
 
 	}
 
