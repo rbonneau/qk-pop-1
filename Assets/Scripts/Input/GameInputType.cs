@@ -106,7 +106,7 @@ public class GameInputType : InputType
 		if(Input.GetButton(GetInputOrFail(controllerButtons, "controllerAction"))) {
 			return true;
 		}
-		return Input.GetKey(GetInputOrFail(keyButtons, "qAbility1"));
+		return Input.GetKey(GetInputOrFail(keyButtons, "qAbility"));
 	}
 
 	public override bool isCrouched() {

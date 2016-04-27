@@ -140,24 +140,23 @@ public class QuestManager : MonoBehaviour {
 	public void AddQuest(int questID) {
 
 		if (_questSaveManager.CompletedQuest (questID) == true) {
-			//DebugOnScreen.Log("Quest has already been completed. Delete in PlayerPrefs probably");
 			return;
 		}
 
 		Quest newQuest = _quest.AddQuest (questID);
 
 		if (newQuest == null) {
-			//DebugOnScreen.Log("New Quest is null. Not adding to List!");
 			return;
 		}
 
 		currentQuests.Add (newQuest);
-		//DebugOnScreen.Log ("Added quest!");
 
 		if (newQuest.HasTimer () == true) {
 
 			StartCoroutine("StartTimer", newQuest);
 		}
+
+        GameHUD.Instance.ShowQuestNotification(0);
 
 		return;
 	}

@@ -60,7 +60,7 @@ public class Goal {
 		goalProgress++;
 		Debug.Log (goalProgress + "/" + goalProgressNeeded + " on goal progress");
 		if (goalProgress >= goalProgressNeeded) {
-            GameHUD.Instance.QuestCompletedNotification();
+            GameHUD.Instance.ShowQuestNotification(1);
 			completed = true;
 		}
 

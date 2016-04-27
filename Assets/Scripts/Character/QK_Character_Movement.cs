@@ -60,6 +60,7 @@ public class QK_Character_Movement : MonoBehaviour {
 	private float jumpTimer = 0;
 	private float quincPause = 0;
 	public bool usingAbility = false;
+	private bool tryjump = false;
 	// Ledge Variables
 	private bool onLedge = false;
 	RaycastHit ledgeTest;
@@ -110,9 +111,12 @@ public class QK_Character_Movement : MonoBehaviour {
 			quincPause = 0;
 		}
 		ApplyGravity ();
+		jumpTimer+=Time.deltaTime;
 
-		jumpTimer++;
-
+		if (_stateModifier == CharacterStates.Jump && charCont.isGrounded)
+		{
+			_stateModifier = CharacterStates.Idle;
+		}
 		DetermineCharacterState ();
 
 		switch (_moveState) 
@@ -152,11 +156,14 @@ public class QK_Character_Movement : MonoBehaviour {
 			else if (_stateModifier == CharacterState.Crouch)
 			{
 				curSpeed = Mathf.Clamp(curSpeed, 0f, crouchSpeed);
-				//this.gameObject.GetComponent<CapsuleCollider>().height = 1;
+				this.gameObject.GetComponent<CharacterController>().center = new Vector3(0f, 0.5f, 0f);
+				this.gameObject.GetComponent<CharacterController>().height = 1;
 			}
 			else {
 				curSpeed = Mathf.Clamp(curSpeed, 0f, runSpeed);
-			}
+				this.gameObject.GetComponent<CharacterController>().center = new Vector3(0f, 1.03f, 0f);
+				this.gameObject.GetComponent<CharacterController>().height = 2;
+		}
         //curSpeed *= desiredMoveVector.magnitude;
 		
 		// Apply Slide
@@ -280,12 +287,12 @@ public class QK_Character_Movement : MonoBehaviour {
 				}
 			}
 
-			if (Input.GetKeyDown(KeyCode.Space)) 
+			if (InputManager.input.isJumping()) 
 			{
 				tempObj = GetLedge();//todo
 			}
 
-			if (Input.GetButton("Jump")) {
+			if (InputManager.input.isJumping()) {
 				Jump ();
 				return;
 			}
@@ -383,13 +390,21 @@ public class QK_Character_Movement : MonoBehaviour {
             return null;
         }
 	}
+	
 	void Jump()
 	{
-		if (jumpTimer % 30 == 0) { 
-			if (charCont.isGrounded)
+		
+		if (jumpTimer >= 1) {
+			jumpTimer = 0;
+			if(charCont.isGrounded) {
 				verticalVelocity = jumpSpeed;
+				_stateModifier = CharacterStates.Jump;
+				
+			}
+				
 		}
 	}
+	
 
 
 	void ClimbLedge()
