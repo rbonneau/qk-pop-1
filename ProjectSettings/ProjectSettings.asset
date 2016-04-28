@@ -136,7 +136,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - m_Icon: {fileID: 0}
-      m_Size: 128
+      m_Size: 40967
   m_BuildTargetBatching:
   - m_BuildTarget: iPhone
     m_StaticBatching: 1

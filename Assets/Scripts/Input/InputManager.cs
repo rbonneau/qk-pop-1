@@ -26,21 +26,20 @@ public sealed class InputManager : MonoBehaviour
 
     void Awake()
     {
-        _instance = null;
+        inputs.Add(Inputs.UI, this.gameObject.AddComponent<UIInputType>());
+        inputs.Add(Inputs.Game, this.gameObject.AddComponent<GameInputType>());
+        inputs.Add(Inputs.Keyboard, this.gameObject.AddComponent<KeyboardInputType>());
+
+        if (inputs.Count > 0)
+            ChangeInputType(Inputs.Game);
+        else
+            Debug.Error("input", "InputManager.inputs is empty.");
+
+        ChangeInputType(Inputs.Game);
     }
 
 	void Start()
     {
-		inputs.Add(Inputs.UI, this.gameObject.AddComponent<UIInputType>());
-		inputs.Add(Inputs.Game, this.gameObject.AddComponent<GameInputType>());
-		inputs.Add(Inputs.Keyboard, this.gameObject.AddComponent<KeyboardInputType>());
-
-		if(inputs.Count > 0)
-			ChangeInputType(Inputs.Game);
-		else
-			Debug.Error("input", "InputManager.inputs is empty.");
-
-		ChangeInputType(Inputs.Game);
 	}
 
     //!Switch input type

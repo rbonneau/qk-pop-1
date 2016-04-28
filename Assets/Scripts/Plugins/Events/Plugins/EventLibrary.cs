@@ -40,6 +40,7 @@ public static class EventLibrary {
 		{ "AIMain", typeof(AIMain) },
 		{ "AIMainTrimmed", typeof(AIMainTrimmed) },
 		{ "QuestNPC", typeof(QuestNPC) },
+		{ "AudioManager", typeof(AudioManager) },
 		{ "PlayerInventory", typeof(PlayerInventory) },
 		{ "QuestManager", typeof(QuestManager) },
 		{ "Crate", typeof(Crate) },
@@ -51,13 +52,14 @@ public static class EventLibrary {
 		{ "GameHUD", typeof(GameHUD) },
 	};
 
-	public static string[] monoClassesNice = new string[] { "StatePatternEnemy",  "AIMain",  "AIMainTrimmed",  "QuestNPC",  "PlayerInventory",  "QuestManager",  "Crate",  "Enemy",  "Rope",  "Well",  "PlayerSaveManager",  "DialogueManager",  "UI", };
+	public static string[] monoClassesNice = new string[] { "StatePatternEnemy",  "AIMain",  "AIMainTrimmed",  "QuestNPC",  "AudioManager",  "PlayerInventory",  "QuestManager",  "Crate",  "Enemy",  "Rope",  "Well",  "PlayerSaveManager",  "DialogueManager",  "UI", };
 
 	public static Dictionary<string, bool> instanceClasses = new Dictionary<string, bool> {
 		{ "StatePatternEnemy", false},
 		{ "AIMain", false},
 		{ "AIMainTrimmed", false},
 		{ "QuestNPC", false},
+		{ "AudioManager", false},
 		{ "PlayerInventory", false},
 		{ "QuestManager", false},
 		{ "Crate", false},
@@ -71,7 +73,7 @@ public static class EventLibrary {
 
 	public static Dictionary<string, string[]> library = new Dictionary<string, string[]> {
 		{ "QuestNPCMethods", new string[] {"ResetLocation", } },
-		{ "AudioManagerMethods", new string[] {"playMe", "changeVol", "seeVol", } },
+		{ "AudioManagerMethods", new string[] {"playMe", "playAudio", "muteAudio", "changeVol", "seeVol", } },
 		{ "PlayerInventoryMethods", new string[] {"LoadInventory", "SaveInventory", } },
 		{ "QuestManagerMethods", new string[] {"LoadQuests", "SaveQuests", "UpdateQuests", "CompleteGoalInQuest", "ProgressGoalInQuest", "AddQuest", } },
 		{ "CrateMethods", new string[] {"TestCrateFunction", } },
@@ -84,7 +86,7 @@ public static class EventLibrary {
 
 	public static Dictionary<string, string[]> libraryNice = new Dictionary<string, string[]> {
 		{ "QuestNPCMethods", new string[] {"ResetLocation", } },
-		{ "AudioManagerMethods", new string[] {"playMe", "changeVol", "seeVol", } },
+		{ "AudioManagerMethods", new string[] {"playMe", "playAudio", "muteAudio", "changeVol", "seeVol", } },
 		{ "PlayerInventoryMethods", new string[] {"LoadInventory", "SaveInventory", } },
 		{ "QuestManagerMethods", new string[] {"LoadQuests", "SaveQuests", "UpdateQuests", "CompleteGoalInQuest", "ProgressGoalInQuest", "AddQuest", } },
 		{ "CrateMethods", new string[] {"test", } },
