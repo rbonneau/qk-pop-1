@@ -166,7 +166,10 @@ public class StealthClock : MonoBehaviour
         //get reference to empty gameObject parent of lines
         lineParent = transform.FindChild("lineManager").transform;
 
-	}
+        //array of empty gameobjects to hold a single line renderer each
+        lines = new GameObject[_degrees];
+
+    }
 
 	void OnEnable()
 	{
@@ -188,18 +191,25 @@ public class StealthClock : MonoBehaviour
 		_endWidth = 0.63f * transform.localScale.x * Mathf.PI / 360f;
 
 		//array of empty gameobjects to hold a single line renderer each
-		lines = new GameObject[_degrees];
+//		lines = new GameObject[_degrees];
 
 		//initialize lines for arc
 		lineSetup();
 
+		//get reference to clockHand
+		_clockHand = GetComponentInChildren<StealthHand>().gameObject;
+
         //set red and green zones accordingly
         setZones();
 
+    }
 
-		//get reference to clockHand
-		_clockHand = GetComponentInChildren<StealthHand>().gameObject;
-        
+
+    void OnDisable()
+    {
+
+        deactivateLines();
+
     }
 
     // Update is called once per frame
@@ -341,8 +351,8 @@ public class StealthClock : MonoBehaviour
 //END TESTING
 
         }
-        //TESTING
-        Debug.Log("player", "Update(): completed");
+//TESTING
+//        Debug.Log("player", "Update(): completed");
 //END TESTING
 
     }
@@ -465,9 +475,17 @@ public class StealthClock : MonoBehaviour
         //find end degree
         _endDegree = _startDegree + stealthMan.areaSize;
 
+//TESTING
+        Debug.Log("player", "StealthClock.setDifficulty():  _endDegree (" + _endDegree +") = _startDegree (" + _startDegree + ") + stealthMan.areaSize (" + stealthMan.areaSize +")");
+//END TESTING
+        
         //adjust for upper bound
         _endDegree %= _degrees;
 
+//TESTING
+        Debug.Log("player", "StealthClock.setDifficulty(): _endDegree (" + _endDegree + ") %= _degrees (" + _degrees + ")");
+//END TESTING
+        
         //check for same start and end degrees
         if (_startDegree == _endDegree)
         {

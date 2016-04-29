@@ -78,7 +78,7 @@ public class StealthGameManager : MonoBehaviour
     // Use this for initialization
     void Start()
 	{
-
+        
 		//get reference to the StealthClock
 		clock = GetComponentInChildren<StealthClock>();
 
@@ -89,13 +89,7 @@ public class StealthGameManager : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
 
         //deactivate mini-game
-        foreach(Transform child in transform)
-        {
-
-            //deactivate children
-            child.gameObject.SetActive(false);
-
-        }
+        deactivateMiniGame();
 
         //check for clock existence
         if(clock == null)
@@ -113,8 +107,11 @@ public class StealthGameManager : MonoBehaviour
 	void Update()
 	{
 
+        Debug.Log("player", "clock active: " + clock.isActiveAndEnabled);
+        Debug.Log("player", "ai chasing: " + aiMan.checkChasing());
+
         //if the player won or lost the mini-game or is not hidden from ai
-        if(clock.isActiveAndEnabled && (clock.gameOver || !QK_Character_Movement.Instance.isHidden))
+        if(clock.isActiveAndEnabled && ((aiMan.checkChasing() < 1) || (clock.gameOver) || (!QK_Character_Movement.Instance.isHidden)))
         {
             
 			//check for win
@@ -136,69 +133,56 @@ public class StealthGameManager : MonoBehaviour
 
             }
 
-			//deactivate mini-game
-            foreach(Transform child in transform)
-            {
-
-                //deactivate children
-                child.gameObject.SetActive(false);
-
-            }
-
+            //deactivate mini-game
+            deactivateMiniGame();
+            
             //allow player to move
             resumeMovement();
 
         }
-		//if button pressed and player is being searched for and in a hiding spot, and the game is not paused
+		//if miniGame hasn't started, start miniGame button pressed, and player is being searched for and in a hiding spot, and the game is not paused
         else if(!clock.isActiveAndEnabled && Input.GetKeyDown("f") && (aiMan.numberChasing > 0) && QK_Character_Movement.Instance.isHidden && !GameHUD.Instance.pauseMenu.activeInHierarchy)
         {
 
-            //if mini-game isn't running
-            if(!clock.isActiveAndEnabled)
-			{
+            //calculate mini-game difficulty
+            if(chooseDifficulty())
+            {
 
-                //calculate mini-game difficulty
-                if(chooseDifficulty())
+                //start mini-game
+                foreach (Transform child in transform)
                 {
 
-                    //start mini-game
-                    foreach(Transform child in transform)
-                    {
+                    //activate children
+                    child.gameObject.SetActive(true);
 
-                        //activate children
-                        child.gameObject.SetActive(true);
-
-						//stop player movement
-						stopMovement();
-
-                    }
-
-                }
-                else
-                {
-
-                    //output error
-                    Debug.Log("player", "StealthGameManager.chooseDifficulty() == false");
+					//stop player movement
+					stopMovement();
 
                 }
 
-			}
+            }
+            else
+            {
+
+                //output error
+                Debug.Log("player", "StealthGameManager.chooseDifficulty() == false");
+
+            }
 
 		}
         //mini-game is running, no AI searching or player is not in a hiding spot
 		else if(clock.isActiveAndEnabled && (aiMan.checkChasing() < 1 || !QK_Character_Movement.Instance.isHidden))
         {
-            
+
             //deactivate mini-game
-            transform.GetChild(0).gameObject.SetActive(false);
+            deactivateMiniGame();
 
 			//resume movement
 			resumeMovement();
             
 		}
 
-        //TESTING
-
+//TESTING
         areaStart = clock.startDegree;
         areaEnd = clock.endDegree;
 
@@ -236,8 +220,6 @@ public class StealthGameManager : MonoBehaviour
 //TESTING
         Debug.Log("player", "StealthGameManager.chooseDifficulty: started");
 //END TESTING
-        //current count of guards searching for player
-        //        int tempGuards = 0;
 
         //number of suspicious guards
         int _numberOfGuards;
@@ -364,5 +346,19 @@ public class StealthGameManager : MonoBehaviour
         QK_Character_Movement.Instance._moveState = CharacterStates.Wait;
 
 	}
+
+    private void deactivateMiniGame()
+    {
+
+        //get children
+        foreach (Transform child in transform)
+        {
+
+            //deactivate all children
+            child.gameObject.SetActive(false);
+
+        }
+
+    }
 
 }
