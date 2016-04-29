@@ -183,7 +183,6 @@ public class Quest {
 			}
 		}
 		if(allCompleted){
-            GameHUD.Instance.StartGoldNotification();
             GameHUD.Instance.calcCompass = false;
 		}
 		return allCompleted;
