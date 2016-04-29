@@ -6,7 +6,14 @@ using Debug = FFP.Debug;
 [EventVisibleAttribute]
 public class QuestManager : MonoBehaviour {
 
-	public static QuestManager instance;
+    private static QuestManager _instance;
+	public static QuestManager instance
+    {
+        get
+        {
+            return _instance ?? (_instance = GameObject.FindObjectOfType<QuestManager>());
+        }
+    }
 
 	public List <Quest> currentQuests;
 	public List <Quest> failedQuests;
@@ -26,7 +33,7 @@ public class QuestManager : MonoBehaviour {
 		currentQuests = new List<Quest> ();
 		failedQuests = new List<Quest> ();
 		completedQuests = new List<Quest> ();
-		instance = this;
+		_instance = null;
 		compassTarget = Instantiate (compassTargetPrefab);
     }
 

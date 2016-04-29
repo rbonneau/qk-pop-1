@@ -47,6 +47,7 @@ public class DialogueManager : MonoBehaviour
 
 	// Use this for initialization
 	void Awake () {
+        _instance = null;
 		Dialoguer.Initialize ();
 		_choiceButtons = new GameObject[5];
 	}
@@ -76,6 +77,13 @@ public class DialogueManager : MonoBehaviour
         _continueButton.GetComponent<Button>().onClick.AddListener(() => ClickedContinueButton());
         _dialogueGO.SetActive (false);
 	}
+
+    void OnDestroy()
+    {
+        Dialoguer.events.onStarted -= onStarted;
+        Dialoguer.events.onEnded -= onEnded;
+        Dialoguer.events.onTextPhase -= onTextPhase;
+    }
 	
 	private void onStarted() {
 		_showing = true;
@@ -83,7 +91,6 @@ public class DialogueManager : MonoBehaviour
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 		PoPCamera.State = Camera_2.CameraState.Pause;
-        QK_Character_Movement.Instance.inADialogue = true;
 	}
 	
 	private void onEnded() {
@@ -256,7 +263,8 @@ public class DialogueManager : MonoBehaviour
 			return;
 		}
 
-		Dialoguer.StartDialogue (npcDialogue [npcID.ToString ()] [index].AsInt);
+        QK_Character_Movement.Instance.inADialogue = true;
+        Dialoguer.StartDialogue (npcDialogue [npcID.ToString ()] [index].AsInt);
 
 		return;
 	}
