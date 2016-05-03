@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: .196078435, g: .196078435, b: .196078435, a: 1}
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 5f1c6820ed22e24498316957f9c04696, type: 3}
+    m_Font: {fileID: 12800000, guid: 241ab984b648c844a9c0f56817acd4f3, type: 3}
     m_FontSize: 25
     m_FontStyle: 0
     m_BestFit: 0
@@ -637,7 +637,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 5f1c6820ed22e24498316957f9c04696, type: 3}
+    m_Font: {fileID: 12800000, guid: 241ab984b648c844a9c0f56817acd4f3, type: 3}
     m_FontSize: 87
     m_FontStyle: 0
     m_BestFit: 0
@@ -718,7 +718,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 5f1c6820ed22e24498316957f9c04696, type: 3}
+    m_Font: {fileID: 12800000, guid: 241ab984b648c844a9c0f56817acd4f3, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
@@ -846,7 +846,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 5f1c6820ed22e24498316957f9c04696, type: 3}
+    m_Font: {fileID: 12800000, guid: 241ab984b648c844a9c0f56817acd4f3, type: 3}
     m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
@@ -890,7 +890,7 @@ GameObject:
   - 114: {fileID: 1638284561}
   - 114: {fileID: 1638284560}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: QuitGameButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1165,7 +1165,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 5f1c6820ed22e24498316957f9c04696, type: 3}
+    m_Font: {fileID: 12800000, guid: 241ab984b648c844a9c0f56817acd4f3, type: 3}
     m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
@@ -1209,7 +1209,7 @@ GameObject:
   - 114: {fileID: 2134002674}
   - 114: {fileID: 2134002673}
   m_Layer: 5
-  m_Name: Button
+  m_Name: NewGameButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1336,7 +1336,7 @@ GameObject:
   - 114: {fileID: 2134797893}
   - 114: {fileID: 2134797892}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: CreditsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1400,13 +1400,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 1826848600}
+        m_MethodName: loadLevelWithIndex
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
