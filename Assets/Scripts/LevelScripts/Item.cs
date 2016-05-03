@@ -241,7 +241,10 @@ public class Item : MonoBehaviour
 		switch (itemType) {
 		case item_type.Crate:	
 			if(pushCompatible){
-				if(!checkForSnapBack()){
+				if(!checkForSnapBack())
+                {
+                    Debug.Log("pushing");
+                    QK_Character_Movement.Instance.usingAbility = true;
 					crate_pushPull(player_position, push_force, current_push_type, false);
 				}
 			}
@@ -282,8 +285,9 @@ public class Item : MonoBehaviour
 	public void Pull(Vector3 player_position, float push_force){
 		switch (itemType) {
 		case item_type.Crate:
-			if(pullCompatible){
-				checkForSnapBack();
+			if(pullCompatible && !checkForSnapBack())
+            {
+                QK_Character_Movement.Instance.usingAbility = true;
 				crate_pushPull(player_position, push_force, current_push_type, true);
 			}
 			else {

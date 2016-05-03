@@ -56,7 +56,8 @@ public sealed class PoPCamera : Camera_2
 	private int noOcclusionLayer = 8;
 	private int playerLayer = 9;
 	private int stealthObjsLayer = 10;
-	private int IgnoreRaycastLayer = 2;
+	public int IgnoreRaycastLayer = 2;
+    public int dialogueLayer = 11;
 	/// Initialize our actual 32bit layermasks
 	public int PlayerLM = 1;
 	public int NoOcclusionLM = 1;
@@ -114,11 +115,12 @@ public sealed class PoPCamera : Camera_2
 		distance = Mathf.Clamp(distance, distanceMin, distanceMax);
 		cameraLatency = Mathf.Clamp (cameraLatency, 0.05f, 1f);
 		// Bit Shift our layermasks
-		PlayerLM = 1 << playerLayer | 1 << IgnoreRaycastLayer;
+		PlayerLM = 1 << playerLayer | 1 << IgnoreRaycastLayer | 1 << dialogueLayer;
 		NoOcclusionLM = 1 << noOcclusionLayer | 
             1 << playerLayer |
 			1 << stealthObjsLayer |
-			1 << IgnoreRaycastLayer;
+			1 << IgnoreRaycastLayer |
+            1 << dialogueLayer;
 		// Inverse masks
 		PlayerLM = ~PlayerLM;
 		NoOcclusionLM = ~NoOcclusionLM;

@@ -12,6 +12,8 @@ public class RCAnimationController : MonoBehaviour
     AnimatorControllerParameter[] animParams;
     StatePatternEnemy redcoat;
     IEnemyState state;
+    Rigidbody rb;
+
 
     void Start()
     {
@@ -25,6 +27,7 @@ public class RCAnimationController : MonoBehaviour
         animParams = animController.parameters;
         redcoat = GetComponent<StatePatternEnemy>();
         state = redcoat.currentState;
+        rb = GetComponent<Rigidbody>();
     }
 
     void FixedUpdate()
@@ -37,15 +40,37 @@ public class RCAnimationController : MonoBehaviour
 
     void DetermineAnimatorParams()
     {
-        if (redcoat.moveSpeed > 0)
+        state = redcoat.currentState;
+        if (state is PatrolState && redcoat.idle == false || state is WalkState && redcoat.idle == false)
         {
-            animController.SetBool("Walk", true);
-            SetAllBoolParams("Walk", false);
+            if (redcoat.navMeshAgent.speed > 0)
+            {
+                animController.SetBool("Walk", true);
+                SetAllBoolParams("Walk", false);
+            }
+            else
+            {
+                animController.SetBool("Idle", true);
+                SetAllBoolParams("Idle", false);
+            }
         }
-        else if(state is SearchingState)
+        else if (state is SearchingState)
         {
-            animController.SetBool("Turn", true);
-            SetAllBoolParams("Turn", false);
+            if (redcoat.navMeshAgent.speed > 0)
+            {
+                animController.SetBool("Chase", true);
+                SetAllBoolParams("Chase", false);
+            }
+            else
+            {
+                animController.SetBool("Turn", true);
+                SetAllBoolParams("Turn", false);
+            }
+        }
+        else if (state is ChaseState)
+        {
+            animController.SetBool("Chase", true);
+            SetAllBoolParams("Chase", false);
         }
         else
         {

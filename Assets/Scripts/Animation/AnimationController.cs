@@ -28,6 +28,10 @@ public class AnimationController : MonoBehaviour {
 	
 	void FixedUpdate () 
 	{
+		//makes it so animations dont play durring daialogue
+		if (QK_Character_Movement.Instance.inADialogue) {
+			return;
+		}
 		//If the player moves vertically, assign the integer value from the input to the movement parameter from the animation controller
 		if(InputManager.input.MoveVerticalAxis() != 0) {
 			movement = (int)InputManager.input.MoveVerticalAxis();
@@ -44,6 +48,19 @@ public class AnimationController : MonoBehaviour {
 		} else {
 			running = false;
 		}
+		//checks if character is sprinting
+		if (QK_Character_Movement.Instance._stateModifier == CharacterStates.Sprint) {
+			sprinting = true;
+			running = false;
+		} else {
+			sprinting = false;
+		}
+		//checks if character is crouched
+		if (QK_Character_Movement.Instance._stateModifier == CharacterStates.Crouch) {
+			crouching = true;
+		} else {
+			crouching = false;
+		}
 		//Checks if the character is climbing a ladder or not
 		if(QK_Character_Movement.Instance._moveState == CharacterStates.Ladder)
 			ladder = true;
@@ -59,6 +76,12 @@ public class AnimationController : MonoBehaviour {
 			PhoneOut = true;
 		else
 			PhoneOut = false;
+		//checks if a power was used
+		/*if (Quinc.Instance.abilityUsed == true) {
+			PowerUsed = true;
+		} else {
+			PowerUsed = false;
+		}*/
 		//Sets the selected ability bool
 		selectedAbility = AbilityDockController.instance.getSelectedAbility ();
 		Debug.Log (selectedAbility);
@@ -101,8 +124,7 @@ public class AnimationController : MonoBehaviour {
 		}
 		//Set the values of the parameters from the animation controller
 		jumping = Input.GetButton("Jump");
-        crouching = false;
-        sprinting = false;
+
 		animator.SetInteger("Movement", movement);
         animator.SetBool("Jump", jumping);
         animator.SetBool("Crouch", crouching);

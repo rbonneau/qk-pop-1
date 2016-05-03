@@ -133,7 +133,6 @@ public class QuestManagerUIController : MonoBehaviour {
 	 * This function organizes quests by active, failed, then completed quests.
 	 */
 	public void reorganizeQuests(){
-		Debug.Log ("ui","Reorganizing quests");
 		allQuests = new List<GameObject> ();
 		mainSelected = true;
 		moreQuestInfoTitle.text = "";

@@ -30,7 +30,7 @@ public class QK_Character_Movement : MonoBehaviour {
 	[ReadOnly] public float curSpeed = 0f;
 	private float acceleration = 0.3f;
 	[ReadOnly] public float runSpeed = 8f;
-	private float sprintSpeed = 12f;
+	private float sprintSpeed = 15f;
 	private float crouchSpeed = 4f;
 	[ReadOnly] public float jumpSpeed = 8f;
 	private float slideSpeed = 8f;
@@ -72,8 +72,6 @@ public class QK_Character_Movement : MonoBehaviour {
 	private Vector3 slideDirection;
 	private Quaternion targetAngle = Quaternion.identity;
 	private PoPCamera cam;
-
-
 
     void Awake()
     {

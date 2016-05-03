@@ -100,7 +100,10 @@ public class PauseMenu : MonoBehaviour
 		AbilityDockController.instance.gameObject.SetActive (true);
 		isOnPauseMenu = false;
 		isPaused = false;
-		hideCursor ();
+        if (!QK_Character_Movement.Instance.inADialogue)
+        {
+            hideCursor();
+        }
 		Time.timeScale = 1f;
 		GHud.hidePauseMenu();
 	}
