@@ -1,37 +1,42 @@
 {
-	"1":
-		[
-			"Head to the market",
-			"Gavyn needs to exit the graveyard",
-			"Interact with items to exit graveyard and make your way to the market.",
-			[ 
-				
-				{
-				"Goal1" : 1
-				}
-			]
-		],
-	"2":	
-		[
-			"Collect Posters",
-			"Collect all the wanted posters",
-			"There seem to be some wanted posters with familiar faces lying around here. See how many you can find.",
-			[
-				{
-				"Posters Found" : 15
-				}
-			]
-		],
-	"3":
-		[
-			"Obtain letter, go to Independence Hall via market",
-			"Gavyn gets the letter that needs to be delivered to Independence Hall",
-			"Make way to Independence Hall",
-			[ 
-				
-				{
-				"Goal1" : 1
-				}
-			]
-		]
+  "1": [
+    "Head to the market",
+    "Gavyn needs to exit the graveyard.",
+    "Interact with items to exit graveyard and make your way to the market.",
+    [
+      {
+        "Progress": 2
+      }
+    ]
+  ],
+  "2": [
+    "Collect Posters",
+    "Collect all the wanted posters.",
+    "There seem to be some wanted posters with familiar faces lying around here. See how many you can find.",
+    [
+      {
+        "Posters Found": 15
+      }
+    ]
+  ],
+  "3": [
+    "Obtain the letter",
+    "Gavyn must obtain the letter that needs to be delivered to Independence Hall.",
+    "Search the Market for your contact.",
+    [
+      {
+        "Progress": 1
+      }
+    ]
+  ],
+  "4": [
+    "Deliver the Letter",
+    "Bring your contact's letter to Indepenence Hall.",
+    "It'd be best if you don't get caught with this letter.",
+    [
+      {
+        "Progress": 2
+      }
+    ]
+  ]
 }
