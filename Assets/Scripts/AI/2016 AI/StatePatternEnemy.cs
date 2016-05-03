@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+//using UnityEditor;
 
 [RequireComponent(typeof(NavMeshAgent))]	                //!<Automaticly Make a navMeshAgent on this game object when this script is applied
 [RequireComponent(typeof(Rigidbody))]                       //!<Automaticaly make a rigid body on this object
@@ -11,21 +12,24 @@ Update and OnTrigger in this script will run the updateState/OnTriggerstate insi
 
 
 */
+[System.Serializable]
 
 public class StatePatternEnemy : MonoBehaviour
 {
-    public float moveSpeed = 5f;                            //!<float to keep adjust the movement speed of the AI
+    public float moveSpeed = 3f;                            //!<float to keep adjust the movement speed of the AI
+    public float chaseSpeed = 10f;
     public float searchingTurnSpeed = 180f;                 //!<float to adjust how fast the AI turns when in the searching state
     public float searchingDuration = 4f;                    //!<float to adjust how long the AI stays in the searching state
-    public float sightRange = 40f;                          //!<float to adjust how far the AI can see
-    public float sightAngle = 10f;                          //!<float to adjust the sight angle of the AI
-    public Transform eyes;
-    public Vector3 offset = new Vector3(0, .5f, 0);
-    public MeshRenderer meshRendererFlag;
-    public int current_preset = 0;
-    public bool customType = false;
-    public bool seesTarget;
-    public GameObject player;
+    public float sightRange = 20f;                          //!<float to adjust how far the AI can see
+    public float sightAngle = 20f;                          //!<float to adjust the sight angle of the AI
+    public float suspiciousCheckRange = 10f;                //!<float to check if the player is in range after noticing the player then losing track of the player while in the patrol state
+    public int current_preset = 0;                          //!<preset setting for the AI editor draw from
+    public bool customType = false;                         //!<bool used in the ai editor for custom AI types to be created
+    public bool seesTarget;                                 //!<bool to determine if the AI can see the player or not
+    public GameObject player;                               //!<stores the player so it can be referenced easily
+    public GameObject NoiseHeard;
+    public bool alert;
+    public bool idle = false;
 
     //Path Variables
     public List<GameObject> Pathways;                       //!<List of the paths the AI uses. Paths are gameobjects with a list of vectors 3s that the AI uses to as waypoints. See AI's editor for paths.
@@ -40,9 +44,19 @@ public class StatePatternEnemy : MonoBehaviour
     public GameObject Path;                                 //!<Stores the current path of the AI so it's checkpoints can be accessed.
     public int PathwayCount = 0;                            //!<Int for tracking which path the AI is on
     public int CheckpointCount = 0;                         //! Int for tracking which checkpoint the AI is on
-    public bool enemy;
+    public bool enemy;                                      
     public Vector3 navPoint = new Vector3(0, 0, 0);         //!<Contains the point to move in the navmesh
     public Transform noiseLoc;
+    public float _firstAngle;
+    public float _secondAngle;
+    public float _turnSpeed;
+    public int _searchCount;
+
+    //Setting Layers
+    private int noOcclusionLayer = 8;
+    //Initialize 32bit layermasks
+    public int NoOcclusionLM = 1;
+
 
 
     [HideInInspector] public Transform chaseTarget;
@@ -56,10 +70,12 @@ public class StatePatternEnemy : MonoBehaviour
     [HideInInspector] public SuspiciousState suspiciousState;
     [HideInInspector] public KOState koState;
     [HideInInspector] public WalkState walkState;
+    [HideInInspector] public PointSearchState pointSearchState;
     [HideInInspector] public NavMeshAgent navMeshAgent;
 
     private void Awake()
     {
+        //PrefabUtility.DisconnectPrefabInstance(this);
         chaseState = new ChaseState(this);
         patrolState = new PatrolState(this);
         guardState = new GuardState(this);
@@ -69,8 +85,23 @@ public class StatePatternEnemy : MonoBehaviour
         suspiciousState = new SuspiciousState(this);
         koState = new KOState(this);
         walkState = new WalkState(this);
+        pointSearchState = new PointSearchState(this);
 
         navMeshAgent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        Path = Pathways[0];
+        AIPath CheckpointScript = Path.GetComponent<AIPath>();
+        navPoint = CheckpointScript.getPoints()[0];
+        if (current_preset == 0)
+        {
+            currentState = walkState;
+        }
+        else
+        {
+        currentState = patrolState; //sets the current state
+        }
+        NoOcclusionLM = 1 << noOcclusionLayer;
+        NoOcclusionLM = ~NoOcclusionLM;
     }
 
 
@@ -82,17 +113,12 @@ public class StatePatternEnemy : MonoBehaviour
         Set default state of the AI (walking, patroling, guarding)
         set current state to default state
         */
-        player = GameObject.FindGameObjectWithTag("Player");
-        currentState = patrolState; //sets the current state
-        Path = Pathways[PathwayCount];
-        AIPath CheckpointScript = Path.GetComponent<AIPath>();
-        //THIS might not be needed maybe idk lets find out navPoint = CheckpointScript.getPoints()[CheckpointCount];
+
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        navMeshAgent.speed = moveSpeed;
         currentState.UpdateState(); //calls the update of the current state
         if (currentState == distractedState)
         {
@@ -114,6 +140,6 @@ public class StatePatternEnemy : MonoBehaviour
 
         */
 
-            currentState.OnTriggerEnter(col); // calls OnTriggerEnter in the current State
+            //currentState.OnTriggerEnter(col); // calls OnTriggerEnter in the current State
     }
 }

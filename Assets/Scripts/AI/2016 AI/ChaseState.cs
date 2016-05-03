@@ -6,7 +6,6 @@ public class ChaseState : IEnemyState
     private readonly StatePatternEnemy enemy;
     private float chaseTimer;
 
-
     public ChaseState(StatePatternEnemy statePatternEnemy)
     {
         enemy = statePatternEnemy;
@@ -42,7 +41,7 @@ public class ChaseState : IEnemyState
     {
         enemy.currentState = enemy.dazedState;
         chaseTimer = 0f;
-        enemy.moveSpeed = 0f;
+        enemy.navMeshAgent.speed= enemy.moveSpeed;
     }
 
     public void ToDistractedState(Transform distractedPoint)
@@ -54,7 +53,7 @@ public class ChaseState : IEnemyState
     {
         enemy.currentState = enemy.searchingState;
         chaseTimer = 0f;
-        enemy.moveSpeed = 5f;
+        enemy.navMeshAgent.speed = enemy.moveSpeed;
     }
 
     public void ToSuspiciousState()
@@ -72,11 +71,15 @@ public class ChaseState : IEnemyState
 
     }
 
+    public void ToPointSearchState(float minAngle, float maxAngle, float turnSpeed, int searchCount)
+    {
+
+    }
+
     private void Look()
     {
         RaycastHit hit;
         //Vector3 enemyToTarget = (enemy.chaseTarget.position + enemy.offset) - enemy.eyes.transform.position;
-        Vector3 enemyToTarget = enemy.chaseTarget.position;
 
         if (Vector3.Angle(enemy.chaseTarget.position - enemy.transform.position, enemy.transform.forward) < enemy.sightAngle)
         {
@@ -99,19 +102,18 @@ public class ChaseState : IEnemyState
 
     private void Chase()
     {
-
         chaseTimer += Time.deltaTime;
-        if (enemy.moveSpeed <= 0)
+        if (enemy.navMeshAgent.speed <= 0)
         {
-            enemy.moveSpeed = 0; //ensures that if the subtraction puts it into a negative value its set to 0
+            enemy.navMeshAgent.speed = 0; //ensures that if the subtraction puts it into a negative value its set to 0
             ToDazedState();
         }
         else
         {
-            enemy.moveSpeed = enemy.moveSpeed - (chaseTimer / 1000);
+            enemy.navMeshAgent.speed = enemy.navMeshAgent.speed - (chaseTimer / 1000);
         }
-        enemy.meshRendererFlag.material.color = Color.red;
         enemy.navMeshAgent.destination = enemy.chaseTarget.position;
         enemy.navMeshAgent.Resume ();
+        enemy.navMeshAgent.speed = enemy.chaseSpeed;
     }
 }

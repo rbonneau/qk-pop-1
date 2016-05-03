@@ -16,10 +16,15 @@ public class Checkpoint : MonoBehaviour
     public float minDist = 0.0f; //!<Minimum distance away from the Checkpoint that CheckpointTrigger needs to be
     public bool aiSearch;
 	public AIPath path_reference;
+    public float minAngle;
+    public float maxAngle;
+    public float turnSpeed;
+    public int loopCount;
 
-//END OLD CODE
 
-	void OnAwake()
+    //END OLD CODE
+
+    void OnAwake()
 	{
 
 		//add self to list of all active checkpoints
@@ -36,7 +41,7 @@ public class Checkpoint : MonoBehaviour
 	public Vector3 getPosition()
     {
 		return transform.position;
-	}
+    }
 
     public Quaternion getRotation()
     {
@@ -47,6 +52,27 @@ public class Checkpoint : MonoBehaviour
     {
         return aiSearch;
     }
+
+    public float getMinAngle()
+    {
+        return minAngle;
+    }
+
+    public float getMaxAngle()
+    {
+        return maxAngle;
+    }
+
+    public float getTurnSpeed()
+    {
+        return turnSpeed;
+    }
+
+    public int getLoopCount()
+    {
+        return loopCount;
+    }
+
 //END OLD CODE
 
     //These script is for the AI checkpoints however this segment of code is for the players checkpoints
@@ -58,7 +84,7 @@ public class Checkpoint : MonoBehaviour
 		if(col.gameObject == QK_Character_Movement.Instance.gameObject)
 		{
 			//make self the most recently reached checkpoint
-			CheckpointManager.instance.SetLatestWorldCheckpoint(transform);
+			//CheckpointManager.instance.SetLatestWorldCheckpoint(transform);
             //			CheckpointManager.LatestWorldCheckPoint = transform;
             FFP.Debug.Log("checkpoint", "Checkpoint: " + gameObject.name + " is LatestWorldCheckpoint");
 		}

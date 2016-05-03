@@ -65,6 +65,11 @@ public class DistractedState : IEnemyState
 
     }
 
+    public void ToPointSearchState(float minAngle, float maxAngle, float turnSpeed, int searchCount)
+    {
+
+    }
+
     public void Distracted ()
     {
         enemy.chaseTarget = enemy.noiseLoc;
