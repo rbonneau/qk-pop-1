@@ -183,7 +183,7 @@ public class Quest {
 			}
 		}
 		if(allCompleted){
-			GameHUD.Instance.calcCompass = false;
+            GameHUD.Instance.calcCompass = false;
 		}
 		return allCompleted;
 	}
