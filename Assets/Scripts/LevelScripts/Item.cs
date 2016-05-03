@@ -132,7 +132,7 @@ public class Item : MonoBehaviour
 
 		case item_type.Rope:
 			if(stunCompatible){
-				// --insert behavior here--
+					// --insert behavior here--
 			}
 			else {
 				NoEffect();
@@ -158,7 +158,8 @@ public class Item : MonoBehaviour
 		switch (itemType) {
 		case item_type.Crate:
 			if(cutCompatible){
-				print("Crate was destroyed by cut.");
+					
+					print("Crate was destroyed by cut.");
 			}
 			else {
 				NoEffect();
@@ -167,7 +168,8 @@ public class Item : MonoBehaviour
 			
 		case item_type.Rope:
 			if(cutCompatible){
-				print("Rope was cut.");
+					Cut_Item();
+					print("Rope was cut.");
 			}
 			else {
 				NoEffect();
@@ -644,6 +646,18 @@ public class Item : MonoBehaviour
 		}
 	}
 
+	private void Cut_Item()
+	{
+		//activate rigidbody gravity
+		
+		this.gameObject.GetComponent<Rigidbody>().useGravity = true;
+		print("attempting to cut");
+		Rigidbody[] children = this.gameObject.GetComponentsInChildren<Rigidbody>();
+		foreach (Rigidbody child in children)
+		{
+			child.useGravity = true;
+		}
+	}
 	private void NoEffect(){
 		print("I'm afraid I can't do that Dave.");
 	}
