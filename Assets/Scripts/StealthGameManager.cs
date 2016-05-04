@@ -181,6 +181,26 @@ public class StealthGameManager : MonoBehaviour
 			resumeMovement();
             
 		}
+//TESTING
+        else if(clock.isActiveAndEnabled && (aiMan.checkChasing() < 1 && !QK_Character_Movement.Instance.isHidden))
+        {
+
+            Debug.Log("player", "Mini-game is running, no AI searching and player is not hidden");
+
+        }
+        else if(clock.isActiveAndEnabled && (aiMan.checkChasing() < 1 || QK_Character_Movement.Instance.isHidden))
+        {
+
+            Debug.Log("player", "QK_Character_Movement.Instance.isHidden: " + QK_Character_Movement.Instance.isHidden);
+
+        }
+        else if(clock.isActiveAndEnabled && (aiMan.checkChasing() >= 1 || !QK_Character_Movement.Instance.isHidden))
+        {
+
+            Debug.Log("player", "aiMan.checkChasing: " + aiMan.checkChasing());
+
+        }
+//END TESTING
 
 //TESTING
         areaStart = clock.startDegree;

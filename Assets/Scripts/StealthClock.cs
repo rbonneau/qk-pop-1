@@ -201,7 +201,13 @@ public class StealthClock : MonoBehaviour
 
         //set red and green zones accordingly
         setZones();
+//TESTING
+        //freeze camera
+        PoPCamera.State = Camera_2.CameraState.Pause;
 
+        //freeze movement
+        QK_Character_Movement.Instance._moveState = CharacterStates.Wait;
+//END TESTING
     }
 
 
@@ -209,7 +215,13 @@ public class StealthClock : MonoBehaviour
     {
 
         deactivateLines();
+//TESTING
+        //allow camera movement
+        PoPCamera.instance.Reset();
 
+        //allow player movement
+        QK_Character_Movement.Instance._moveState = CharacterStates.Normal;
+//END TESTING
     }
 
     // Update is called once per frame
